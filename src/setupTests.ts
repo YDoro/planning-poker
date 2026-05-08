@@ -15,6 +15,18 @@ Object.assign(navigator, {
   },
 });
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: true,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+})
+
 i18n.use(initReactI18next).init({
   lng: 'en', // set your default language here
   fallbackLng: 'en',
