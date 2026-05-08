@@ -17,14 +17,11 @@ services:
       - firestore-emulator
 
   firestore-emulator:
-    image: node:24-alpine
-    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile.emulator
     ports:
       - "8080:8080"
     volumes:
       - ./firebase.json:/app/firebase.json
       - ./firebase-emulators:/app/firebase-emulators
-    command: >
-      sh -c "apk add --no-cache openjdk17 &&
-             npm install -g firebase-tools &&
-             firebase emulators:start --only firestore --project demo"
