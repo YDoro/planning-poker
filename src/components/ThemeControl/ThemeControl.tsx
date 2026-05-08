@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { MenuItem } from '../Toolbar/MenuItem';
 
 export const ThemeControl = () => {
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
   const [theme, setTheme] = useState<'light' | 'dark'>(
-    () => (localStorage.getItem('theme') as 'light' | 'dark') || 'light',
+    () => mq.matches ? 'dark' : 'light'
   );
 
   useEffect(() => {
