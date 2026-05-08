@@ -9,6 +9,9 @@ delete process.env['ProgramFiles(x86)'];
 export default defineConfig({
   base: '/',
   plugins: [react(), tailwindcss(), EnvironmentPlugin('all')],
+  server: {
+    host: true,
+  },
   build: {
     outDir: 'build',
   },

@@ -1,0 +1,30 @@
+
+services:
+  app:
+    build:
+      context: .
+      target: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    environment:
+      - VITE_USE_FIRESTORE_EMULATOR=true
+    depends_on:
+      - firestore-emulator
+
+  firestore-emulator:
+    image: node:24-alpine
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./firebase.json:/app/firebase.json
+      - ./firebase-emulators:/app/firebase-emulators
+    command: >
+      sh -c "apk add --no-cache openjdk17 &&
+             npm install -g firebase-tools &&
+             firebase emulators:start --only firestore --project demo"
