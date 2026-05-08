@@ -2,29 +2,19 @@
 /* eslint-disable testing-library/no-container */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { Toolbar } from './Toolbar';
+const mockHistoryPush = vi.fn();
 
-const mockHistoryPush = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => mockHistoryPush,
 }));
 
 describe('Toolbar component', () => {
-  // const { location } = window;
-  // beforeAll(() => {
-  //   // @ts-ignore
-  //   delete window.location;
-  //   // @ts-ignore
-  //   window.location = { href: '' };
-  // });
+  beforeEach(() => {
+    mockHistoryPush.mockClear();
+  });
 
-  // afterAll((): void => {
-  //   // @ts-ignore
-  //   window.location = location;
-  // });
   it('should render correct title', () => {
     render(<Toolbar />);
     const title = screen.getByText('Planning Poker');
@@ -40,32 +30,22 @@ describe('Toolbar component', () => {
     const newSession = screen.getByTestId('toolbar.menu.joinSession');
     expect(newSession).toBeInTheDocument();
   });
-  it('should navigate to Home page when New Session button is clicked', () => {
+  it('should navigate to Home page when New Session button is clicked', async () => {
     render(<Toolbar />);
     const newSession = screen.getByTestId('toolbar.menu.newSession');
-    userEvent.click(newSession);
-    expect(mockHistoryPush).toBeCalledWith('/');
+    await userEvent.click(newSession);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/');
   });
-  it('should navigate to Join session page when Join Session button is clicked', () => {
+  it('should navigate to Join session page when Join Session button is clicked', async () => {
     render(<Toolbar />);
     const newSession = screen.getByTestId('toolbar.menu.joinSession');
-    userEvent.click(newSession);
-    expect(mockHistoryPush).toBeCalledWith('/join');
+    await userEvent.click(newSession);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/join');
   });
-  it('should navigate to home page when Title is clicked clicked', () => {
+  it('should navigate to home page when Title is clicked clicked', async () => {
     render(<Toolbar />);
     const title = screen.getByText('Planning Poker');
-    userEvent.click(title);
-    expect(mockHistoryPush).toBeCalledWith('/');
+    await userEvent.click(title);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/');
   });
-  // it('should navigate to github page when Github icon is clicked clicked', () => {
-  //   // @ts-ignore
-  //   delete window.location;
-  //   // @ts-ignore
-  //   window.location = { href: '' };
-  //   const view = render(<Toolbar />);
-  //   const title = view.getByText('GitHub') as HTMLElement;
-  //   userEvent.click(title);
-  //   expect(window.location.href).toEqual('https://github.com/hellomuthu23/planning-poker');
-  // });
 });

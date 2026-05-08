@@ -1,7 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Timer } from './Timer';
+import { vi } from 'vitest';
 
-jest.mock('../TimerProgressPopup/TimerProgressPopup', () => ({
+vi.mock('../TimerProgressPopup/TimerProgressPopup', () => ({
   TimerProgress: (props: any) => (
     <div data-testid='timer-progress'>
       TimerProgress
@@ -10,7 +11,7 @@ jest.mock('../TimerProgressPopup/TimerProgressPopup', () => ({
   ),
 }));
 
-jest.mock('../../../../SVGs/Clock', () => ({
+vi.mock('../../../../SVGs/Clock', () => ({
   ClockSVG: (props: any) => <svg data-testid='clock-svg' {...props} />,
 }));
 
@@ -24,11 +25,11 @@ describe('Timer', () => {
       totalSeconds: 300,
       soundOn: true,
     },
-    onTimerUpdate: jest.fn(),
+    onTimerUpdate: vi.fn(),
   };
 
   it('does not render clock or timer for non-mod', () => {
-    render(<Timer timerProps={{ isMod: false }} onTimerUpdate={jest.fn()} />);
+    render(<Timer timerProps={{ isMod: false }} onTimerUpdate={vi.fn()} />);
     expect(screen.queryByTestId('clock-svg')).not.toBeInTheDocument();
     expect(screen.queryByTestId('timer-progress')).not.toBeInTheDocument();
   });
@@ -39,7 +40,7 @@ describe('Timer', () => {
   });
 
   it('shows TimerProgress when clock button is clicked', () => {
-    const onTimerUpdate = jest.fn();
+    const onTimerUpdate = vi.fn();
     render(<Timer {...defaultProps} onTimerUpdate={onTimerUpdate} />);
     fireEvent.click(screen.getByTestId('clock-svg').parentElement!);
     // Simulate parent updating timerVisible to true
@@ -54,7 +55,7 @@ describe('Timer', () => {
   });
 
   it('closes TimerProgress when onTimerClose is called', () => {
-    const onTimerUpdate = jest.fn();
+    const onTimerUpdate = vi.fn();
     render(
       <Timer
         {...defaultProps}
@@ -87,7 +88,7 @@ describe('Timer', () => {
 
   it('toggles TimerProgress on clock button click and close', () => {
     let timerVisible = false;
-    const onTimerUpdate = jest.fn((update) => {
+    const onTimerUpdate = vi.fn((update) => {
       timerVisible = update.timerVisible;
     });
 

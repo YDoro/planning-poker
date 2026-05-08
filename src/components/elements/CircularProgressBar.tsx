@@ -1,9 +1,10 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
 interface Props {
   strokeWidth?: number;
   sqSize?: number;
   percentage: number;
+  children?: ReactNode;
 }
 
 const CircularProgressBar: FC<Props> = (props) => {

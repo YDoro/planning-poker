@@ -25,6 +25,7 @@ if (process.env.VITE_USE_FIRESTORE_EMULATOR === 'true') {
   console.log('Using Firestore Emulator');
   // application host name
   const emulatorHost = window.location.hostname;
+  // TODO - use env to determine port
   db.useEmulator(emulatorHost, 8080); // Point to the Firestore Emulator
 }
 

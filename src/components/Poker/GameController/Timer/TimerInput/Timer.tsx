@@ -26,7 +26,7 @@ export const Timer: React.FC<TimerProps> = ({ timerProps, onTimerUpdate }) => {
   } = timerProps;
 
   const onTimerStateUpdate = useCallback(
-    (update) => {
+    (update: GameTimerProps) => {
       onTimerUpdate(update);
     },
     [onTimerUpdate],

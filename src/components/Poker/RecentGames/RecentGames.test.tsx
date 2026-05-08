@@ -1,16 +1,20 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import reactRouter from 'react-router';
 import * as playersService from '../../../service/players';
 import { PlayerGame } from '../../../types/player';
 import { RecentGames } from './RecentGames';
+import { vi } from 'vitest';
 
-jest.mock('../../../service/players');
-const mockHistoryPush = jest.fn();
+vi.mock('../../../service/players');
+const mockNavigate = vi.fn();
+
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => mockNavigate,
+}));
 
 describe('RecentGames component', () => {
   beforeEach(() => {
-    jest.spyOn(reactRouter, 'useHistory').mockReturnValue({ push: mockHistoryPush } as any);
+    mockNavigate.mockClear();
   });
   it('should display no recent session when no games found in user local storage', async () => {
     render(<RecentGames />);
@@ -33,7 +37,7 @@ describe('RecentGames component', () => {
         playerId: 'abc',
       },
     ];
-    jest.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
+    vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
 
     render(<RecentGames />);
 
@@ -62,12 +66,12 @@ describe('RecentGames component', () => {
         playerId: 'aaa',
       },
     ];
-    jest.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
+    vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
 
     render(<RecentGames />);
 
     await screen.findByText(mockGames[0].name);
-    userEvent.click(screen.getByText(mockGames[0].name));
-    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/game/abc'));
+    await userEvent.click(screen.getByText(mockGames[0].name));
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/game/abc'));
   });
 });

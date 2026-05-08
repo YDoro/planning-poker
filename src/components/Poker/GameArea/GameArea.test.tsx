@@ -3,6 +3,12 @@ import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
 import { GameArea } from './GameArea';
+import { vi } from 'vitest';
+
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
+}));
+
 
 describe('GameArea component', () => {
   const mockGame: Game = {

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { GamesSVG } from '../SVGs/GamesSVG';
 
 import { useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useBreakpoint } from '../../hooks/useBreakpoint';
 import { LanguageControl } from '../LanguageControl/LanguageControl';
 import { ExampleSVG } from '../SVGs/Example';
@@ -17,7 +17,7 @@ import { MenuItem } from './MenuItem';
 export const title = 'Planning Poker';
 
 export const Toolbar = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const screenSize = useBreakpoint();
   const { t } = useTranslation();
 
@@ -29,7 +29,7 @@ export const Toolbar = () => {
   };
 
   const handleNavigation = (path: string) => {
-    history.push(path);
+    navigate(path);
     setIsDropdownOpen(false); // Close dropdown after navigation
   };
 
@@ -84,7 +84,7 @@ export const Toolbar = () => {
   return (
     <div className='flex w-full items-center shadow-sm dark:shadow-gray-800'>
       <div className='inline-flex items-center'>
-        <button className='button-ghost flex items-center' onClick={() => history.push('/')}>
+        <button className='button-ghost flex items-center' onClick={() => navigate('/')}>
           <div className='pr-1'>
             <GamesSVG />
           </div>

@@ -5,6 +5,8 @@
 import '@testing-library/jest-dom';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { vi } from 'vitest';
+globalThis.jest = vi as any;
 import en from '../public/locales/en/translation.json'; // adjust the path as needed
 
 Object.assign(navigator, {

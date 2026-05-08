@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import App from './App';
-jest.mock('./service/players');
-jest.mock('./service/games');
-jest.mock('./repository/firebase');
+vi.mock('./service/players');
+vi.mock('./service/games');
+vi.mock('./repository/firebase');
 
 // eslint-disable-next-line jest/valid-describe-callback
 
-jest.mock('country-flag-emoji-polyfill', () => ({
-  polyfillCountryFlagEmojis: jest.fn(),
+vi.mock('country-flag-emoji-polyfill', () => ({
+  polyfillCountryFlagEmojis: vi.fn(),
 }));
 
 describe('App', () =>

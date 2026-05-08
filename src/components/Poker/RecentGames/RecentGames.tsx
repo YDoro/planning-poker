@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AlertDialog } from '../../../components/AlertDialog/AlertDialog';
 import { removeGame } from '../../../service/games';
 import { getCurrentPlayerId, getPlayerRecentGames } from '../../../service/players';
@@ -8,7 +8,7 @@ import { isModerator } from '../../../utils/isModerator';
 import { DeleteSVG } from '../../SVGs/DeleteSVG';
 
 export const RecentGames = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [recentGames, setRecentGames] = useState<PlayerGame[] | undefined>(undefined);
   const [reloadRecent, setReloadRecent] = useState<Boolean>(false);
 
@@ -72,7 +72,7 @@ export const RecentGames = () => {
                       <tr
                         key={recentGame.id}
                         className='hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer border-t border-gray-200'
-                        onClick={() => history.push(`/game/${recentGame.id}`)}
+                        onClick={() => navigate(`/game/${recentGame.id}`)}
                       >
                         <td className='px-6 py-4 text-sm'>{recentGame.name}</td>
                         <td className='px-6 py-4 text-sm'>{recentGame.createdBy}</td>

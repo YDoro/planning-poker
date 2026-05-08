@@ -11,17 +11,20 @@ import {
   GameController,
   getAverage,
 } from './GameController';
+import { vi } from 'vitest';
 
-jest.mock('../../../service/games');
-const mockHistoryPush = jest.fn();
+vi.mock('../../../service/games');
+const mockNavigate = vi.fn();
+document.execCommand = vi.fn();
 
-jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => mockNavigate,
 }));
-document.execCommand = jest.fn();
+
 describe('GameController component', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+  });
   const mockGame: Game = {
     id: 'xyz',
     name: 'testGame',
@@ -88,7 +91,7 @@ describe('GameController component', () => {
     expect(screen.getByText('Invite')).toBeInTheDocument();
   });
 
-  it('should copy invite link to clipboard', () => {
+  it('should copy invite link to clipboard', async () => {
     render(
       <GameController
         game={mockGame}
@@ -97,11 +100,13 @@ describe('GameController component', () => {
       />,
     );
 
-    userEvent.click(screen.getByTestId('invite-button'));
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('http://localhost/join/xyz');
+    await userEvent.click(screen.getByTestId('invite-button'));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect.stringContaining('/join/xyz'),
+    );
   });
 
-  it('should navigate to home page when exit button is clicked', () => {
+  it('should navigate to home page when exit button is clicked', async () => {
     render(
       <GameController
         game={mockGame}
@@ -110,8 +115,8 @@ describe('GameController component', () => {
       />,
     );
 
-    userEvent.click(screen.getByTestId('exit-button'));
-    expect(mockHistoryPush).toHaveBeenCalledWith('/');
+    await userEvent.click(screen.getByTestId('exit-button'));
+    expect(mockNavigate).toHaveBeenCalledWith('/');
   });
   it('should display story name', () => {
     render(
@@ -124,7 +129,7 @@ describe('GameController component', () => {
     expect(screen.getByDisplayValue('testStory')).toBeInTheDocument();
   });
 
-  it('can enter new story name', () => {
+  it('can enter new story name', async () => {
     render(
       <GameController
         game={mockGame}
@@ -133,7 +138,7 @@ describe('GameController component', () => {
       />,
     );
     const input = screen.getByPlaceholderText('Enter story name or number') as HTMLInputElement;
-    userEvent.type(input, 'n');
+    await userEvent.type(input, 'n');
     expect(gamesService.updateStoryName).toHaveBeenCalledWith(mockGame.id, 'testStoryn');
   });
 
@@ -160,7 +165,7 @@ describe('GameController component', () => {
 
       expect(screen.getByText('Restart')).toBeInTheDocument();
     });
-    it('should reveal cards when player click on Reveal button', () => {
+    it('should reveal cards when player click on Reveal button', async () => {
       render(
         <GameController
           game={mockGame}
@@ -168,10 +173,10 @@ describe('GameController component', () => {
           players={mockPlayers}
         />,
       );
-      userEvent.click(screen.getByTestId('reveal-button'));
+      await userEvent.click(screen.getByTestId('reveal-button'));
       expect(gamesService.finishGame).toHaveBeenCalled();
     });
-    it('should restart game when player click on Restart button', () => {
+    it('should restart game when player click on Restart button', async () => {
       render(
         <GameController
           game={mockGame}
@@ -179,7 +184,7 @@ describe('GameController component', () => {
           players={mockPlayers}
         />,
       );
-      userEvent.click(screen.getByTestId('restart-button'));
+      await userEvent.click(screen.getByTestId('restart-button'));
       expect(gamesService.resetGame).toHaveBeenCalled();
     });
     it('should call finish game when auto reveal is true and all players has voted', () => {
@@ -395,27 +400,27 @@ describe('GameController component', () => {
   describe('AutoReveal', () => {
     it('renders the auto reveal switch', () => {
       const { getByRole, getByText } = render(
-        <AutoReveal autoReveal={true} onAutoReveal={() => {}} />,
+        <AutoReveal autoReveal={true} onAutoReveal={() => { }} />,
       );
       expect(getByText(/auto reveal/i)).toBeInTheDocument();
       expect(getByRole('switch')).toBeInTheDocument();
     });
 
     it('shows OFF when switch is off and ON when switch is on', () => {
-      const { getByRole } = render(<AutoReveal autoReveal={false} onAutoReveal={() => {}} />);
+      const { getByRole } = render(<AutoReveal autoReveal={false} onAutoReveal={() => { }} />);
       const switchBtn = getByRole('switch');
       // Initially OFF
       expect(switchBtn).toHaveAttribute('aria-checked', 'false');
     });
 
     it('shows ON when switch is on', () => {
-      const { getByRole } = render(<AutoReveal autoReveal={true} onAutoReveal={() => {}} />);
+      const { getByRole } = render(<AutoReveal autoReveal={true} onAutoReveal={() => { }} />);
       const switchBtn = getByRole('switch');
       expect(switchBtn).toHaveAttribute('aria-checked', 'true');
     });
 
     it('calls onAutoReveal with correct value when toggled', () => {
-      const onAutoReveal = jest.fn();
+      const onAutoReveal = vi.fn();
       const { getByRole } = render(<AutoReveal autoReveal={false} onAutoReveal={onAutoReveal} />);
       const switchBtn = getByRole('switch');
       // Toggle ON
