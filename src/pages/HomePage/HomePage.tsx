@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useMatch } from 'react-router-dom';
 import { Divider } from '../../components/Divider/Divider';
-import { GoogleAd } from '../../components/GoogleAd/GoogleAd';
 import { CreateGame } from '../../components/Poker/CreateGame/CreateGame';
 import { JoinGame } from '../../components/Poker/JoinGame/JoinGame';
 import { RecentGames } from '../../components/Poker/RecentGames/RecentGames';
@@ -14,15 +13,15 @@ export const HomePage = () => {
     <>
       <div className='flex flex-col items-center w-full animate-fade-in-down'>
         <HeroSection />
-        <GoogleAd />
+        {/* <GoogleAd /> */}
         <Divider />
         <RecentGamesSection />
         <Divider />
         <UIDesignSection />
-        <GoogleAd />
+        {/* <GoogleAd /> */}
         <Divider />
         <AboutSection />
-        <GoogleAd />
+        {/* <GoogleAd /> */}
       </div>
     </>
   );

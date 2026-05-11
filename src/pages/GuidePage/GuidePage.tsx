@@ -1,10 +1,8 @@
-import { GoogleAd } from '../../components/GoogleAd/GoogleAd';
-
 export const GuidePage = () => {
   return (
     <div className='flex flex-col items-center w-full'>
       <GuideContent />
-      <GoogleAd />
+      {/* <GoogleAd /> */}
     </div>
   );
 };
