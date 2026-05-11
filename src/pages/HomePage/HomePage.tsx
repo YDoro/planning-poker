@@ -57,7 +57,7 @@ const Column = ({ children, className = '', ...props }: ColumnProps) => (
 const HeroSection = () => {
   const isJoin = useMatch('/join');
   const { t } = useTranslation();
-  return (
+  return (<div>
     <Section className='pt-8'>
       <Column className='flex flex-col items-center'>
         <h1 className='text-2xl font-semibold text-center mb-4'>
@@ -73,10 +73,16 @@ const HeroSection = () => {
         </div>
         <p className='text-base text-center mb-4'>{t('HomePage.heroSection.description')}</p>
       </Column>
-      <Column className='flex flex-col items-center'>
-        <div className='w-full max-w-md'>{isJoin ? <JoinGame /> : <CreateGame />}</div>
-      </Column>
     </Section>
+    <div className='flex flex-col gap-4 md:flex-row align-middle justify-center'>
+      <Column className='flex flex-col items-center'>
+        <div className='w-full max-w-md'><CreateGame /></div>
+      </Column>
+      <Column className='flex flex-col items-center'>
+        <div className='w-full max-w-md'><JoinGame /></div>
+      </Column>
+    </div>
+  </div>
   );
 };
 

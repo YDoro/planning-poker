@@ -81,7 +81,7 @@ export const CreateGame = () => {
 
   return (
     <form onSubmit={handleSubmit} className='w-full flex justify-center'>
-      <div className='w-full max-w-lg border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg p-6 mt-6'>
+      <div className='w-full max-w-lg border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg p-6'>
         <h2 className='text-2xl font-semibold mb-4 text-center'>
           {t('CreateGame.newSessionHeader')}
         </h2>
@@ -173,9 +173,8 @@ export const CreateGame = () => {
         <div className='flex justify-end mt-6'>
           <button
             type='submit'
-            className={`bg-blue-600 text-white px-6 py-2 rounded font-semibold shadow hover:bg-blue-700 transition ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`bg-blue-600 text-white px-6 py-2 rounded font-semibold shadow hover:bg-blue-700 transition ${loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             disabled={loading}
             data-testid='loading'
           >
