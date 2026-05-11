@@ -4,8 +4,8 @@ Free / Open source Scrum/Agile Planning Poker Web App to estimate user stories f
 
 <div align="center">
   
-[![Build and Tests](https://github.com/hellomuthu23/planning-poker/actions/workflows/build-and-tests.yml/badge.svg)](https://github.com/hellomuthu23/planning-poker/actions/workflows/build-and-tests.yml)
-[![Deploy to Firebase](https://github.com/hellomuthu23/planning-poker/actions/workflows/deploy-to-firebase-on-master.yml/badge.svg)](https://github.com/hellomuthu23/planning-poker/actions/workflows/deploy-to-firebase-on-master.yml)
+[![Build and Tests](https://github.com/ydoro/planning-poker/actions/workflows/build-and-tests.yml/badge.svg)](https://github.com/ydoro/planning-poker/actions/workflows/build-and-tests.yml)
+[![Deploy to Firebase](https://github.com/ydoro/planning-poker/actions/workflows/deploy-to-firebase-on-master.yml/badge.svg)](https://github.com/ydoro/planning-poker/actions/workflows/deploy-to-firebase-on-master.yml)
 
 </div>
 
@@ -55,7 +55,7 @@ Pre-req
 1. Clone the repo
 
    ```bash
-   git clone https://github.com/hellomuthu23/planning-poker.git
+   git clone https://github.com/ydoro/planning-poker.git
    ```
 
 2. Run `yarn` command to install the required npm package.
@@ -123,4 +123,4 @@ pre-req
 1. Add Semantic Release to generate changelog and release notes
 2. Add missing unit tests for services
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/hellomuthu23)
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ydoro)
