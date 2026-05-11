@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useMatch } from 'react-router-dom';
 import { Divider } from '../../components/Divider/Divider';
-import { Footer } from '../../components/Footer/Footer';
 import { GoogleAd } from '../../components/GoogleAd/GoogleAd';
 import { CreateGame } from '../../components/Poker/CreateGame/CreateGame';
 import { JoinGame } from '../../components/Poker/JoinGame/JoinGame';
@@ -25,7 +24,6 @@ export const HomePage = () => {
         <AboutSection />
         <GoogleAd />
       </div>
-      <Footer />
     </>
   );
 };
