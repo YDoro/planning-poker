@@ -17,20 +17,20 @@ describe('ThemeControl', () => {
 
   it('renders theme based on user preference', () => {
     mockMetchMedia(true)
-    render(<ThemeControl />);
+    render(<ThemeControl withLabel />);
     expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
     expect(screen.getByText('Light')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
 
     mockMetchMedia(false)
-    render(<ThemeControl />);
+    render(<ThemeControl withLabel />);
     expect(screen.getByText('Dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(false);
   })
 
   it('renders with light theme by default', () => {
     mockMetchMedia(false)
-    render(<ThemeControl />);
+    render(<ThemeControl withLabel />);
     expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
     expect(screen.getByText('Dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(false);
@@ -38,14 +38,14 @@ describe('ThemeControl', () => {
 
   it('renders with dark theme if set in localStorage', () => {
     localStorage.setItem('theme', 'dark');
-    render(<ThemeControl />);
+    render(<ThemeControl withLabel />);
     expect(screen.getByText('Light')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('toggles theme on click', () => {
     mockMetchMedia(false)
-    render(<ThemeControl />);
+    render(<ThemeControl withLabel />);
     const button = screen.getByTestId('toolbar.menu.theme');
     // Initially light
     expect(document.documentElement.classList.contains('dark')).toBe(false);
@@ -62,4 +62,11 @@ describe('ThemeControl', () => {
     expect(localStorage.getItem('theme')).toBe('light');
     expect(screen.getByText('Dark')).toBeInTheDocument();
   });
+
+  it('renders only icon bydefault', () => {
+    render(<ThemeControl />)
+    expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
+    expect(screen.queryByText('Light')).not.toBeInTheDocument();
+    expect(screen.queryByText('Dark')).not.toBeInTheDocument();
+  })
 });

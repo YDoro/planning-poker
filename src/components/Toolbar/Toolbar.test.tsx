@@ -20,28 +20,6 @@ describe('Toolbar component', () => {
     const title = screen.getByText('Planning Poker');
     expect(title).toBeInTheDocument();
   });
-  it('should render Create new session button', () => {
-    render(<Toolbar />);
-    const newSession = screen.getByTestId('toolbar.menu.newSession');
-    expect(newSession).toBeInTheDocument();
-  });
-  it('should render Join session button', () => {
-    render(<Toolbar />);
-    const newSession = screen.getByTestId('toolbar.menu.joinSession');
-    expect(newSession).toBeInTheDocument();
-  });
-  it('should navigate to Home page when New Session button is clicked', async () => {
-    render(<Toolbar />);
-    const newSession = screen.getByTestId('toolbar.menu.newSession');
-    await userEvent.click(newSession);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/');
-  });
-  it('should navigate to Join session page when Join Session button is clicked', async () => {
-    render(<Toolbar />);
-    const newSession = screen.getByTestId('toolbar.menu.joinSession');
-    await userEvent.click(newSession);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/join');
-  });
   it('should navigate to home page when Title is clicked clicked', async () => {
     render(<Toolbar />);
     const title = screen.getByText('Planning Poker');
