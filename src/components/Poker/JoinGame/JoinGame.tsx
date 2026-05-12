@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { getGame } from '../../../service/games';
 import { addPlayerToGame, isCurrentPlayerInGame } from '../../../service/players';
-import { Card, CardContent, CardFooter, CardHeader } from '@ui/card';
 import { Input } from '@ui/input';
 import { Button } from '@ui/button';
 import { Label } from '@ui/label';
-import { H2, H3, H4 } from '../../Typography';
+import { H3 } from '../../Typography';
 import { useTranslation } from 'react-i18next';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../ui/dialog';
 
 const joinSchema = z.object({
   joinGameId: z.string().min(1, 'Session ID is required'),
@@ -19,7 +19,12 @@ const joinSchema = z.object({
 
 type JoinValues = z.infer<typeof joinSchema>;
 
-export const JoinGame = () => {
+type JoinGameProps = {
+  open: boolean;
+  onClose: (open: boolean) => void;
+}
+
+export const JoinGame = ({ open, onClose }: JoinGameProps) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
@@ -74,13 +79,13 @@ export const JoinGame = () => {
   };
 
   return (
-    <div className='w-full'>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Card className='p-4 h-96'>
-          <CardHeader>
-            <H3>{t('JoinGame.cardHeader')}</H3>
-          </CardHeader>
-          <CardContent className='flex flex-col gap-4'>
+    <Dialog open={open} onOpenChange={(value) => onClose(value)} >
+      <DialogContent className='p-4 min-h-96'>
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col h-full'>
+          <DialogHeader>
+            <DialogTitle asChild><H3>{t('JoinGame.cardHeader')}</H3></DialogTitle>
+          </DialogHeader>
+          <div className='flex flex-col gap-4'>
             <div className='space-y-1'>
               <Label htmlFor='joinGameId'>{t('JoinGame.sessionIdLabel')}</Label>
               <Input
@@ -108,8 +113,8 @@ export const JoinGame = () => {
                 <p className='text-destructive text-xs mt-1'>{errors.playerName.message}</p>
               )}
             </div>
-          </CardContent>
-          <CardFooter className='mt-auto flex justify-end'>
+          </div>
+          <DialogFooter className='mt-auto flex justify-end'>
             <Button
               type='submit'
               className='px-6'
@@ -117,9 +122,9 @@ export const JoinGame = () => {
             >
               {isSubmitting ? t('JoinGame.joinging') : t('JoinGame.joinGameButton')}
             </Button>
-          </CardFooter>
-        </Card>
-      </form>
+          </DialogFooter>
+        </form>
+      </DialogContent>
       {showNotExistMessage && (
         <div className='fixed top-6 right-6 z-50 animate-in fade-in slide-in-from-top-4'>
           <div
@@ -130,7 +135,7 @@ export const JoinGame = () => {
           </div>
         </div>
       )}
-    </div>
+    </Dialog>
   );
 };
 

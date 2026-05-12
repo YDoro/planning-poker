@@ -33,7 +33,7 @@ describe('JoinGame component', () => {
   it('should render the form correctly', () => {
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
 
-    render(<JoinGame />);
+    render(<JoinGame open={true} onClose={() => { }} />);
 
     expect(screen.getByPlaceholderText('JoinGame.sessionIdPlaceholder')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('JoinGame.playerNamePlaceholder')).toBeInTheDocument();
@@ -44,14 +44,14 @@ describe('JoinGame component', () => {
     localStorage.setItem('recentPlayerName', 'Alice');
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
 
-    render(<JoinGame />);
+    render(<JoinGame open={true} onClose={() => { }} />);
     expect(screen.getByPlaceholderText('JoinGame.playerNamePlaceholder')).toHaveValue('Alice');
   });
 
   it('should be able to join a session', async () => {
     vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
-    render(<JoinGame />);
+    render(<JoinGame open={true} onClose={() => { }} />);
     const sessionID = screen.getByPlaceholderText('JoinGame.sessionIdPlaceholder');
     await userEvent.clear(sessionID);
     await userEvent.type(sessionID, 'gameId');
@@ -78,7 +78,7 @@ describe('JoinGame component', () => {
     vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(true);
 
-    render(<JoinGame />);
+    render(<JoinGame open={true} onClose={() => { }} />);
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/game/abc'));
   });
 
@@ -89,7 +89,7 @@ describe('JoinGame component', () => {
     vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
 
-    render(<JoinGame />);
+    render(<JoinGame open={true} onClose={() => { }} />);
 
     expect(screen.getByPlaceholderText('JoinGame.playerNamePlaceholder')).toBeInTheDocument();
   });

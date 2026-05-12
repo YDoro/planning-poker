@@ -1,15 +1,15 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs';
 import { HTMLAttributes, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatch } from 'react-router-dom';
+import { useMatch, useNavigate } from 'react-router-dom';
 import { Divider } from '../../components/Divider/Divider';
 import { CreateGame } from '../../components/Poker/CreateGame/CreateGame';
 import { JoinGame } from '../../components/Poker/JoinGame/JoinGame';
 import { RecentGames } from '../../components/Poker/RecentGames/RecentGames';
-import { H1, H2, H4 } from '../../components/Typography';
+import { H1, H4 } from '../../components/Typography';
 import { AboutPlanningPokerContent } from '../AboutPage/AboutPage';
 import SessionControllerImage from './../../images/Session.jpg';
 import LandingImage from './../../images/background.jpg';
+import { Button } from '@/src/components/ui/button';
 
 export const HomePage = () => {
   return (
@@ -56,31 +56,28 @@ const Column = ({ children, className = '', ...props }: ColumnProps) => (
 );
 
 const HeroSection = () => {
-  const isJoin = useMatch('/join');
+  const isJoin = !!useMatch('/join');
+  const isCreate = !!useMatch('/create');
+  const navigate = useNavigate();
   const { t } = useTranslation();
+
   return (<div>
     <Section className='pt-8'>
-      <div className='flex flex-col md:flex-row p-4 items-center h-full' >
+      <div className='flex flex-col-reverse md:flex-row p-4 items-stretch' >
         <div className='flex flex-1 flex-col'>
           <H1 className='text-left text-wrap'>{t('HomePage.heroSection.description')}</H1>
           <H4 className='text-left text-wrap my-6 md:my-4'>{t('HomePage.heroSection.sub')}</H4>
-          <Tabs defaultValue={isJoin ? 'join' : 'create'} className="p-4">
-            <TabsList className='w-full'>
-              <TabsTrigger value='create'>
-                <H4>{t('HomePage.heroSection.createSessionButton')}</H4>
-              </TabsTrigger>
-              <TabsTrigger value='join'>
-                <H4>{t('HomePage.heroSection.joinSessionButton')}</H4>
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value='create'>
-              <CreateGame />
-            </TabsContent>
-            <TabsContent value='join'>
-              <JoinGame />
-            </TabsContent>
-          </Tabs>
+          <div className='flex flex-row gap-2 mt-auto justify-center'>
+            <Button className='px-4 py-6' variant='secondary' onClick={() => navigate('/join')}>
+              <H4>{t('HomePage.heroSection.joinSessionButton')}</H4>
+            </Button>
+            <Button className='px-4 py-6' onClick={() => navigate('/create')}>
+              <H4>{t('HomePage.heroSection.createSessionButton')}</H4>
+            </Button>
+          </div>
         </div>
+        <CreateGame open={isCreate} onClose={() => navigate('/')} />
+        <JoinGame open={isJoin} onClose={() => navigate('/')} />
         <div className='flex-1 p-4'>
           <img
             loading='lazy'

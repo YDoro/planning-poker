@@ -33,7 +33,7 @@ describe('CreateGame component', () => {
   });
 
   it('should render the form correctly', () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
 
     expect(screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('CreateGame.yourNamePlaceholder')).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe('CreateGame component', () => {
   it('should have default values in the input fields', () => {
     (uniqueNamesGenerator as Mock).mockReturnValueOnce('sesh name');
     (uniqueNamesGenerator as Mock).mockReturnValueOnce('user name');
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     const userName = screen.getByPlaceholderText('CreateGame.yourNamePlaceholder');
 
@@ -52,7 +52,7 @@ describe('CreateGame component', () => {
   });
 
   it('should empty inputs when clicked', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     const userName = screen.getByPlaceholderText('CreateGame.yourNamePlaceholder');
     await userEvent.click(sessionName);
@@ -65,12 +65,12 @@ describe('CreateGame component', () => {
   it('should pre-fill the name field from localStorage', () => {
     localStorage.setItem('recentPlayerName', 'Alice');
 
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     expect(screen.getByPlaceholderText('CreateGame.yourNamePlaceholder')).toHaveValue('Alice');
   });
 
   it('should be able to create new session', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
@@ -95,7 +95,7 @@ describe('CreateGame component', () => {
   });
 
   it('should be able to create new session with Allow members to manage session', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
@@ -123,7 +123,7 @@ describe('CreateGame component', () => {
   });
 
   it('should be able to create new session of TShirt Sizing', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
@@ -148,7 +148,7 @@ describe('CreateGame component', () => {
   });
 
   it('should be able to create new session of Short Fibonacci Sizing', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
@@ -173,7 +173,7 @@ describe('CreateGame component', () => {
   });
 
   it('should be able to create new session of TShirt & Numbers', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
@@ -198,7 +198,7 @@ describe('CreateGame component', () => {
   });
 
   it('should be able to create new session of Custom option', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
@@ -238,7 +238,7 @@ describe('CreateGame component', () => {
   });
 
   it('should display error when no custom options entered', async () => {
-    render(<CreateGame />);
+    render(<CreateGame open={true} onClose={() => { }} />);
     const sessionName = screen.getByPlaceholderText('CreateGame.sessionNamePlaceholder');
     await userEvent.clear(sessionName);
     await userEvent.type(sessionName, 'Marvels');
