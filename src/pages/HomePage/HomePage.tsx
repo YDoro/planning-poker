@@ -1,9 +1,12 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@ui/tabs';
+import { HTMLAttributes, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatch } from 'react-router-dom';
 import { Divider } from '../../components/Divider/Divider';
 import { CreateGame } from '../../components/Poker/CreateGame/CreateGame';
 import { JoinGame } from '../../components/Poker/JoinGame/JoinGame';
 import { RecentGames } from '../../components/Poker/RecentGames/RecentGames';
+import { H1, H2, H4 } from '../../components/Typography';
 import { AboutPlanningPokerContent } from '../AboutPage/AboutPage';
 import SessionControllerImage from './../../images/Session.jpg';
 import LandingImage from './../../images/background.jpg';
@@ -26,8 +29,6 @@ export const HomePage = () => {
     </>
   );
 };
-
-import { HTMLAttributes, ReactNode } from 'react';
 
 type SectionProps = {
   children: ReactNode;
@@ -59,29 +60,37 @@ const HeroSection = () => {
   const { t } = useTranslation();
   return (<div>
     <Section className='pt-8'>
-      <Column className='flex flex-col items-center'>
-        <h1 className='text-2xl font-semibold text-center mb-4'>
-          {t('HomePage.heroSection.title')}
-        </h1>
-        <div className='p-4'>
+      <div className='flex flex-col md:flex-row p-4 items-center h-full' >
+        <div className='flex flex-1 flex-col'>
+          <H1 className='text-left text-wrap'>{t('HomePage.heroSection.description')}</H1>
+          <H4 className='text-left text-wrap my-6 md:my-4'>{t('HomePage.heroSection.sub')}</H4>
+          <Tabs defaultValue={isJoin ? 'join' : 'create'} className="p-4">
+            <TabsList className='w-full'>
+              <TabsTrigger value='create'>
+                <H4>{t('HomePage.heroSection.createSessionButton')}</H4>
+              </TabsTrigger>
+              <TabsTrigger value='join'>
+                <H4>{t('HomePage.heroSection.joinSessionButton')}</H4>
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value='create'>
+              <CreateGame />
+            </TabsContent>
+            <TabsContent value='join'>
+              <JoinGame />
+            </TabsContent>
+          </Tabs>
+        </div>
+        <div className='flex-1 p-4'>
           <img
             loading='lazy'
             alt={t('HomePage.heroSection.title')}
-            className='w-[500px] h-auto rounded-lg shadow-md'
+            className='w-full h-auto rounded-lg shadow-md'
             src={LandingImage}
           />
         </div>
-        <p className='text-base text-center mb-4'>{t('HomePage.heroSection.description')}</p>
-      </Column>
+      </div>
     </Section>
-    <div className='flex flex-col gap-4 md:flex-row align-middle justify-center'>
-      <Column className='flex flex-col items-center'>
-        <div className='w-full max-w-md'><CreateGame /></div>
-      </Column>
-      <Column className='flex flex-col items-center'>
-        <div className='w-full max-w-md'><JoinGame /></div>
-      </Column>
-    </div>
   </div>
   );
 };

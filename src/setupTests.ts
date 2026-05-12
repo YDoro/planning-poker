@@ -37,3 +37,18 @@ i18n.use(initReactI18next).init({
   },
   interpolation: { escapeValue: false },
 });
+
+global.ResizeObserver = vi.fn().mockImplementation(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+});
+
+if (typeof window !== 'undefined') {
+  HTMLElement.prototype.hasPointerCapture = vi.fn();
+  HTMLElement.prototype.setPointerCapture = vi.fn();
+  HTMLElement.prototype.releasePointerCapture = vi.fn();
+  HTMLElement.prototype.scrollIntoView = vi.fn();
+}

@@ -1,117 +1,136 @@
-import { FormEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { getGame } from '../../../service/games';
 import { addPlayerToGame, isCurrentPlayerInGame } from '../../../service/players';
+import { Card, CardContent, CardFooter, CardHeader } from '@ui/card';
+import { Input } from '@ui/input';
+import { Button } from '@ui/button';
+import { Label } from '@ui/label';
+import { H2, H3, H4 } from '../../Typography';
+import { useTranslation } from 'react-i18next';
+
+const joinSchema = z.object({
+  joinGameId: z.string().min(1, 'Session ID is required'),
+  playerName: z.string().min(1, 'Your name is required'),
+});
+
+type JoinValues = z.infer<typeof joinSchema>;
 
 export const JoinGame = () => {
   const navigate = useNavigate();
-  let { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
 
-  const [joinGameId, setJoinGameId] = useState(id);
-  const [playerName, setPlayerName] = useState(
-    () => localStorage.getItem('recentPlayerName') || '',
-  );
-  const [gameFound, setIsGameFound] = useState(true);
+
+  const [gameFound, setGameFound] = useState(true);
   const [showNotExistMessage, setShowNotExistMessage] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  const form = useForm<JoinValues>({
+    resolver: zodResolver(joinSchema),
+    defaultValues: {
+      joinGameId: id || '',
+      playerName: localStorage.getItem('recentPlayerName') || '',
+    },
+  });
+
+  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = form;
+  const watchedJoinGameId = watch('joinGameId');
 
   useEffect(() => {
     async function fetchData() {
-      if (joinGameId) {
-        if (await getGame(joinGameId)) {
-          setIsGameFound(true);
-          if (await isCurrentPlayerInGame(joinGameId)) {
-            navigate(`/game/${joinGameId}`);
+      if (watchedJoinGameId) {
+        if (await getGame(watchedJoinGameId)) {
+          setGameFound(true);
+          if (await isCurrentPlayerInGame(watchedJoinGameId)) {
+            navigate(`/game/${watchedJoinGameId}`);
           }
         } else {
-          setShowNotExistMessage(true);
-          setTimeout(() => {
-            navigate('/');
-          }, 5000);
+          // If it was already in the URL and not found
+          if (watchedJoinGameId === id) {
+            setShowNotExistMessage(true);
+            setTimeout(() => {
+              navigate('/');
+            }, 5000);
+          } else {
+            setGameFound(false);
+          }
         }
       }
     }
     fetchData();
-  }, [joinGameId, history]);
+  }, [watchedJoinGameId, navigate, id]);
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const gameId = (form.elements.namedItem('joinGameId') as HTMLInputElement)?.value;
-    const playerName = (form.elements.namedItem('playerName') as HTMLInputElement)?.value;
+  const onSubmit = async (values: JoinValues) => {
+    localStorage.setItem('recentPlayerName', values.playerName);
+    const res = await addPlayerToGame(values.joinGameId, values.playerName);
 
-    setLoading(true);
-    if (joinGameId) {
-      localStorage.setItem('recentPlayerName', playerName);
-      const res = await addPlayerToGame(gameId, playerName);
-
-      setIsGameFound(res);
-      if (res) {
-        navigate(`/game/${joinGameId}`);
-      }
-      setLoading(false);
+    setGameFound(res);
+    if (res) {
+      navigate(`/game/${values.joinGameId}`);
     }
   };
 
   return (
     <div className='w-full'>
-      <form onSubmit={handleSubmit} className='w-full flex justify-center'>
-        <div className='w-full max-w-lg  border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg p-6'>
-          <h2 className='text-2xl font-bold mb-4 text-center'>Join a Session</h2>
-          <div className='flex flex-col gap-4'>
-            <div>
-              <label className='block text-sm font-medium mb-1'>Session ID</label>
-              <input
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Card className='p-4 h-96'>
+          <CardHeader>
+            <H3>{t('JoinGame.cardHeader')}</H3>
+          </CardHeader>
+          <CardContent className='flex flex-col gap-4'>
+            <div className='space-y-1'>
+              <Label htmlFor='joinGameId'>{t('JoinGame.sessionIdLabel')}</Label>
+              <Input
                 id='joinGameId'
-                required
-                type='text'
-                className={`w-full border border-gray-400 dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400 ${
-                  !gameFound ? 'border-red-500' : ''
-                }`}
-                placeholder='xyz...'
-                value={joinGameId || ''}
-                onChange={(e) => setJoinGameId(e.target.value)}
+                placeholder={t('JoinGame.sessionIdPlaceholder')}
+                {...register('joinGameId')}
+                className={!gameFound || errors.joinGameId ? 'border-destructive focus-visible:ring-destructive' : ''}
               />
               {!gameFound && (
-                <p className='text-red-600 text-xs mt-1'>Session not found, check the ID</p>
+                <p className='text-destructive text-xs mt-1'>{t('JoinGame.sessionNotFound')}</p>
+              )}
+              {errors.joinGameId && (
+                <p className='text-destructive text-xs mt-1'>{errors.joinGameId.message}</p>
               )}
             </div>
-            <div>
-              <label className='block text-sm font-medium mb-1'>Your Name</label>
-              <input
-                required
+            <div className='space-y-1'>
+              <Label htmlFor='playerName'>{t('JoinGame.playerNameLabel')}</Label>
+              <Input
                 id='playerName'
-                type='text'
-                className='w-full border border-gray-400 dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-400'
-                placeholder='Enter your name'
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
+                placeholder={t('JoinGame.playerNamePlaceholder')}
+                {...register('playerName')}
+                className={errors.playerName ? 'border-destructive focus-visible:ring-destructive' : ''}
               />
+              {errors.playerName && (
+                <p className='text-destructive text-xs mt-1'>{errors.playerName.message}</p>
+              )}
             </div>
-          </div>
-          <div className='flex justify-end mt-6'>
-            <button
+          </CardContent>
+          <CardFooter className='mt-auto flex justify-end'>
+            <Button
               type='submit'
-              className={`bg-blue-600 text-white px-6 py-2 rounded font-semibold shadow hover:bg-blue-700 transition ${
-                loading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={loading}
+              className='px-6'
+              disabled={isSubmitting}
             >
-              {loading ? 'Joining...' : 'Join'}
-            </button>
-          </div>
-        </div>
+              {isSubmitting ? t('JoinGame.joinging') : t('JoinGame.joinGameButton')}
+            </Button>
+          </CardFooter>
+        </Card>
       </form>
       {showNotExistMessage && (
-        <div className='fixed top-6 right-6 z-50'>
+        <div className='fixed top-6 right-6 z-50 animate-in fade-in slide-in-from-top-4'>
           <div
-            className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow'
+            className='bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg shadow-lg backdrop-blur-sm'
             role='alert'
           >
-            <span className='block font-bold'>Session was deleted and doesn't exist anymore!</span>
+            <span className='block font-bold text-sm'>{t('JoinGame.sessionDeleted')}</span>
           </div>
         </div>
       )}
     </div>
   );
 };
+

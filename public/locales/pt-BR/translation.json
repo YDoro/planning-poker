@@ -11,7 +11,10 @@
   "HomePage": {
     "heroSection": {
       "title": "Sistema grátis de Planning Poker",
-      "description": "Sistema de Planning Poker grátis e open source para estimativa de histórias dos usuários para seu time ágil/scrum. Crie uma sessão e convide membros do seu time para estimar as histórias com eficiência."
+      "description": "Planning Poker Gratuito e open source para o seu time ágil.",
+      "sub": " Crie uma sessão e convide membros do seu time para estimar as histórias com eficiência.",
+      "createSessionButton": "Criar Sessão",
+      "joinSessionButton": "Entrar na Sessão"
     }
   },
   "GameController": {
@@ -46,7 +49,9 @@
   "CreateGame": {
     "newSessionHeader": "Criar nova sessão",
     "sessionNameLabel": "Nome da sessão",
+    "sessionNamePlaceholder": "Digite o nome da sessão",
     "yourNameLabel": "Seu nome",
+    "yourNamePlaceholder": "Digite seu nome",
     "sessionSizingType": "Tipo de dimensionamento da sessão",
     "fibonacci": "Fibonacci (0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89)",
     "shortFibonacci": "Fibonacci curto (0, ½, 1, 2, 3, 5, 8, 13, 20, 40, 100)",
@@ -56,6 +61,19 @@
     "pleaseEnterValues": "Por favor, insira valores para pelo menos duas opções personalizadas.",
     "allowMembersToManageSession": "Permitir que os membros gerenciem a sessão",
     "creating": "Criando...",
-    "create": "Criar"
+    "create": "Criar",
+    "gameNameRequired": "O nome da sessão é obrigatório",
+    "createdByRequired": "Seu nome é obrigatório"
+  },
+  "JoinGame": {
+    "cardHeader": "Entrar em uma sessão",
+    "sessionIdLabel": "ID da sessão",
+    "sessionIdPlaceholder": "Digite o ID da sessão",
+    "playerNameLabel": "Seu nome",
+    "playerNamePlaceholder": "Digite seu nome",
+    "joinGameButton": "Entrar",
+    "joinging": "Entrando...",
+    "sessionNotFound": "Sessão não encontrada, verifique o ID",
+    "sessionDeleted": "Sessão excluída e não existe mais!"
   }
 }

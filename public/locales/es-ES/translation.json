@@ -11,7 +11,10 @@
   "HomePage": {
     "heroSection": {
       "title": "Aplicación gratuita de Planning Poker",
-      "description": "Aplicación web gratuita y de código abierto de Planning Poker para estimar historias de usuario en tus equipos Ágiles/Scrum. Crea una sesión e invita a tus compañeros de equipo para estimar historias de usuario de manera eficiente."
+      "description": "Aplicación web gratuita y de código abierto de Planning Poker para estimar historias de usuario en tus equipos Ágiles/Scrum",
+      "sub": "Crea una sesión e invita a tus compañeros de equipo para estimar historias de usuario de manera eficiente.",
+      "createSessionButton": "Crear Sesión",
+      "joinSessionButton": "Entrar en la Sesión"
     }
   },
   "GameController": {
@@ -46,7 +49,9 @@
   "CreateGame": {
     "newSessionHeader": "Crear nueva sesión",
     "sessionNameLabel": "Nombre de la sesión",
+    "sessionNamePlaceholder": "Ingrese el nombre de la sesión",
     "yourNameLabel": "Tu nombre",
+    "yourNamePlaceholder": "Ingrese su nombre",
     "sessionSizingType": "Tipo de estimación de sesión",
     "fibonacci": "Fibonacci (0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89)",
     "shortFibonacci": "Fibonacci corto (0, ½, 1, 2, 3, 5, 8, 13, 20, 40, 100)",
@@ -56,6 +61,19 @@
     "pleaseEnterValues": "Por favor, ingrese valores para al menos dos opciones personalizadas.",
     "allowMembersToManageSession": "Permitir a los miembros gestionar la sesión",
     "creating": "Creando...",
-    "create": "Crear"
+    "create": "Crear",
+    "gameNameRequired": "El nombre de la sesión es obligatorio",
+    "createdByRequired": "Tu nombre es obligatorio"
+  },
+  "JoinGame": {
+    "cardHeader": "Unirse a una sesión",
+    "sessionIdLabel": "ID de la sesión",
+    "sessionIdPlaceholder": "Introduce el ID de la sesión",
+    "playerNameLabel": "Tu nombre",
+    "playerNamePlaceholder": "Introduce tu nombre",
+    "joinGameButton": "Entrar",
+    "joinging": "Entrando...",
+    "sessionNotFound": "Sessión no encontrada, verifique el ID",
+    "sessionDeleted": "Sessão excluída e não existe mais!"
   }
 }

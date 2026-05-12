@@ -17,6 +17,12 @@ vi.mock('react-router-dom', () => ({
   useParams: () => mockParams,
 }));
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
 describe('JoinGame component', () => {
   beforeEach(() => {
     mockNavigate.mockClear();
@@ -24,13 +30,14 @@ describe('JoinGame component', () => {
     localStorage.clear();
   });
 
-  it('should display correct text fields', () => {
+  it('should render the form correctly', () => {
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
 
     render(<JoinGame />);
 
-    expect(screen.getByPlaceholderText('xyz...')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('JoinGame.sessionIdPlaceholder')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('JoinGame.playerNamePlaceholder')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /JoinGame.joinGameButton/i })).toBeInTheDocument();
   });
 
   it('should pre-fill the name field from localStorage', () => {
@@ -38,29 +45,21 @@ describe('JoinGame component', () => {
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
 
     render(<JoinGame />);
-    expect(screen.getByPlaceholderText('Enter your name')).toHaveValue('Alice');
-  });
-
-  it('should display join button', () => {
-    vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
-    render(<JoinGame />);
-
-    expect(screen.getByRole('button')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toHaveTextContent('Join');
+    expect(screen.getByPlaceholderText('JoinGame.playerNamePlaceholder')).toHaveValue('Alice');
   });
 
   it('should be able to join a session', async () => {
     vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
     vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
     render(<JoinGame />);
-    const sessionID = screen.getByPlaceholderText('xyz...');
+    const sessionID = screen.getByPlaceholderText('JoinGame.sessionIdPlaceholder');
     await userEvent.clear(sessionID);
     await userEvent.type(sessionID, 'gameId');
 
-    const userName = screen.getByPlaceholderText('Enter your name');
+    const userName = screen.getByPlaceholderText('JoinGame.playerNamePlaceholder');
     await userEvent.type(userName, 'Rock');
 
-    const joinButton = screen.getByText('Join');
+    const joinButton = screen.getByRole('button', { name: /JoinGame.joinGameButton/i });
 
     await userEvent.click(joinButton);
 
@@ -92,6 +91,6 @@ describe('JoinGame component', () => {
 
     render(<JoinGame />);
 
-    expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('JoinGame.playerNamePlaceholder')).toBeInTheDocument();
   });
 });
