@@ -38,7 +38,6 @@
     "storyName": "Nombre de la historia",
     "enterStoryName": "Ingresa el nombre o número de la historia",
     "inviteLinkCopied": "Enlace de invitación copiado al portapapeles",
-    "areYouSureDelete": "¿Estás seguro? Esto eliminará esta sesión y quitará a todos los jugadores.",
     "inProgress": "En progreso",
     "finished": "Finalizado",
     "Timer": {
@@ -50,6 +49,12 @@
       "resetTimer": "Restablecer temporizador",
       "pauseTimer": "Pausar temporizador",
       "closeTimer": "Cerrar temporizador"
+    },
+    "deleteDialog": {
+      "title": "¿Estás seguro?",
+      "description": "Esto eliminará esta sesión y quitará a todos los jugadores.",
+      "continueButton": "Continuar",
+      "cancelButton": "Cancelar"
     }
   },
   "CardPicker": {

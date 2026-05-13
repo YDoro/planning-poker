@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { AlertDialog } from '../../../components/AlertDialog/AlertDialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@ui/alert-dialog';
 import {
   finishGame,
   removeGame,
@@ -136,26 +136,31 @@ export const GameController: React.FC<GameControllerProps> = ({
                 className='hover:bg-red-200'
                 testId='restart-button'
               />
-              <ControllerButton
-                icon={<TrashSVG className='h-9 w-9 text-red-500' />}
-                label={t('GameController.delete')}
-                className='hover:bg-red-200'
-                testId='delete-button'
+
+              <AlertDialog
+                data-testid='delete-button-dialog'
               >
-                <AlertDialog
-                  id={game.id}
-                  message={t('GameController.areYouSureDelete')}
-                  onConfirm={() => handleRemoveGame(game.id)}
-                  data-testid='delete-button-dialog'
-                >
-                  <button
-                    className='p-2 cursor-pointer rounded-full bg-white dark:bg-gray-900 hover:bg-red-200 transition'
-                    title={t('GameController.delete')}
-                  >
-                    <TrashSVG className='h-9 w-9 text-red-500' />
-                  </button>
-                </AlertDialog>
-              </ControllerButton>
+                <AlertDialogTrigger asChild>
+                  <ControllerButton
+                    icon={<TrashSVG className='h-9 w-9 text-red-500' />}
+                    label={t('GameController.delete')}
+                    className='hover:bg-red-200'
+                    testId='delete-button'
+                  />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('GameController.deleteDialog.title')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('GameController.deleteDialog.description')}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('GameController.deleteDialog.cancelButton')}</AlertDialogCancel>
+                    <AlertDialogAction variant='destructive' onClick={() => handleRemoveGame(game.id)}>
+                      {t('GameController.deleteDialog.continueButton')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           )}
           <ControllerButton

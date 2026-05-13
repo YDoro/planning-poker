@@ -38,9 +38,14 @@
     "storyName": "Story Name",
     "enterStoryName": "Enter story name or number",
     "inviteLinkCopied": "Invite Link copied to clipboard",
-    "areYouSureDelete": "Are you sure? This will delete this session and remove all players.",
     "inProgress": "In Progress",
     "finished": "Finished",
+    "deleteDialog": {
+      "title": "Are you sure?",
+      "description": "This will delete this session and remove all players.",
+      "continueButton": "Continue",
+      "cancelButton": "Cancel"
+    },
     "Timer": {
       "soundDisabledMod": "Enable sound",
       "soundEnabledMod": "Disable sound",
