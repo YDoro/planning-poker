@@ -1,5 +1,5 @@
 import { Divider } from '../../components/Divider/Divider';
-import { HeroSection, RecentGamesSection, UIDesignSection, AboutSection } from './components';
+import { HeroSection, UIDesignSection, AboutSection } from './components';
 
 export const HomePage = () => {
   return (
@@ -7,8 +7,6 @@ export const HomePage = () => {
       <div className='flex flex-col items-center w-full animate-fade-in-down'>
         <HeroSection />
         {/* <GoogleAd /> */}
-        <Divider />
-        <RecentGamesSection />
         <Divider />
         <UIDesignSection />
         {/* <GoogleAd /> */}
