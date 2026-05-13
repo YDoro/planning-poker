@@ -38,7 +38,7 @@ type SectionProps = {
 
 const Section = ({ children, maxWidth = 'max-w-7xl', className = '' }: SectionProps) => (
   <div
-    className={`flex flex-col lg:flex-row w-full ${maxWidth} items-center justify-center ${className}`}
+    className={`flex flex-col py-6 md:py-12 lg:flex-row w-full ${maxWidth} items-center justify-center ${className}`}
   >
     {children}
   </div>
@@ -62,8 +62,8 @@ const HeroSection = () => {
   const { t } = useTranslation();
 
   return (<div>
-    <Section className='pt-8'>
-      <div className='flex flex-col-reverse md:flex-row p-4 items-stretch' >
+    <Section>
+      <div className='flex flex-col-reverse md:flex-row p-4 items-stretch gap-4' >
         <div className='flex flex-1 flex-col'>
           <H1 className='text-left text-wrap'>{t('HomePage.heroSection.description')}</H1>
           <H4 className='text-left text-wrap my-6 md:my-4'>{t('HomePage.heroSection.sub')}</H4>
@@ -78,7 +78,7 @@ const HeroSection = () => {
         </div>
         <CreateGame open={isCreate} onClose={() => navigate('/')} />
         <JoinGame open={isJoin} onClose={() => navigate('/')} />
-        <div className='flex-1 p-4'>
+        <div className='flex-1'>
           <img
             loading='lazy'
             alt={t('HomePage.heroSection.title')}
@@ -118,7 +118,7 @@ const RecentGamesSection = () => {
 const UIDesignSection = () => {
   const { t } = useTranslation();
   return (
-    <Section maxWidth='max-w-5xl'>
+    <Section className='max-w-7xl'>
       <Column className='mb-8 lg:mb-0'>
         <div className='p-6 flex flex-col items-center justify-center'>
           <h2 className='text-xl font-semibold mb-2'>
@@ -148,9 +148,9 @@ const UIDesignSection = () => {
 };
 
 const AboutSection = () => (
-  <div className='w-full max-w-7xl my-8'>
+  <Section>
     <AboutPlanningPokerContent />
-  </div>
+  </Section>
 );
 
 export default HomePage;
