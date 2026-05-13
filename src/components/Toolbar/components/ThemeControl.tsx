@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MenuItem } from '../Toolbar/MenuItem';
+import { MenuItem } from './MenuItem';
 import { Moon, Sun } from 'lucide-react';
 
 type ThemeControlProps = {

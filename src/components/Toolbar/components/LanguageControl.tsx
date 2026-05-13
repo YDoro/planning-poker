@@ -1,7 +1,7 @@
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loading } from '../Loading/Loading';
+import { Loading } from '../../Loading/Loading';
 
 const LANGUAGES = [
   { value: 'en-US', label: 'English', flag: 'US' },

@@ -3,11 +3,12 @@ import { GamesSVG } from '../SVGs/GamesSVG';
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LanguageControl } from '../LanguageControl/LanguageControl';
+import { LanguageControl } from './components/LanguageControl';
 import { GithubSVG } from '../SVGs/Github';
-import { ThemeControl } from '../ThemeControl/ThemeControl';
-import { MenuItem } from './MenuItem';
+import { ThemeControl } from './components/ThemeControl';
+import { MenuItem } from './components/MenuItem';
 import { Info, List, Menu, Search, SquareArrowRightEnter, SquarePlus } from 'lucide-react'
+import { HistoryButton } from './components/History';
 export const title = 'Planning Poker';
 
 export const Toolbar = () => {
@@ -92,6 +93,7 @@ export const Toolbar = () => {
         {/* Right Section */}
         <div className='inline-flex items-center justify-end flex-1'>
           <div className='flex relative' ref={dropdownRef}>
+            <HistoryButton />
             <ThemeControl />
             <LanguageControl />
             <button
