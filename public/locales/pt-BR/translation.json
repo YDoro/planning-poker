@@ -1,5 +1,15 @@
 {
   "toolbar": {
+    "history": {
+      "title": "Sessões recentes",
+      "noGames": "Nenhuma sessão recente encontrada",
+      "deletionDialog": {
+        "title": "Tem certeza?",
+        "description": "Isso excluirá esta sessão e removerá todos os jogadores.",
+        "continueButton": "Continuar",
+        "cancelButton": "Cancelar"
+      }
+    },
     "menu": {
       "about": "Sobre o planning poker",
       "guide": "Guia",

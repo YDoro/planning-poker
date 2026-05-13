@@ -1,5 +1,15 @@
 {
   "toolbar": {
+    "history": {
+      "title": "Sesiónes recientes",
+      "noGames": "No se encontraron sesiones recientes",
+      "deletionDialog": {
+        "title": "¿Estás seguro?",
+        "description": "Esto eliminará esta sesión y quitará a todos los jugadores.",
+        "continueButton": "Continuar",
+        "cancelButton": "Cancelar"
+      }
+    },
     "menu": {
       "about": "¿Qué es Planning Poker?",
       "guide": "Guía",
