@@ -78,39 +78,41 @@ export const Toolbar = () => {
     },
   ];
   return (
-    <div className='flex w-full items-center shadow-sm dark:shadow-gray-800'>
-      <div className='inline-flex items-center'>
-        <button className='button-ghost flex items-center' onClick={() => navigate('/')}>
-          <div className='pr-1'>
-            <GamesSVG />
-          </div>
-          <p className='md:text-2xl text-sm font-normal'>{title}</p>
-        </button>
-      </div>
-
-      {/* Right Section */}
-      <div className='inline-flex items-center justify-end flex-1'>
-        <div className='flex relative' ref={dropdownRef}>
-          <ThemeControl />
-          <LanguageControl />
-          <button
-            className='button-ghost flex items-center'
-            onClick={toggleDropdown}
-            aria-label='Toggle Menu'
-          >
-            <Menu />
-          </button>
-          {isDropdownOpen && (
-            <div className='absolute right-0 mt-10 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg z-50 flex flex-col'>
-              {menuItems.map((item, index) => (
-                <MenuItem
-                  {...item}
-                  key={item.label}
-                  hiddenLabel={false}
-                />
-              ))}
+    <div className='flex w-full justify-center shadow-sm bg-background'>
+      <div className='flex w-full items-center p-2 max-w-7xl'>
+        <div className='inline-flex items-center'>
+          <button className='button-ghost flex items-center' onClick={() => navigate('/')}>
+            <div className='pr-1'>
+              <GamesSVG />
             </div>
-          )}
+            <p className='md:text-2xl text-sm font-normal'>{title}</p>
+          </button>
+        </div>
+
+        {/* Right Section */}
+        <div className='inline-flex items-center justify-end flex-1'>
+          <div className='flex relative' ref={dropdownRef}>
+            <ThemeControl />
+            <LanguageControl />
+            <button
+              className='button-ghost flex items-center'
+              onClick={toggleDropdown}
+              aria-label='Toggle Menu'
+            >
+              <Menu />
+            </button>
+            {isDropdownOpen && (
+              <div className='absolute right-0 mt-10 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg z-50 flex flex-col'>
+                {menuItems.map((item, index) => (
+                  <MenuItem
+                    {...item}
+                    key={item.label}
+                    hiddenLabel={false}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
