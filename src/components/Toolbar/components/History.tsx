@@ -1,5 +1,4 @@
 import { History } from "lucide-react";
-import { MenuItem } from "./MenuItem";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { RecentGames } from "../../Poker/RecentGames/RecentGames";
 
