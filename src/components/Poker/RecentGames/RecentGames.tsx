@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { removeGame } from '../../../service/games';
 import { getCurrentPlayerId, getPlayerRecentGames } from '../../../service/players';
 import { PlayerGame } from '../../../types/player';
@@ -61,9 +61,14 @@ export const RecentGames = () => {
                 recentGame.name && (
                   <div
                     key={recentGame.id}
-                    className='cursor-pointer flex flex-row items-center'
+                    className='flex flex-row items-center hover:bg-muted/50 rounded-lg transition-colors overflow-hidden'
                   >
-                    <Button variant='ghost' className='flex-1 justify-start overflow-hidden text-ellipsis' onClick={() => navigate(`/game/${recentGame.id}`)}>{recentGame.name}</Button>
+                    <Link
+                      to={`/game/${recentGame.id}`}
+                      className='flex-1 text-left px-3 py-2 overflow-hidden text-ellipsis text-sm font-medium whitespace-nowrap'
+                    >
+                      {recentGame.name}
+                    </Link>
 
                     {isModerator(
                       recentGame.createdById,

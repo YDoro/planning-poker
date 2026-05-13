@@ -8,7 +8,7 @@ export const HistoryButton = () => {
             <PopoverTrigger className="button-ghost text-left flex items-center">
                 <History />
             </PopoverTrigger>
-            <PopoverContent asChild>
+            <PopoverContent className='w-xs p-0'>
                 <RecentGames />
             </PopoverContent>
         </Popover>

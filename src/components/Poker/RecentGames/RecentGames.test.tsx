@@ -15,6 +15,11 @@ const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
+  Link: ({ to, children }: { to: string; children: React.ReactNode }) => (
+    <a href={to} onClick={(e) => { e.preventDefault(); mockNavigate(to); }}>
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock('react-i18next', () => ({
