@@ -7,11 +7,11 @@ import { Status } from '../../../types/status';
 import { CardConfig } from '../../Players/CardPicker/CardConfigs';
 import {
   areAllFinishedPlayersDisplayValuesNumeric,
-  AutoReveal,
   GameController,
   getAverage,
 } from './GameController';
 import { vi } from 'vitest';
+import { AutoReveal } from './AutoReveal';
 
 vi.mock('../../../service/games');
 const mockNavigate = vi.fn();

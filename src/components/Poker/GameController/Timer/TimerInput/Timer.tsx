@@ -1,7 +1,9 @@
-import { useCallback, useState } from 'react';
-import { ClockSVG } from '../../../../SVGs/Clock';
+import { useCallback } from 'react';
 import { TimerProgress } from '../TimerProgressPopup/TimerProgressPopup';
 import { TimerProps as GameTimerProps } from '../../../../../types/game';
+import { Clock } from 'lucide-react';
+import { Button } from '@/src/components/ui/button';
+import { ControllerButton } from '../../ControllerButton';
 
 type TimerProps = {
   timerProps: {
@@ -45,21 +47,20 @@ export const Timer: React.FC<TimerProps> = ({ timerProps, onTimerUpdate }) => {
   return (
     <>
       {isMod && (
-        <button
-          onClick={() =>
-            onTimerStateUpdate({
-              currentSeconds: 0,
-              totalSeconds: 300,
-              soundOn: true,
-              timerPaused: false,
-              timerVisible: true,
-            })
-          }
-          title='Timer'
-          className='cursor-pointer'
-        >
-          <ClockSVG className={`h-6 w-6 ${timerVisible ? 'text-green-500' : 'text-grey-500'}`} />
-        </button>
+        <ControllerButton
+          onClick={() => onTimerStateUpdate({
+            currentSeconds: 0,
+            totalSeconds: 300,
+            soundOn: true,
+            timerPaused: false,
+            timerVisible: true,
+          })}
+          icon={<Clock />}
+          label={'Timer'}
+          className={`text-primary ${timerVisible && 'text-green-700'}`}
+          testId='timer-button'
+        />
+
       )}
 
       {timerVisible && (

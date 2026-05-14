@@ -19,7 +19,10 @@ import { LinkSVG } from '../../SVGs/Link';
 import { RefreshSVG } from '../../SVGs/Refresh';
 import { TrashSVG } from '../../SVGs/Trash';
 import { Timer } from './Timer/TimerInput/Timer';
-import { Info } from 'lucide-react';
+import { DoorOpen, Info, LogOut, Share, Share2 } from 'lucide-react';
+import { H1, Text } from '../../Typography';
+import { GameControlls } from './GameControlls';
+import { ControllerButton } from './ControllerButton';
 
 interface GameControllerProps {
   game: Game;
@@ -52,16 +55,6 @@ export const GameController: React.FC<GameControllerProps> = ({
     JSON.stringify(players.map((p) => ({ id: p.id, value: p.value, status: p.status }))),
   ]);
 
-  const onAutoReveal = (value: boolean) => {
-    updateGame(game.id, { autoReveal: value });
-  };
-
-  const onUpdatedTimerProps = useCallback(
-    (timer: TimerProps) => {
-      updateGame(game.id, { timerProps: timer });
-    },
-    [game.id],
-  );
 
   const copyInviteLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/join/${game.id}`);
@@ -70,10 +63,7 @@ export const GameController: React.FC<GameControllerProps> = ({
   };
 
   const leaveGame = () => navigate(`/`);
-  const handleRemoveGame = async (id: string) => {
-    await removeGame(id);
-    window.location.href = '/';
-  };
+
 
   const isMod = isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession);
   const timerProps: {
@@ -84,111 +74,35 @@ export const GameController: React.FC<GameControllerProps> = ({
     totalSeconds?: number;
     soundOn?: boolean;
   } = { isMod: isMod, timerVisible: game.timerProps?.timerVisible };
-  if (!isMod) {
-    timerProps.isMod = false;
-    timerProps.timerVisible = game.timerProps?.timerVisible;
-    timerProps.timerPaused = game.timerProps?.timerPaused;
-    timerProps.currentSeconds = game.timerProps?.currentSeconds;
-    timerProps.totalSeconds = game.timerProps?.totalSeconds;
-    timerProps.soundOn = game.timerProps?.soundOn;
-  }
 
   return (
-    <div className='flex flex-col items-center w-full px-2'>
-      <div className='w-full max-w-md bg-gray-200 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg my-5'>
-        {/* Card Header */}
-
-        <div className='flex items-center justify-between px-3 py-1 border-b border-gray-400 dark:border-gray-600'>
-          <div className='text-lg font-semibold truncate flex-grow'>{game.name}</div>
-          <Timer timerProps={timerProps} onTimerUpdate={(props) => onUpdatedTimerProps(props)} />
-          <div className='mx-2 h-6 border-l border-gray-400 dark:border-gray-600' />
-          <span className='text-sm font-medium'>
+    <div className='flex w-full bg-secondary relative top-0'>
+      <div className='flex flex-row justify-between px-4 w-full max-w-7xl'>
+        <div className='flex items-center gap-2'>
+          <H1 className='text-lg font-semibold truncate'>{game.name}</H1>
+          <span className='text-sm font-medium text-muted-foreground'>
             {game.gameStatus} {getGameStatusIcon(game.gameStatus)}
           </span>
-          <AverageComponent game={game} players={players} />
         </div>
-        {isMod && (
-          <div
-            className='flex justify-end p-2'
-            title='Auto Reveal when all members finished voting'
-          >
-            <AutoReveal
-              autoReveal={game.autoReveal || false}
-              onAutoReveal={(value) => onAutoReveal(value)}
-            />
-          </div>
-        )}
-        {/* Card Content */}
-        <div className='flex flex-wrap justify-center gap-6 px-2 pt-8 pb-2'>
-          {isMod && (
-            <>
-              <ControllerButton
-                onClick={() => finishGame(game.id)}
-                icon={<EyeSVG className='h-9 w-9 text-green-500' />}
-                label={t('GameController.reveal')}
-                className='hover:bg-green-200'
-                testId='reveal-button'
-              />
-              <ControllerButton
-                onClick={() => resetGame(game.id)}
-                icon={<RefreshSVG className='h-9 w-9 text-red-400' />}
-                label={t('GameController.restart')}
-                className='hover:bg-red-200'
-                testId='restart-button'
-              />
-
-              <AlertDialog
-                data-testid='delete-button-dialog'
-              >
-                <AlertDialogTrigger asChild>
-                  <ControllerButton
-                    icon={<TrashSVG className='h-9 w-9 text-red-500' />}
-                    label={t('GameController.delete')}
-                    className='hover:bg-red-200'
-                    testId='delete-button'
-                  />
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{t('GameController.deleteDialog.title')}</AlertDialogTitle>
-                    <AlertDialogDescription>{t('GameController.deleteDialog.description')}</AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t('GameController.deleteDialog.cancelButton')}</AlertDialogCancel>
-                    <AlertDialogAction variant='destructive' onClick={() => handleRemoveGame(game.id)}>
-                      {t('GameController.deleteDialog.continueButton')}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </>
-          )}
-          <ControllerButton
-            onClick={leaveGame}
-            icon={<ExitSVG className='h-9 w-9 text-orange-500 ' />}
-            label={t('GameController.exit')}
-            className='hover:bg-red-200'
-            testId='exit-button'
-          />
+        {/** Game Controllers */}
+        <div className='flex items-center'>
+          {isMod && <GameControlls isModerator={isMod} game={game} />}
           <ControllerButton
             onClick={copyInviteLink}
-            icon={<LinkSVG className='h-9 w-9 text-blue-500' />}
-            label={t('GameController.invite')}
-            className='hover:bg-blue-200'
+            icon={<Share2 />}
+            label=''
+            className='text-primary'
             testId='invite-button'
-            title='Copy invite link'
+            title={t('GameController.invite')}
           />
-          <div className='w-full text-xs mt-2'>
-            <label className='font-semibold'>{t('GameController.storyName')}:</label>
-            <input
-              placeholder={t('GameController.enterStoryName')}
-              className='w-full italic p-2 mt-2 border bg-white dark:bg-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400'
-              type='text'
-              data-testid='story-name-input'
-              value={game.storyName || ''}
-              onChange={(e) => updateStoryName(game.id, e.target.value || '')}
-            />
-          </div>
+          <ControllerButton
+            onClick={leaveGame}
+            icon={<LogOut />}
+            title={t('GameController.exit')}
+            label=''
+            className='text-destructive'
+            testId='exit-button'
+          />
         </div>
       </div>
       {/* Snackbar/Alert */}
@@ -203,78 +117,39 @@ export const GameController: React.FC<GameControllerProps> = ({
         </div>
       )}
     </div>
+
+
+
+    //       <div className='w-full text-xs mt-2'>
+    //         <label className='font-semibold'>{t('GameController.storyName')}:</label>
+    //         <input
+    //           placeholder={t('GameController.enterStoryName')}
+    //           className='w-full italic p-2 mt-2 border bg-white dark:bg-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400'
+    //           type='text'
+    //           data-testid='story-name-input'
+    //           value={game.storyName || ''}
+    //           onChange={(e) => updateStoryName(game.id, e.target.value || '')}
+    //         />
+    //       </div>
+    //     </div>
+    //   </div>
+    // {/* Snackbar/Alert */}
+    // {showCopiedMessage && (
+    //   <div className='fixed top-6 right-6 z-50'>
+    //     <div
+    //       className='bg-green-100 border border-green-200  text-gray-800 opacity-85 px-4 py-3 text-xs rounded shadow'
+    //       role='alert'
+    //     >
+    //       <span className='block font-bold'>{t('GameController.inviteLinkCopied')}!</span>
+    //     </div>
+    //   </div>
+    // )}
+    // </div>
   );
 };
 
-export const ControllerButton = ({
-  onClick,
-  icon,
-  label,
-  className,
-  testId,
-  title,
-  children,
-}: {
-  onClick?: () => void;
-  icon: React.ReactNode;
-  label: string;
-  className: string;
-  testId?: string;
-  title?: string;
-  children?: React.ReactNode;
-}) => (
-  <div className='flex flex-col items-center'>
-    {children ? (
-      children
-    ) : (
-      <button
-        type='button'
-        role='button'
-        aria-label={label}
-        id={testId}
-        key={testId}
-        onClick={onClick}
-        data-testid={testId}
-        className={`p-2 cursor-pointer rounded-full bg-white dark:bg-gray-900 ${className} transition`}
-        title={title || label}
-      >
-        {icon}
-      </button>
-    )}
-    <span className='text-xs mt-1'>{label}</span>
-  </div>
-);
 
-interface AutoRevealProps {
-  autoReveal: boolean;
-  onAutoReveal: (autoReveal: boolean) => void;
-}
 
-export const AutoReveal: React.FC<AutoRevealProps> = ({ autoReveal, onAutoReveal }) => {
-  const { t } = useTranslation();
-
-  return (
-    <div className='flex flex-col items-center'>
-      <label className='flex items-center cursor-pointer'>
-        <span className='mr-1 text-xs'>{t('GameController.autoReveal')}</span>
-        <button
-          type='button'
-          role='switch'
-          aria-checked={autoReveal}
-          onClick={() => onAutoReveal(!autoReveal)}
-          className={`relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none ${autoReveal ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
-            }`}
-          style={{ minWidth: '2rem' }}
-        >
-          <span
-            className={`inline-block h-3 w-3 cursor-pointer transform rounded-full bg-white shadow transition-transform ${autoReveal ? 'translate-x-4' : 'translate-x-1'
-              }`}
-          />
-        </button>
-      </label>
-    </div>
-  );
-};
 
 const getGameStatusIcon = (gameStatus: string) => {
   switch (gameStatus) {
