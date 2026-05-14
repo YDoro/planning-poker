@@ -3,10 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { TimerProgress } from '../TimerProgressPopup/TimerProgressPopup';
 import { TimerProps as GameTimerProps } from '../../../../../types/game';
 import { Clock } from 'lucide-react';
-import { Button } from '@/src/components/ui/button';
 import { ControllerButton } from '../../ControllerButton';
 
+/** dock: moderador — só o botão para abrir o timer. overlay — painel visível para todos quando o timer está ativo. */
+export type TimerVariant = 'dock' | 'overlay'
+
 type TimerProps = {
+  variant: TimerVariant;
   timerProps: {
     isMod?: boolean;
     currentSeconds?: number;
@@ -18,7 +21,7 @@ type TimerProps = {
   onTimerUpdate: (timer: GameTimerProps) => void;
 };
 
-export const Timer: React.FC<TimerProps> = ({ timerProps, onTimerUpdate }) => {
+export const Timer: React.FC<TimerProps> = ({ variant, timerProps, onTimerUpdate }) => {
   const { t } = useTranslation();
   const {
     isMod = false,
@@ -46,9 +49,12 @@ export const Timer: React.FC<TimerProps> = ({ timerProps, onTimerUpdate }) => {
     });
   }, [onTimerStateUpdate]);
 
+  const showDockButton = variant === 'dock' && isMod
+  const showOverlayPanel = variant === 'overlay' && timerVisible
+
   return (
     <>
-      {isMod && (
+      {showDockButton && (
         <ControllerButton
           onClick={() => onTimerStateUpdate({
             currentSeconds: 0,
@@ -65,14 +71,14 @@ export const Timer: React.FC<TimerProps> = ({ timerProps, onTimerUpdate }) => {
 
       )}
 
-      {timerVisible && (
+      {showOverlayPanel && (
         <TimerProgress
           currentSeconds={currentSeconds}
           totalSeconds={totalSeconds}
           onTimerClose={onTimerClose}
           isMod={isMod}
           onTimerStateUpdate={(update) => {
-            onTimerStateUpdate({ ...update, timerVisible });
+            onTimerStateUpdate({ ...update, timerVisible })
           }}
           soundOn={soundOn}
           timerPaused={timerPaused}

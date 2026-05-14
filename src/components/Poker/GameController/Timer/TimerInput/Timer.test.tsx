@@ -1,19 +1,21 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Timer } from './Timer';
-import { vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react'
+import { Timer } from './Timer'
+import { vi } from 'vitest'
 
 vi.mock('../TimerProgressPopup/TimerProgressPopup', () => ({
   TimerProgress: (props: any) => (
     <div data-testid='timer-progress'>
       TimerProgress
-      <button onClick={props.onTimerClose}>Close</button>
+      <button type='button' onClick={props.onTimerClose}>
+        Close
+      </button>
     </div>
   ),
-}));
-
+}))
 
 describe('Timer', () => {
-  const defaultProps = {
+  const dockDefaults = {
+    variant: 'dock' as const,
     timerProps: {
       isMod: true,
       timerVisible: false,
@@ -23,107 +25,102 @@ describe('Timer', () => {
       soundOn: true,
     },
     onTimerUpdate: vi.fn(),
-  };
+  }
 
-  it('does not render clock or timer for non-mod', () => {
-    render(<Timer timerProps={{ isMod: false }} onTimerUpdate={vi.fn()} />);
-    expect(screen.queryByTestId('timer-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('timer-progress')).not.toBeInTheDocument();
-  });
-
-  it('renders clock button for mod', () => {
-    render(<Timer {...defaultProps} />);
-    expect(screen.getByTestId('timer-button')).toBeInTheDocument();
-  });
-
-  it('shows TimerProgress when clock button is clicked', () => {
-    const onTimerUpdate = vi.fn();
-    render(<Timer {...defaultProps} onTimerUpdate={onTimerUpdate} />);
-    fireEvent.click(screen.getByTestId('timer-button'));
-    // Simulate parent updating timerVisible to true
-    render(
-      <Timer
-        {...defaultProps}
-        timerProps={{ ...defaultProps.timerProps, timerVisible: true }}
-        onTimerUpdate={onTimerUpdate}
-      />,
-    );
-    expect(screen.getByTestId('timer-progress')).toBeInTheDocument();
-  });
-
-  it('closes TimerProgress when onTimerClose is called', () => {
-    const onTimerUpdate = vi.fn();
-    render(
-      <Timer
-        {...defaultProps}
-        timerProps={{ ...defaultProps.timerProps, timerVisible: true }}
-        onTimerUpdate={onTimerUpdate}
-      />,
-    );
-    expect(screen.getByTestId('timer-progress')).toBeInTheDocument();
-    fireEvent.click(screen.getByText('Close'));
-    expect(onTimerUpdate).toHaveBeenCalledWith({
+  const overlayDefaults = {
+    variant: 'overlay' as const,
+    timerProps: {
+      isMod: true,
+      timerVisible: true,
+      timerPaused: false,
       currentSeconds: 0,
       totalSeconds: 300,
       soundOn: true,
-      timerPaused: false,
-      timerVisible: false,
-    });
-  });
+    },
+    onTimerUpdate: vi.fn(),
+  }
 
-  it('shows TimerProgress if timerVisible is true', () => {
+  it('does not render clock button for non-mod (dock)', () => {
     render(
-      <Timer {...defaultProps} timerProps={{ ...defaultProps.timerProps, timerVisible: true }} />,
-    );
-    expect(screen.getByTestId('timer-progress')).toBeInTheDocument();
-  });
+      <Timer variant='dock' timerProps={{ isMod: false }} onTimerUpdate={vi.fn()} />,
+    )
+    expect(screen.queryByTestId('timer-button')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('timer-progress')).not.toBeInTheDocument()
+  })
 
-  it('does not show TimerProgress if timerVisible is false', () => {
-    render(<Timer {...defaultProps} />);
-    expect(screen.queryByTestId('timer-progress')).not.toBeInTheDocument();
-  });
-
-  it('toggles TimerProgress on clock button click and close', () => {
-    let timerVisible = false;
-    const onTimerUpdate = vi.fn((update) => {
-      timerVisible = update.timerVisible;
-    });
-
-    const { rerender } = render(
+  it('renders timer panel for all players when visible (overlay), including non-mod', () => {
+    render(
       <Timer
-        {...defaultProps}
-        timerProps={{ ...defaultProps.timerProps, timerVisible }}
-        onTimerUpdate={onTimerUpdate}
+        variant='overlay'
+        timerProps={{ isMod: false, timerVisible: true }}
+        onTimerUpdate={vi.fn()}
       />,
-    );
-    // Open
-    fireEvent.click(screen.getByTestId('timer-button'));
+    )
+    expect(screen.getByTestId('timer-progress')).toBeInTheDocument()
+  })
+
+  it('renders clock button for mod (dock)', () => {
+    render(<Timer {...dockDefaults} />)
+    expect(screen.getByTestId('timer-button')).toBeInTheDocument()
+  })
+
+  it('opens timer via clock (dock) calls onTimerUpdate', () => {
+    const onTimerUpdate = vi.fn()
+    render(<Timer {...dockDefaults} onTimerUpdate={onTimerUpdate} />)
+    fireEvent.click(screen.getByTestId('timer-button'))
     expect(onTimerUpdate).toHaveBeenCalledWith({
       currentSeconds: 0,
       totalSeconds: 300,
       soundOn: true,
       timerPaused: false,
       timerVisible: true,
-    });
+    })
+  })
 
-    // Simulate parent updating timerVisible to true
-    rerender(
+  it('shows TimerProgress in overlay when timerVisible is true', () => {
+    render(<Timer {...overlayDefaults} />)
+    expect(screen.getByTestId('timer-progress')).toBeInTheDocument()
+  })
+
+  it('does not show overlay panel when timerVisible is false', () => {
+    render(
       <Timer
-        {...defaultProps}
-        timerProps={{ ...defaultProps.timerProps, timerVisible: true }}
+        variant='overlay'
+        timerProps={{ ...overlayDefaults.timerProps, timerVisible: false }}
+        onTimerUpdate={vi.fn()}
+      />,
+    )
+    expect(screen.queryByTestId('timer-progress')).not.toBeInTheDocument()
+  })
+
+  it('closes overlay via onTimerClose', () => {
+    const onTimerUpdate = vi.fn()
+    render(
+      <Timer
+        variant='overlay'
+        timerProps={{ ...overlayDefaults.timerProps, timerVisible: true }}
         onTimerUpdate={onTimerUpdate}
       />,
-    );
-    expect(screen.getByTestId('timer-progress')).toBeInTheDocument();
-
-    // Close
-    fireEvent.click(screen.getByText('Close'));
+    )
+    expect(screen.getByTestId('timer-progress')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Close'))
     expect(onTimerUpdate).toHaveBeenCalledWith({
       currentSeconds: 0,
       totalSeconds: 300,
       soundOn: true,
       timerPaused: false,
       timerVisible: false,
-    });
-  });
-});
+    })
+  })
+
+  it('dock does not render overlay panel even when timerVisible true', () => {
+    render(
+      <Timer
+        variant='dock'
+        timerProps={{ ...dockDefaults.timerProps, timerVisible: true }}
+        onTimerUpdate={vi.fn()}
+      />,
+    )
+    expect(screen.queryByTestId('timer-progress')).not.toBeInTheDocument()
+  })
+})
