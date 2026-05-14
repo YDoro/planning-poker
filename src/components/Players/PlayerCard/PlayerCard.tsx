@@ -6,6 +6,10 @@ import { Status } from '../../../types/status';
 import { isModerator } from '../../../utils/isModerator';
 import { TrashSVG } from '../../SVGs/Trash';
 import { getCards } from '../CardPicker/CardConfigs';
+import { Card } from '../../ui/card';
+import { Text, MarqueeText } from '../../Typography';
+import { Cross, Trash2, X } from 'lucide-react';
+import { Button } from '../../ui/button';
 
 interface PlayerCardProps {
   game: Game;
@@ -19,32 +23,40 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
   };
 
   return (
-    <div
-      className='rounded shadow-lg w-25 bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-600 border mb-2 m-3'
-      style={{
-        backgroundColor: getCardColor(game, player.value),
-      }}
-    >
-      <div className='text-center -mt-5 mx-auto w-[95%] bg-white dark:bg-gray-900 border-2  border-gray-400 dark:border-gray-700 rounded-2xl flex items-center justify-around px-3 py-1'>
-        <div className='text-center font-semibold text-sm truncate' title={player.name}>
+
+    <div className='w-25 flex flex-col items-center justify-around relative group'>
+      <div className='flex w-full'>
+        <MarqueeText className='text-center w-full font-semibold text-sm py-2' title={player.name}>
           {player.name}
-        </div>
+        </MarqueeText>
+      </div>
+
+      <div className="relative w-full">
         {isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession) &&
           player.id !== currentPlayerId && (
-            <button
+            <Button
               title='Remove'
-              className='cursor-pointer  p-0.5 mt-0.5 rounded hover:bg-red-100 transition'
+              variant='ghost'
+              size='icon'
               onClick={() => removeUser(game.id, player.id)}
               data-testid='remove-button'
+              className='absolute -top-1 -right-1 text-destructive z-30'
             >
-              <TrashSVG className='h-4 w-4 text-red-400' />
-            </button>
+              <X className="h-3 w-3" />
+            </Button>
           )}
-      </div>
-      <div className='flex items-center justify-center text-gray-800 py-6 mb-3'>
-        <span className={`${getCardValue(player, game)?.length < 2 ? 'text-4xl' : 'text-3xl'}`}>
-          {getCardValue(player, game)}
-        </span>
+        <Card
+          className='w-full aspect-3/4 shadow-md'
+          style={{
+            backgroundColor: getCardColor(game, player.value),
+          }}
+        >
+          <div className='flex items-center justify-center m-auto'>
+            <Text className='text-5xl font-semibold'>
+              {getCardValue(player, game)}
+            </Text>
+          </div>
+        </Card>
       </div>
     </div>
   );

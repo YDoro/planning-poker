@@ -17,7 +17,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
         <Players game={game} players={players} currentPlayerId={currentPlayerId} />
         <GameController game={game} players={players} currentPlayerId={currentPlayerId} />
       </div>
-      <div className='text-center flex justify-center'>
+      <div className='text-center flex justify-center absolute bottom-4 w-full'>
         <CardPicker game={game} players={players} currentPlayerId={currentPlayerId} />
       </div>
     </>
