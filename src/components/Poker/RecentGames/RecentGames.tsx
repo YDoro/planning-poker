@@ -81,7 +81,7 @@ export const RecentGames = () => {
                               variant='ghost'
                               size='icon'
                               onClick={(e) => e.stopPropagation()}
-                              aria-label='Delete session'
+                              aria-label={t('toolbar.history.deleteSession')}
                             >
                               <Trash2
                                 className='text-destructive'

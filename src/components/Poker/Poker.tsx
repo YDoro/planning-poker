@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useBlocker } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { streamGame, streamPlayers } from '../../service/games';
 import { getCurrentPlayerId } from '../../service/players';
 import { Game } from '../../types/game';
@@ -8,6 +9,7 @@ import { Loading } from '../Loading/Loading';
 import { GameArea } from './GameArea/GameArea';
 
 export const Poker = () => {
+  const { t } = useTranslation();
   let { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [game, setGame] = useState<Game | undefined>(undefined);
@@ -18,7 +20,7 @@ export const Poker = () => {
   useBlocker(({ historyAction }) => {
     if (historyAction === 'POP') {
       // Detect back navigation
-      const confirmLeave = window.confirm('Are you sure you want to go back?');
+      const confirmLeave = window.confirm(t('Poker.leaveBackConfirm'));
       if (!confirmLeave) {
         return true; // Prevent navigation
       }
@@ -85,7 +87,7 @@ export const Poker = () => {
       {game && players && currentPlayerId ? (
         <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
       ) : (
-        <p>Game not found</p>
+        <p>{t('Poker.gameNotFound')}</p>
       )}
     </>
   );

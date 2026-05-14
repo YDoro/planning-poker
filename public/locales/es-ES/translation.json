@@ -1,8 +1,17 @@
 {
+  "common": {
+    "edit": "Editar",
+    "confirm": "Confirmar"
+  },
+  "Poker": {
+    "leaveBackConfirm": "¿Seguro que quieres volver atrás?",
+    "gameNotFound": "Juego no encontrado"
+  },
   "toolbar": {
     "history": {
       "title": "Sesiónes recientes",
       "noGames": "No se encontraron sesiones recientes",
+      "deleteSession": "Eliminar sesión",
       "deletionDialog": {
         "title": "¿Estás seguro?",
         "description": "Esto eliminará esta sesión y quitará a todos los jugadores.",
@@ -37,10 +46,22 @@
     "invite": "Invitar",
     "storyName": "Nombre de la historia",
     "enterStoryName": "Ingresa el nombre o número de la historia",
-    "inviteLinkCopied": "Enlace de invitación copiado al portapapeles",
+    "inviteLinkCopied": "¡Enlace de invitación copiado al portapapeles!",
     "inProgress": "En progreso",
     "finished": "Finalizado",
+    "sessionStatus": {
+      "notStarted": "No iniciado",
+      "started": "Iniciado",
+      "inProgress": "En progreso",
+      "finished": "Finalizado"
+    },
+    "storyStats": {
+      "mode": "Moda",
+      "closest": "Más cercano"
+    },
+    "roundedAverageTooltip": "Promedio redondeado: {{value}}",
     "Timer": {
+      "timerButtonLabel": "Temporizador",
       "soundDisabledMod": "Activar sonido",
       "soundEnabledMod": "Desactivar sonido",
       "soundDisabledPlayer": "Sonido desactivado",
@@ -48,7 +69,13 @@
       "startTimer": "Iniciar temporizador",
       "resetTimer": "Restablecer temporizador",
       "pauseTimer": "Pausar temporizador",
-      "closeTimer": "Cerrar temporizador"
+      "closeTimer": "Cerrar temporizador",
+      "closeTimerAria": "Cerrar temporizador",
+      "setTimeTitle": "Establecer tiempo: {{minutes}} min, {{seconds}} s. Restablecer para editar.",
+      "runningTimeTitle": "Tiempo en ejecución: {{minutes}} min, {{seconds}} s.",
+      "runningElapsedTitle": "Transcurrido: {{minutes}} min, {{seconds}} s.",
+      "subtractOneMinute": "Restar un minuto",
+      "addOneMinute": "Añadir un minuto"
     },
     "deleteDialog": {
       "title": "¿Estás seguro?",
@@ -88,7 +115,11 @@
     "playerNamePlaceholder": "Introduce tu nombre",
     "joinGameButton": "Entrar",
     "joinging": "Entrando...",
-    "sessionNotFound": "Sessión no encontrada, verifique el ID",
-    "sessionDeleted": "Sessão excluída e não existe mais!"
+    "sessionNotFound": "Sesión no encontrada, verifica el ID",
+    "sessionDeleted": "La sesión fue eliminada y ya no existe.",
+    "validation": {
+      "sessionIdRequired": "El ID de la sesión es obligatorio",
+      "playerNameRequired": "Tu nombre es obligatorio"
+    }
   }
 }

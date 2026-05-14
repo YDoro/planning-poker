@@ -132,24 +132,29 @@ export const TimerProgress: React.FC<TimerProps> = ({
         {_soundOn ? '🔊' : '🔇'}
       </button>
       {isMod && (
-        <div
-          className='absolute top-3 right-3 cursor-pointer'
+        <button
+          type='button'
+          className='absolute top-3 right-3 cursor-pointer text-sm'
           title={t('GameController.Timer.closeTimer')}
+          aria-label={t('GameController.Timer.closeTimerAria')}
           onClick={onTimerClose}
         >
-          X
-        </div>
+          ×
+        </button>
       )}
-      <div className='flex h-full w-full justify-center items-center space-y-2 flex-col'>
+      <div className='flex h-full w-full justify-center items-center flex-col gap-2'>
         <CircularProgressBar percentage={percentage}>
-          <div className='text-4xl flex flex-col items-center space-y-2'>
+          <div className='text-4xl flex flex-col items-center gap-2'>
             <div
               title={
                 isMod
-                  ? `Set Time: ${minutes} Minutes, ${seconds} Seconds.\nReset to edit`
-                  : `Running Time: ${runningMinutes} Minutes, ${runningSeconds} Seconds.`
+                  ? t('GameController.Timer.setTimeTitle', { minutes, seconds })
+                  : t('GameController.Timer.runningTimeTitle', {
+                      minutes: runningMinutes,
+                      seconds: runningSeconds,
+                    })
               }
-              className='flex items-center space-x-1 flex-grow dark:text-white'
+              className='flex items-center gap-1 flex-grow dark:text-white'
             >
               <input
                 type='text'
@@ -181,7 +186,10 @@ export const TimerProgress: React.FC<TimerProps> = ({
             </div>
             {isMod && !inProgress && (
               <div
-                title={`Running Time: ${currentMinutesRunning} Minutes, ${currentSecondsRunning} Seconds.`}
+                title={t('GameController.Timer.runningElapsedTitle', {
+                  minutes: currentMinutesRunning,
+                  seconds: currentSecondsRunning,
+                })}
                 className='text-2xl dark:text-white'
               >
                 <span>{currentMinutesRunning.toString().padStart(2, '0')}</span>
@@ -194,7 +202,7 @@ export const TimerProgress: React.FC<TimerProps> = ({
         {isMod && (
           <>
             <hr className='h-px my-3 bg-gray-200 border-0 dark:bg-gray-700 w-full' />
-            <div className='flex space-x-2 w-full'>
+            <div className='flex gap-2 w-full'>
               <TimerControlButton
                 title={t('GameController.Timer.resetTimer')}
                 callback={handleReset}
@@ -205,10 +213,13 @@ export const TimerProgress: React.FC<TimerProps> = ({
               <div className='flex-grow w-full'>
                 {!inProgress && (
                   <div className='flex justify-center items-center gap-x-2 w-full h-8' role='group'>
-                    <TimerControlButton callback={onReduceSeconds} title='Minus 1 minute'>
+                    <TimerControlButton
+                      callback={onReduceSeconds}
+                      title={t('GameController.Timer.subtractOneMinute')}
+                    >
                       -
                     </TimerControlButton>
-                    <TimerControlButton callback={onAddSeconds} title='Add 1 minute'>
+                    <TimerControlButton callback={onAddSeconds} title={t('GameController.Timer.addOneMinute')}>
                       +
                     </TimerControlButton>
                   </div>
@@ -259,6 +270,7 @@ export const TimerControlButton: React.FC<TimerControlButtonProps> = ({
   return (
     <button
       title={title}
+      aria-label={title}
       className={`p-2 border-2 border-gray-200 h-8 w-8 flex items-center justify-center text-xl hover:text-gray-600 hover:border-gray-600 pb-[0.7rem] ${className} dark:border-gray-700 dark:hover:border-gray-500 dark:hover:text-gray-300`}
       onClick={callback}
       type='button'

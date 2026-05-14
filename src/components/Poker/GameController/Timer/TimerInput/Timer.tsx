@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TimerProgress } from '../TimerProgressPopup/TimerProgressPopup';
 import { TimerProps as GameTimerProps } from '../../../../../types/game';
 import { Clock } from 'lucide-react';
@@ -18,6 +19,7 @@ type TimerProps = {
 };
 
 export const Timer: React.FC<TimerProps> = ({ timerProps, onTimerUpdate }) => {
+  const { t } = useTranslation();
   const {
     isMod = false,
     timerVisible = false,
@@ -56,7 +58,7 @@ export const Timer: React.FC<TimerProps> = ({ timerProps, onTimerUpdate }) => {
             timerVisible: true,
           })}
           icon={<Clock />}
-          label={'Timer'}
+          label={t('GameController.Timer.timerButtonLabel')}
           className={`text-primary ${timerVisible && 'text-green-700'}`}
           testId='timer-button'
         />

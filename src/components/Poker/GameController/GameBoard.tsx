@@ -1,5 +1,5 @@
 import { FC, HTMLAttributes } from "react";
-import { AddStoryCard, StoryCard } from "./StoryCard";
+import { StoryCard } from "./StoryCard";
 import { Story } from "./types/story";
 import { Game } from "../../../types/game";
 import { Player } from "../../../types/player";

@@ -90,8 +90,8 @@ describe('StoryCard', () => {
         render(<StoryCard {...defaultProps} game={finishedGame} players={mockPlayers} />);
 
         expect(screen.getByText('GameController.average')).toBeInTheDocument();
-        expect(screen.getByText('Moda')).toBeInTheDocument();
-        expect(screen.getByText('Próximo')).toBeInTheDocument();
+        expect(screen.getByText('GameController.storyStats.mode')).toBeInTheDocument();
+        expect(screen.getByText('GameController.storyStats.closest')).toBeInTheDocument();
 
         // Average (1 + 3) / 2 = 2.0
         expect(screen.getByText('2.0')).toBeInTheDocument();

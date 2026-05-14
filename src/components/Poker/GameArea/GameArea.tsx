@@ -3,7 +3,7 @@ import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { CardPicker } from '../../Players/CardPicker/CardPicker';
 import { Players } from '../../Players/Players';
-import { GameController } from '../GameController/GameController';
+import { GameTopBar } from '../GameController/GameTopBar';
 import { GameBoard } from '../GameController/GameBoard';
 import { isModerator } from '../../../utils/isModerator';
 import { updateStoryName } from '../../../service/games';
@@ -18,7 +18,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
 
   return (
     <>
-      <GameController game={game} players={players} currentPlayerId={currentPlayerId} />
+      <GameTopBar game={game} players={players} currentPlayerId={currentPlayerId} />
       <div className='flex flex-col min-h-[60%] overflow-auto p-0.5 justify-center'>
         <Players game={game} players={players} currentPlayerId={currentPlayerId} />
         <GameBoard 

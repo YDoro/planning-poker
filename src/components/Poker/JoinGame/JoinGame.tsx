@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,12 +12,10 @@ import { H3 } from '../../Typography';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../ui/dialog';
 
-const joinSchema = z.object({
-  joinGameId: z.string().min(1, 'Session ID is required'),
-  playerName: z.string().min(1, 'Your name is required'),
-});
-
-type JoinValues = z.infer<typeof joinSchema>;
+type JoinValues = {
+  joinGameId: string;
+  playerName: string;
+};
 
 type JoinGameProps = {
   open: boolean;
@@ -29,6 +27,14 @@ export const JoinGame = ({ open, onClose }: JoinGameProps) => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
 
+  const joinSchema = useMemo(
+    () =>
+      z.object({
+        joinGameId: z.string().min(1, t('JoinGame.validation.sessionIdRequired')),
+        playerName: z.string().min(1, t('JoinGame.validation.playerNameRequired')),
+      }),
+    [t],
+  );
 
   const [gameFound, setGameFound] = useState(true);
   const [showNotExistMessage, setShowNotExistMessage] = useState(false);

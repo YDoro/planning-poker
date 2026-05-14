@@ -104,7 +104,7 @@ describe('RecentGames component', () => {
 
     await screen.findByText(mockGames[0].name);
     
-    const deleteButton = screen.getByLabelText('Delete session');
+    const deleteButton = screen.getByLabelText('toolbar.history.deleteSession');
     await userEvent.click(deleteButton);
 
     // Dialog should be open
