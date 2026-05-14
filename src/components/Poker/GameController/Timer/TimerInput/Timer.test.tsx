@@ -11,9 +11,6 @@ vi.mock('../TimerProgressPopup/TimerProgressPopup', () => ({
   ),
 }));
 
-vi.mock('../../../../SVGs/Clock', () => ({
-  ClockSVG: (props: any) => <svg data-testid='clock-svg' {...props} />,
-}));
 
 describe('Timer', () => {
   const defaultProps = {
@@ -30,19 +27,19 @@ describe('Timer', () => {
 
   it('does not render clock or timer for non-mod', () => {
     render(<Timer timerProps={{ isMod: false }} onTimerUpdate={vi.fn()} />);
-    expect(screen.queryByTestId('clock-svg')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('timer-button')).not.toBeInTheDocument();
     expect(screen.queryByTestId('timer-progress')).not.toBeInTheDocument();
   });
 
   it('renders clock button for mod', () => {
     render(<Timer {...defaultProps} />);
-    expect(screen.getByTestId('clock-svg')).toBeInTheDocument();
+    expect(screen.getByTestId('timer-button')).toBeInTheDocument();
   });
 
   it('shows TimerProgress when clock button is clicked', () => {
     const onTimerUpdate = vi.fn();
     render(<Timer {...defaultProps} onTimerUpdate={onTimerUpdate} />);
-    fireEvent.click(screen.getByTestId('clock-svg').parentElement!);
+    fireEvent.click(screen.getByTestId('timer-button'));
     // Simulate parent updating timerVisible to true
     render(
       <Timer
@@ -100,7 +97,7 @@ describe('Timer', () => {
       />,
     );
     // Open
-    fireEvent.click(screen.getByTestId('clock-svg').parentElement!);
+    fireEvent.click(screen.getByTestId('timer-button'));
     expect(onTimerUpdate).toHaveBeenCalledWith({
       currentSeconds: 0,
       totalSeconds: 300,

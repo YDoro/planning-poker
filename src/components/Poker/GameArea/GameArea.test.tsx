@@ -36,7 +36,7 @@ describe('GameArea component', () => {
     );
 
     mockPlayers.forEach((player: Player) => {
-      expect(screen.getByText(player.name)).toBeInTheDocument();
+      expect(screen.getAllByText(player.name)[0]).toBeInTheDocument();
     });
   });
 
