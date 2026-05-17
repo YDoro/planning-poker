@@ -1,10 +1,11 @@
 import { Game, TimerProps } from '@/src/types/game'
 import { Timer } from './Timer/TimerInput/Timer'
 import { finishGame, removeGame, resetGame, updateGame } from '@/src/service/games'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { ControllerButton } from './ControllerButton'
-import { Eye, RefreshCcw, Trash2 } from 'lucide-react'
+import { Eye, RefreshCcw, Trash2, SkipForward } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { nextTask } from '@/src/service/games'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +26,21 @@ export type ControlDockProps = {
 
 export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => {
   const { t } = useTranslation()
+  const [showSkipPrompt, setShowSkipPrompt] = useState(false)
+
+  const handleNextTask = () => {
+    const currentTask = game.tasks?.find(t => t.id === game.currentTaskId);
+    if (currentTask && !currentTask.score) {
+      setShowSkipPrompt(true);
+    } else {
+      nextTask(game.id);
+    }
+  }
+
+  const handleSkipTask = () => {
+    nextTask(game.id, undefined, true);
+    setShowSkipPrompt(false);
+  }
 
   const handleAutoReveal = (value: boolean) => {
     updateGame(game.id, { autoReveal: value })
@@ -70,6 +86,29 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
         className='text-primary'
         testId='restart-button'
       />
+      {game.tasks && game.tasks.length > 0 && (
+        <ControllerButton
+          onClick={handleNextTask}
+          icon={<SkipForward />}
+          label={t('GameController.nextTask', 'Next Task')}
+          className='text-blue-500'
+          testId='next-task-button'
+        />
+      )}
+      <AlertDialog open={showSkipPrompt} onOpenChange={setShowSkipPrompt}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('GameController.skipDialog.title', 'Skip Task?')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('GameController.skipDialog.description', 'The final score was not defined. Do you want to skip this task?')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('GameController.deleteDialog.cancelButton')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSkipTask}>
+              {t('common.confirm', 'Confirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <AlertDialog data-testid='delete-button-dialog'>
         <AlertDialogTrigger asChild>
           <ControllerButton

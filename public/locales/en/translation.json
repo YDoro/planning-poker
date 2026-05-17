@@ -41,6 +41,8 @@
     "average": "Average",
     "reveal": "Reveal",
     "restart": "Restart",
+    "nextTask": "Next Task",
+    "finalScore": "Final Score",
     "delete": "Delete",
     "exit": "Exit",
     "invite": "Invite",
@@ -59,12 +61,30 @@
       "mode": "Mode",
       "closest": "Closest"
     },
+    "tasks": {
+      "title": "Tasks",
+      "add": "Add Task",
+      "newTaskPlaceholder": "Task title...",
+      "empty": "No tasks yet",
+      "score": "Score:",
+      "play": "Vote on this task",
+      "status": {
+        "pending": "Pending",
+        "voting": "Voting",
+        "voted": "Voted",
+        "skipped": "Skipped"
+      }
+    },
     "roundedAverageTooltip": "Rounded average: {{value}}",
     "deleteDialog": {
       "title": "Are you sure?",
       "description": "This will delete this session and remove all players.",
       "continueButton": "Continue",
       "cancelButton": "Cancel"
+    },
+    "skipDialog": {
+      "title": "Skip Task?",
+      "description": "The final score was not defined. Do you want to skip this task?"
     },
     "Timer": {
       "timerButtonLabel": "Timer",

@@ -41,6 +41,8 @@
     "average": "Média",
     "reveal": "Revelar",
     "restart": "Reiniciar",
+    "nextTask": "Próxima Tarefa",
+    "finalScore": "Pontuação Final",
     "delete": "Excluir",
     "exit": "Sair",
     "invite": "Convidar",
@@ -58,6 +60,20 @@
     "storyStats": {
       "mode": "Moda",
       "closest": "Mais próximo"
+    },
+    "tasks": {
+      "title": "Tarefas",
+      "add": "Adicionar Tarefa",
+      "newTaskPlaceholder": "Título da tarefa...",
+      "empty": "Sem tarefas",
+      "score": "Pontos:",
+      "play": "Votar nesta tarefa",
+      "status": {
+        "pending": "Pendente",
+        "voting": "Votando",
+        "voted": "Votada",
+        "skipped": "Pulada"
+      }
     },
     "roundedAverageTooltip": "Média arredondada: {{value}}",
     "Timer": {
@@ -82,6 +98,10 @@
       "description": "Isso excluirá esta sessão e removerá todos os jogadores.",
       "continueButton": "Continuar",
       "cancelButton": "Cancelar"
+    },
+    "skipDialog": {
+      "title": "Pular tarefa?",
+      "description": "A pontuação final não foi definida. Deseja pular esta tarefa?"
     }
   },
   "CardPicker": {

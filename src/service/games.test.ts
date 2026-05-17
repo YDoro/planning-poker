@@ -244,4 +244,99 @@ describe('games service', () => {
       expect(spy).toHaveBeenCalledWith(mockId, { ...mockGame, storyName: 'User story 1' });
     });
   });
+
+  describe('tasks logic', () => {
+    it('should add a task and set it as current if first', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
+      const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
+      const { addTask } = await import('./games');
+
+      await addTask(mockId, { title: 'New Task', description: '', status: 'pending' });
+      expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
+         tasks: [{ id: mockUlid, title: 'New Task', description: '', status: 'voting' }],
+         currentTaskId: mockUlid
+      }));
+    });
+
+    it('should edit a task', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ ...mockGame, tasks: [{ id: 'task1', title: 'Old', description: '', status: 'pending' }] });
+      const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
+      const { editTask } = await import('./games');
+
+      await editTask(mockId, 'task1', { title: 'New' });
+      expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
+         tasks: [{ id: 'task1', title: 'New', description: '', status: 'pending' }]
+      }));
+    });
+
+    it('should delete a task', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ ...mockGame, tasks: [{ id: 'task1', title: 'Task 1', description: '', status: 'pending' }] });
+      const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
+      const { deleteTask } = await import('./games');
+
+      await deleteTask(mockId, 'task1');
+      expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
+         tasks: []
+      }));
+    });
+    
+    it('should change current task', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ ...mockGame, tasks: [{ id: 'task1', title: 'Task 1', description: '', status: 'pending' }] });
+      const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
+      const { changeCurrentTask } = await import('./games');
+
+      await changeCurrentTask(mockId, 'task1');
+      expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
+         currentTaskId: 'task1',
+         tasks: [{ id: 'task1', title: 'Task 1', description: '', status: 'voting' }],
+         gameStatus: Status.Started
+      }));
+    });
+
+    it('should go to next task', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ 
+         ...mockGame, 
+         currentTaskId: 'task1',
+         tasks: [
+            { id: 'task1', title: 'Task 1', description: '', status: 'voting' },
+            { id: 'task2', title: 'Task 2', description: '', status: 'pending' }
+         ] 
+      });
+      const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
+      const { nextTask } = await import('./games');
+
+      await nextTask(mockId, '5');
+      expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
+         currentTaskId: 'task2',
+         tasks: [
+            { id: 'task1', title: 'Task 1', description: '', status: 'voted', score: '5' },
+            { id: 'task2', title: 'Task 2', description: '', status: 'voting' }
+         ],
+         gameStatus: Status.Started
+      }));
+    });
+
+    it('should skip task', async () => {
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ 
+         ...mockGame, 
+         currentTaskId: 'task1',
+         tasks: [
+            { id: 'task1', title: 'Task 1', description: '', status: 'voting' },
+            { id: 'task2', title: 'Task 2', description: '', status: 'pending' }
+         ] 
+      });
+      const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
+      const { nextTask } = await import('./games');
+
+      await nextTask(mockId, undefined, true);
+      expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
+         currentTaskId: 'task2',
+         tasks: [
+            { id: 'task1', title: 'Task 1', description: '', status: 'skipped' },
+            { id: 'task2', title: 'Task 2', description: '', status: 'voting' }
+         ],
+         gameStatus: Status.Started
+      }));
+    });
+  });
 });

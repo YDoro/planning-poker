@@ -1,5 +1,6 @@
 import { CardConfig } from '../components/Players/CardPicker/CardConfigs';
 import { Status } from './status';
+import { Task } from './task';
 
 export interface TimerProps {
   currentSeconds?: number;
@@ -16,6 +17,8 @@ export interface Game {
   gameType?: GameType | GameType.Fibonacci;
   isAllowMembersToManageSession?: boolean;
   storyName?: string;
+  tasks?: Task[];
+  currentTaskId?: string;
   autoReveal?: boolean;
   cards: CardConfig[];
   createdBy: string;

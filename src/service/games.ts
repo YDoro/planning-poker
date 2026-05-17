@@ -12,6 +12,7 @@ import {
 } from '../repository/firebase';
 import { NewGame } from '../types/game';
 import { Player } from '../types/player';
+import { Task } from '../types/task';
 import { Status } from '../types/status';
 import { removeGameFromCache, resetPlayers, updatePlayerGames } from './players';
 
@@ -134,4 +135,82 @@ export const removeGame = async (gameId: string) => {
 
 export const deleteOldGames = async () => {
   await removeOldGameFromStore();
+};
+
+export const addTask = async (gameId: string, task: Omit<Task, 'id'>) => {
+  const game = await getGameFromStore(gameId);
+  if (game) {
+    const newTask: Task = { ...task, id: ulid() };
+    const tasks = game.tasks || [];
+    
+    // If it's the first task, set it as current
+    const isFirstTask = tasks.length === 0;
+    const currentTaskId = isFirstTask ? newTask.id : game.currentTaskId;
+    if (isFirstTask) newTask.status = 'voting';
+
+    const updatedGame = { tasks: [...tasks, newTask], currentTaskId };
+    await updateGame(gameId, updatedGame);
+  }
+};
+
+export const editTask = async (gameId: string, taskId: string, updatedTask: Partial<Task>) => {
+  const game = await getGameFromStore(gameId);
+  if (game && game.tasks) {
+    const tasks = game.tasks.map((t) => (t.id === taskId ? { ...t, ...updatedTask } : t));
+    await updateGame(gameId, { tasks });
+  }
+};
+
+export const deleteTask = async (gameId: string, taskId: string) => {
+  const game = await getGameFromStore(gameId);
+  if (game && game.tasks) {
+    const tasks = game.tasks.filter((t) => t.id !== taskId);
+    let currentTaskId = game.currentTaskId;
+    if (currentTaskId === taskId) {
+      currentTaskId = tasks.length > 0 ? tasks[0].id : undefined;
+    }
+    await updateGame(gameId, { tasks, currentTaskId });
+  }
+};
+
+export const changeCurrentTask = async (gameId: string, taskId: string) => {
+  const game = await getGameFromStore(gameId);
+  if (game && game.tasks) {
+    const tasks = game.tasks.map((t) => {
+      if (t.id === taskId && t.status === 'pending') {
+         return { ...t, status: 'voting' };
+      }
+      return t;
+    });
+    await updateGame(gameId, { currentTaskId: taskId, tasks, gameStatus: Status.Started });
+    await resetPlayers(gameId);
+  }
+};
+
+export const nextTask = async (gameId: string, score?: string, skipped?: boolean) => {
+  const game = await getGameFromStore(gameId);
+  if (game && game.tasks && game.currentTaskId) {
+    const currentTaskIndex = game.tasks.findIndex(t => t.id === game.currentTaskId);
+    if (currentTaskIndex !== -1) {
+      const tasks = [...game.tasks];
+      const newStatus = skipped ? 'skipped' : 'voted';
+      const updatedTask = { ...tasks[currentTaskIndex], status: newStatus };
+      if (score !== undefined) {
+        updatedTask.score = score;
+      }
+      tasks[currentTaskIndex] = updatedTask;
+      
+      const nextPendingTask = tasks.find((t, idx) => idx > currentTaskIndex && (t.status === 'pending' || t.status === 'skipped'));
+      let newCurrentTaskId = game.currentTaskId;
+      
+      if (nextPendingTask) {
+        newCurrentTaskId = nextPendingTask.id;
+        const nextIndex = tasks.findIndex(t => t.id === newCurrentTaskId);
+        tasks[nextIndex] = { ...tasks[nextIndex], status: 'voting' };
+      }
+
+      await updateGame(gameId, { tasks, currentTaskId: newCurrentTaskId, gameStatus: Status.Started });
+      await resetPlayers(gameId);
+    }
+  }
 };

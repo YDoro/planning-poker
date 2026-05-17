@@ -7,7 +7,8 @@ import { GameTopBar } from '../GameController/GameTopBar';
 import { GameBoard } from '../GameController/GameBoard';
 import { Timer } from '../GameController/Timer/TimerInput/Timer';
 import { isModerator } from '../../../utils/isModerator';
-import { updateGame, updateStoryName } from '../../../service/games';
+import { updateGame } from '../../../service/games';
+import { TaskList } from '../GameController/TaskList';
 
 interface GameAreaProps {
   game: Game;
@@ -36,20 +37,19 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
         }}
         onTimerUpdate={handleTimerUpdate}
       />
-      <div className='flex flex-col min-h-[60%] overflow-auto p-0.5 justify-center'>
-        <Players game={game} players={players} currentPlayerId={currentPlayerId} />
-        <GameBoard 
-          className="mt-6" 
-          stories={[{ cod: 'active', title: game.storyName || '', description: '' }]} 
-          game={game}
-          players={players}
-          isModerator={isMod}
-          onStoryNameChange={(name) => updateStoryName(game.id, name)}
-          onAddStory={() => { }} 
-        />
-      </div>
-      <div className='text-center flex justify-center absolute bottom-4 w-full'>
-        <CardPicker game={game} players={players} currentPlayerId={currentPlayerId} />
+      <div className='flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden'>
+        <div className='flex-1 flex flex-col overflow-auto p-0.5 justify-center relative pb-32'>
+          <Players game={game} players={players} currentPlayerId={currentPlayerId} />
+          <GameBoard
+            className='mt-6'
+            game={game}
+            players={players}
+            isModerator={isMod}
+          />
+          <div className='text-center flex justify-center absolute bottom-4 w-full'>
+            <CardPicker game={game} players={players} currentPlayerId={currentPlayerId} />
+          </div>
+        </div>
       </div>
     </>
   );

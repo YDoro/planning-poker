@@ -8,6 +8,7 @@ import { H2 } from '../../Typography'
 import { Plus, Pencil, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { computeStoryVoteStatistics } from '@/src/domain/game/storyVoteStatistics'
+import { editTask } from '../../../service/games'
 
 type StoryCardProps = HTMLAttributes<HTMLDivElement> & {
   story: Story
@@ -95,25 +96,49 @@ export const StoryCard = ({
       </div>
 
       {isFinished && stats && (
-        <div className='w-full mt-4 pt-4 border-t border-border grid grid-cols-3 gap-2 text-[10px]'>
-          <div className='flex flex-col items-center'>
-            <span className='text-muted-foreground font-medium uppercase tracking-wider'>
-              {t('GameController.average')}
-            </span>
-            <span className='text-sm font-bold text-primary'>{stats.averageFormatted}</span>
+        <div className='w-full mt-4 pt-4 border-t border-border flex flex-col gap-4'>
+          <div className='grid grid-cols-3 gap-2 text-[10px]'>
+            <div className='flex flex-col items-center'>
+              <span className='text-muted-foreground font-medium uppercase tracking-wider'>
+                {t('GameController.average')}
+              </span>
+              <span className='text-sm font-bold text-primary'>{stats.averageFormatted}</span>
+            </div>
+            <div className='flex flex-col items-center'>
+              <span className='text-muted-foreground font-medium uppercase tracking-wider'>
+                {t('GameController.storyStats.mode')}
+              </span>
+              <span className='text-sm font-bold text-primary'>{stats.modeFormatted}</span>
+            </div>
+            <div className='flex flex-col items-center'>
+              <span className='text-muted-foreground font-medium uppercase tracking-wider'>
+                {t('GameController.storyStats.closest')}
+              </span>
+              <span className='text-sm font-bold text-primary'>{stats.closestFormatted}</span>
+            </div>
           </div>
-          <div className='flex flex-col items-center'>
-            <span className='text-muted-foreground font-medium uppercase tracking-wider'>
-              {t('GameController.storyStats.mode')}
-            </span>
-            <span className='text-sm font-bold text-primary'>{stats.modeFormatted}</span>
-          </div>
-          <div className='flex flex-col items-center'>
-            <span className='text-muted-foreground font-medium uppercase tracking-wider'>
-              {t('GameController.storyStats.closest')}
-            </span>
-            <span className='text-sm font-bold text-primary'>{stats.closestFormatted}</span>
-          </div>
+          {isModerator && (
+            <div className='flex items-center justify-center gap-2 mt-2'>
+              <label className='text-xs font-semibold' htmlFor='final-score'>
+                {t('GameController.finalScore', 'Final Score')}:
+              </label>
+              <input
+                id='final-score'
+                className='w-16 p-1 text-center text-sm border bg-background border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring'
+                defaultValue={story.points || stats.closestFormatted}
+                onBlur={(e) => {
+                  if (game && story.cod && story.cod !== 'active') {
+                    editTask(game.id, story.cod, { score: e.target.value });
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.currentTarget.blur();
+                  }
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
     </Card>
