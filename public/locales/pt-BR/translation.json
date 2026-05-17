@@ -42,6 +42,8 @@
     "reveal": "Revelar",
     "restart": "Reiniciar",
     "nextTask": "Próxima Tarefa",
+    "finishPlanning": "Finalizar",
+    "planningFinished": "Planning Finalizada! 🎉",
     "finalScore": "Pontuação Final",
     "delete": "Excluir",
     "exit": "Sair",
@@ -68,6 +70,7 @@
       "empty": "Sem tarefas",
       "score": "Pontos:",
       "play": "Votar nesta tarefa",
+      "dragToReorder": "Arraste para reordenar",
       "status": {
         "pending": "Pendente",
         "voting": "Votando",
@@ -102,6 +105,10 @@
     "skipDialog": {
       "title": "Pular tarefa?",
       "description": "A pontuação final não foi definida. Deseja pular esta tarefa?"
+    },
+    "finishDialog": {
+      "title": "Finalizar Planning?",
+      "description": "Esta é a última tarefa. Deseja finalizar a sessão de planning?"
     }
   },
   "CardPicker": {

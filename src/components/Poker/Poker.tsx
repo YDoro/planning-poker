@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useNavigate, useParams, useBlocker } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { streamGame, streamPlayers } from '../../service/games';
@@ -83,13 +85,13 @@ export const Poker = () => {
   }
 
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       {game && players && currentPlayerId ? (
         <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
       ) : (
         <p>{t('Poker.gameNotFound')}</p>
       )}
-    </>
+    </DndProvider>
   );
 };
 

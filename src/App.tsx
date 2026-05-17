@@ -10,6 +10,7 @@ import { GamePage } from './pages/GamePage/GamePage';
 import { GuidePage } from './pages/GuidePage/GuidePage';
 import HomePage from './pages/HomePage/HomePage';
 import JoinPage from './pages/JoinPage/JoinPage';
+import { Toaster } from './components/ui/sonner';
 
 polyfillCountryFlagEmojis();
 
@@ -44,6 +45,7 @@ function App() {
         }
       >
         <RouterProvider router={router} />
+        <Toaster richColors position='top-center' />
       </Suspense>
     </div>
   );

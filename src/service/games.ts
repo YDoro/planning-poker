@@ -214,3 +214,7 @@ export const nextTask = async (gameId: string, score?: string, skipped?: boolean
     }
   }
 };
+
+export const updateTasksOrder = async (gameId: string, orderedTasks: Task[]) => {
+  await updateGame(gameId, { tasks: orderedTasks });
+};

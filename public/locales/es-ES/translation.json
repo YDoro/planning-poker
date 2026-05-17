@@ -41,7 +41,10 @@
     "average": "Promedio",
     "reveal": "Revelar",
     "restart": "Reiniciar",
-    "delete": "Eliminar",
+    "nextTask": "Siguiente Tarea",
+    "finishPlanning": "Finalizar",
+    "planningFinished": "¡Planning Finalizado! 🎉",
+    "finalScore": "Puntuación Final",
     "exit": "Salir",
     "invite": "Invitar",
     "storyName": "Nombre de la historia",
@@ -59,7 +62,29 @@
       "mode": "Moda",
       "closest": "Más cercano"
     },
-    "roundedAverageTooltip": "Promedio redondeado: {{value}}",
+    "tasks": {
+      "title": "Tareas",
+      "add": "Añadir Tarea",
+      "newTaskPlaceholder": "Título de la tarea...",
+      "empty": "Sin tareas",
+      "score": "Puntos:",
+      "play": "Votar en esta tarea",
+      "dragToReorder": "Arrastra para reordenar",
+      "status": {
+        "pending": "Pendiente",
+        "voting": "Votando",
+        "voted": "Votada",
+        "skipped": "Omitida"
+      }
+    },
+    "skipDialog": {
+      "title": "¿Omitir Tarea?",
+      "description": "La puntuación final no fue definida. ¿Deseas omitir esta tarea?"
+    },
+    "finishDialog": {
+      "title": "¿Finalizar Planning?",
+      "description": "Esta es la última tarea. ¿Deseas finalizar la sesión de planning?"
+    },
     "Timer": {
       "timerButtonLabel": "Temporizador",
       "soundDisabledMod": "Activar sonido",

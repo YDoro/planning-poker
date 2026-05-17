@@ -16,6 +16,7 @@ type StoryCardProps = HTMLAttributes<HTMLDivElement> & {
   game?: Game
   players?: Player[]
   onStoryNameChange?: (name: string) => void
+  onStoryNameConfirm?: (name: string) => void
 }
 
 export const StoryCard = ({
@@ -24,6 +25,7 @@ export const StoryCard = ({
   game,
   players,
   onStoryNameChange,
+  onStoryNameConfirm,
   ...props
 }: StoryCardProps) => {
   const { t } = useTranslation()
@@ -69,7 +71,10 @@ export const StoryCard = ({
               </label>
               <button
                 type='button'
-                onClick={toggleEdit}
+                onClick={() => {
+                  onStoryNameConfirm?.(story.title || '');
+                  toggleEdit();
+                }}
                 className='p-1 rounded-full hover:bg-secondary text-primary'
                 title={t('common.confirm')}
               >
@@ -86,7 +91,10 @@ export const StoryCard = ({
               value={story.title || ''}
               onChange={(e) => onStoryNameChange?.(e.target.value || '')}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') toggleEdit()
+                if (e.key === 'Enter') {
+                  onStoryNameConfirm?.(story.title || '');
+                  toggleEdit();
+                }
               }}
             />
           </div>

@@ -1,9 +1,9 @@
 import { Game, TimerProps } from '@/src/types/game'
 import { Timer } from './Timer/TimerInput/Timer'
-import { finishGame, removeGame, resetGame, updateGame } from '@/src/service/games'
+import { finishGame, removeGame, updateGame } from '@/src/service/games'
 import { useCallback, useState } from 'react'
 import { ControllerButton } from './ControllerButton'
-import { Eye, RefreshCcw, Trash2, SkipForward } from 'lucide-react'
+import { Eye, Trash2, SkipForward, CheckCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { nextTask } from '@/src/service/games'
 import {
@@ -18,6 +18,7 @@ import {
   AlertDialogTrigger,
 } from '../../ui/alert-dialog'
 import { AutoReveal } from './AutoReveal'
+import { toast } from 'sonner'
 
 export type ControlDockProps = {
   game: Game
@@ -27,19 +28,47 @@ export type ControlDockProps = {
 export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => {
   const { t } = useTranslation()
   const [showSkipPrompt, setShowSkipPrompt] = useState(false)
+  const [showFinishPrompt, setShowFinishPrompt] = useState(false)
+
+  const tasks = game.tasks || []
+  const currentTaskIndex = tasks.findIndex(t => t.id === game.currentTaskId)
+  const currentTask = tasks[currentTaskIndex]
+  const hasNextTask = tasks.slice(currentTaskIndex + 1).some(
+    t => t.status === 'pending' || t.status === 'skipped' || t.status === 'voting'
+  )
+  const isLastTask = tasks.length > 0 && !hasNextTask
 
   const handleNextTask = () => {
-    const currentTask = game.tasks?.find(t => t.id === game.currentTaskId);
+    if (isLastTask) {
+      if (currentTask && !currentTask.score) {
+        setShowSkipPrompt(true)
+      } else {
+        setShowFinishPrompt(true)
+      }
+      return
+    }
     if (currentTask && !currentTask.score) {
-      setShowSkipPrompt(true);
+      setShowSkipPrompt(true)
     } else {
-      nextTask(game.id);
+      nextTask(game.id)
     }
   }
 
   const handleSkipTask = () => {
-    nextTask(game.id, undefined, true);
-    setShowSkipPrompt(false);
+    if (isLastTask) {
+      nextTask(game.id, undefined, true).then(() => {
+        toast.success(t('GameController.planningFinished'))
+      })
+    } else {
+      nextTask(game.id, undefined, true)
+    }
+    setShowSkipPrompt(false)
+  }
+
+  const handleFinishPlanning = async () => {
+    await nextTask(game.id, currentTask?.score)
+    setShowFinishPrompt(false)
+    toast.success(t('GameController.planningFinished'))
   }
 
   const handleAutoReveal = (value: boolean) => {
@@ -79,22 +108,18 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
         className='text-green-700'
         testId='reveal-button'
       />
-      <ControllerButton
-        onClick={() => resetGame(game.id)}
-        icon={<RefreshCcw />}
-        label={t('GameController.restart')}
-        className='text-primary'
-        testId='restart-button'
-      />
-      {game.tasks && game.tasks.length > 0 && (
+
+      {tasks.length > 0 && (
         <ControllerButton
           onClick={handleNextTask}
-          icon={<SkipForward />}
-          label={t('GameController.nextTask', 'Next Task')}
-          className='text-blue-500'
+          icon={isLastTask ? <CheckCheck /> : <SkipForward />}
+          label={isLastTask ? t('GameController.finishPlanning') : t('GameController.nextTask')}
+          className={isLastTask ? 'text-green-600' : 'text-blue-500'}
           testId='next-task-button'
         />
       )}
+
+      {/* Skip prompt (when current task has no score) */}
       <AlertDialog open={showSkipPrompt} onOpenChange={setShowSkipPrompt}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -109,6 +134,24 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Finish planning confirmation */}
+      <AlertDialog open={showFinishPrompt} onOpenChange={setShowFinishPrompt}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('GameController.finishDialog.title', 'Finish Planning?')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('GameController.finishDialog.description', 'This is the last task. Do you want to finish the planning session?')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('GameController.deleteDialog.cancelButton')}</AlertDialogCancel>
+            <AlertDialogAction className='bg-green-600 hover:bg-green-700' onClick={handleFinishPlanning}>
+              {t('GameController.finishPlanning', 'Finish')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete session */}
       <AlertDialog data-testid='delete-button-dialog'>
         <AlertDialogTrigger asChild>
           <ControllerButton

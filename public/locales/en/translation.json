@@ -42,6 +42,8 @@
     "reveal": "Reveal",
     "restart": "Restart",
     "nextTask": "Next Task",
+    "finishPlanning": "Finish",
+    "planningFinished": "Planning Finished! 🎉",
     "finalScore": "Final Score",
     "delete": "Delete",
     "exit": "Exit",
@@ -68,6 +70,7 @@
       "empty": "No tasks yet",
       "score": "Score:",
       "play": "Vote on this task",
+      "dragToReorder": "Drag to reorder",
       "status": {
         "pending": "Pending",
         "voting": "Voting",
@@ -85,6 +88,10 @@
     "skipDialog": {
       "title": "Skip Task?",
       "description": "The final score was not defined. Do you want to skip this task?"
+    },
+    "finishDialog": {
+      "title": "Finish Planning?",
+      "description": "This is the last task. Do you want to finish the planning session?"
     },
     "Timer": {
       "timerButtonLabel": "Timer",
