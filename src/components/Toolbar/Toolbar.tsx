@@ -79,7 +79,7 @@ export const Toolbar = () => {
     },
   ];
   return (
-    <div className='flex w-full justify-center shadow-sm bg-background'>
+    <div className='flex w-full justify-center bg-background'>
       <div className='flex w-full items-center p-2 max-w-7xl'>
         <div className='inline-flex items-center'>
           <button className='button-ghost flex items-center' onClick={() => navigate('/')}>

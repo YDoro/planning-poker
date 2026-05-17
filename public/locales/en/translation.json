@@ -1,8 +1,17 @@
 {
+  "common": {
+    "edit": "Edit",
+    "confirm": "Confirm"
+  },
+  "Poker": {
+    "leaveBackConfirm": "Are you sure you want to go back?",
+    "gameNotFound": "Game not found"
+  },
   "toolbar": {
     "history": {
       "title": "Recent Sessions",
       "noGames": "No recent sessions found",
+      "deleteSession": "Delete session",
       "deletionDialog": {
         "title": "Are you sure?",
         "description": "This will delete this session and remove all players.",
@@ -37,9 +46,20 @@
     "invite": "Invite",
     "storyName": "Story Name",
     "enterStoryName": "Enter story name or number",
-    "inviteLinkCopied": "Invite Link copied to clipboard",
+    "inviteLinkCopied": "Invite link copied to clipboard!",
     "inProgress": "In Progress",
     "finished": "Finished",
+    "sessionStatus": {
+      "notStarted": "Not started",
+      "started": "Started",
+      "inProgress": "In progress",
+      "finished": "Finished"
+    },
+    "storyStats": {
+      "mode": "Mode",
+      "closest": "Closest"
+    },
+    "roundedAverageTooltip": "Rounded average: {{value}}",
     "deleteDialog": {
       "title": "Are you sure?",
       "description": "This will delete this session and remove all players.",
@@ -47,6 +67,7 @@
       "cancelButton": "Cancel"
     },
     "Timer": {
+      "timerButtonLabel": "Timer",
       "soundDisabledMod": "Enable sound",
       "soundEnabledMod": "Disable sound",
       "soundDisabledPlayer": "Sound Disabled",
@@ -54,7 +75,13 @@
       "startTimer": "Start Timer",
       "resetTimer": "Reset Timer",
       "pauseTimer": "Pause Timer",
-      "closeTimer": "Close Timer"
+      "closeTimer": "Close Timer",
+      "closeTimerAria": "Close timer",
+      "setTimeTitle": "Set time: {{minutes}} min, {{seconds}} sec. Reset to edit.",
+      "runningTimeTitle": "Running time: {{minutes}} min, {{seconds}} sec.",
+      "runningElapsedTitle": "Elapsed: {{minutes}} min, {{seconds}} sec.",
+      "subtractOneMinute": "Subtract one minute",
+      "addOneMinute": "Add one minute"
     }
   },
   "CardPicker": {
@@ -89,6 +116,10 @@
     "joinGameButton": "Join Game",
     "joinging": "Joining...",
     "sessionNotFound": "Session not found, check the ID",
-    "sessionDeleted": "Session was deleted and doesn't exist anymore!"
+    "sessionDeleted": "Session was deleted and doesn't exist anymore!",
+    "validation": {
+      "sessionIdRequired": "Session ID is required",
+      "playerNameRequired": "Your name is required"
+    }
   }
 }

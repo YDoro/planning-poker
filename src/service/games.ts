@@ -64,6 +64,7 @@ export const resetGame = async (gameId: string) => {
     const updatedGame = {
       average: 0,
       gameStatus: Status.Started,
+      storyName: '',
     };
     await updateGame(gameId, updatedGame);
     await resetPlayers(gameId);

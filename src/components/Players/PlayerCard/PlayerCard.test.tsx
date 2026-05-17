@@ -30,7 +30,7 @@ describe('PlayerCard component', () => {
       <PlayerCard game={mockGame} player={mockPlayer} currentPlayerId={mockCurrentPlayerId} />,
     );
 
-    expect(screen.getByText(mockPlayer.name)).toBeInTheDocument();
+    expect(screen.getAllByText(mockPlayer.name)[0]).toBeInTheDocument();
   });
 
   it('should display thinking emoji when Player has not voted', () => {

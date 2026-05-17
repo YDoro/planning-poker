@@ -137,7 +137,7 @@ describe('games service', () => {
 
   describe('reset the game', () => {
     it('should update the game and reset the players', async () => {
-      const expectGame = { average: 0, gameStatus: Status.Started };
+      const expectGame = { average: 0, gameStatus: Status.Started, storyName: '' };
       vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
       const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
       const playerSpy = vi.spyOn(players, 'resetPlayers');

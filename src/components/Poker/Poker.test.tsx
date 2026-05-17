@@ -77,7 +77,7 @@ describe('Poker component', () => {
     await screen.findByText(mockGame.name);
 
     expect(screen.getByText(mockGame.name)).toBeInTheDocument();
-    expect(screen.getByText(`${mockGame.gameStatus} 🚀`)).toBeInTheDocument();
+    expect(screen.getByText('Not started 🚀')).toBeInTheDocument()
   });
   it('should display confirmation dialog when user clicks the back button', async () => {
     const mockGame: Game = {
