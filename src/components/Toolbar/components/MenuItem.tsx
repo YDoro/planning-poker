@@ -5,11 +5,13 @@ export const MenuItem = ({
   label,
   onClick,
   testId,
+  hiddenLabel
 }: {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
   testId?: string;
+  hiddenLabel?: boolean;
 }) => {
   return (
     <button
@@ -17,8 +19,8 @@ export const MenuItem = ({
       onClick={onClick}
       data-testid={testId}
     >
-      <div className='pr-2'>{icon}</div>
-      <div className='text-sm font-normal'> {label}</div>
+      <div>{icon}</div>
+      {!hiddenLabel && <div className='pl-2 text-sm font-normal'> {label}</div>}
     </button>
   );
 };

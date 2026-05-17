@@ -1,5 +1,4 @@
 import { Divider } from '../../components/Divider/Divider';
-import { GoogleAd } from '../../components/GoogleAd/GoogleAd';
 import { BenefitsSVG } from '../../components/SVGs/Benefits';
 import { BestPracticeSVG } from '../../components/SVGs/BestPractice';
 import { HowSVG } from '../../components/SVGs/How';
@@ -9,7 +8,7 @@ export const AboutPage = () => {
   return (
     <div className='flex flex-col items-center w-full'>
       <AboutPlanningPokerContent />
-      <GoogleAd />
+      {/* <GoogleAd /> */}
     </div>
   );
 };

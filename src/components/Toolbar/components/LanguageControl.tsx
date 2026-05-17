@@ -1,7 +1,7 @@
 import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loading } from '../Loading/Loading';
+import { Loading } from '../../Loading/Loading';
 
 const LANGUAGES = [
   { value: 'en-US', label: 'English', flag: 'US' },
@@ -46,7 +46,7 @@ export const LanguageControl: React.FC = () => {
     <select
       value={language}
       onChange={handleChange}
-      className='w-20 m-1 text-xs cursor-pointer focus:outline-none focus:shadow-outline text-ellipsis'
+      className='w-10 m-1 text-sm cursor-pointer focus:outline-none focus:shadow-outline overflow-hidden'
       data-testid='language-control'
     >
       {LANGUAGES.map(({ value, label, flag }) => (

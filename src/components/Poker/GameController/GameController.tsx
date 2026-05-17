@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { AlertDialog } from '../../../components/AlertDialog/AlertDialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@ui/alert-dialog';
 import {
   finishGame,
   removeGame,
@@ -15,11 +15,11 @@ import { Status } from '../../../types/status';
 import { isModerator } from '../../../utils/isModerator';
 import { ExitSVG } from '../../SVGs/Exit';
 import { EyeSVG } from '../../SVGs/Eye';
-import { InfoSVG } from '../../SVGs/Info';
 import { LinkSVG } from '../../SVGs/Link';
 import { RefreshSVG } from '../../SVGs/Refresh';
 import { TrashSVG } from '../../SVGs/Trash';
 import { Timer } from './Timer/TimerInput/Timer';
+import { Info } from 'lucide-react';
 
 interface GameControllerProps {
   game: Game;
@@ -136,26 +136,31 @@ export const GameController: React.FC<GameControllerProps> = ({
                 className='hover:bg-red-200'
                 testId='restart-button'
               />
-              <ControllerButton
-                icon={<TrashSVG className='h-9 w-9 text-red-500' />}
-                label={t('GameController.delete')}
-                className='hover:bg-red-200'
-                testId='delete-button'
+
+              <AlertDialog
+                data-testid='delete-button-dialog'
               >
-                <AlertDialog
-                  id={game.id}
-                  message={t('GameController.areYouSureDelete')}
-                  onConfirm={() => handleRemoveGame(game.id)}
-                  data-testid='delete-button-dialog'
-                >
-                  <button
-                    className='p-2 cursor-pointer rounded-full bg-white dark:bg-gray-900 hover:bg-red-200 transition'
-                    title={t('GameController.delete')}
-                  >
-                    <TrashSVG className='h-9 w-9 text-red-500' />
-                  </button>
-                </AlertDialog>
-              </ControllerButton>
+                <AlertDialogTrigger asChild>
+                  <ControllerButton
+                    icon={<TrashSVG className='h-9 w-9 text-red-500' />}
+                    label={t('GameController.delete')}
+                    className='hover:bg-red-200'
+                    testId='delete-button'
+                  />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('GameController.deleteDialog.title')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('GameController.deleteDialog.description')}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('GameController.deleteDialog.cancelButton')}</AlertDialogCancel>
+                    <AlertDialogAction variant='destructive' onClick={() => handleRemoveGame(game.id)}>
+                      {t('GameController.deleteDialog.continueButton')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           )}
           <ControllerButton
@@ -257,15 +262,13 @@ export const AutoReveal: React.FC<AutoRevealProps> = ({ autoReveal, onAutoReveal
           role='switch'
           aria-checked={autoReveal}
           onClick={() => onAutoReveal(!autoReveal)}
-          className={`relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none ${
-            autoReveal ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
-          }`}
+          className={`relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none ${autoReveal ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+            }`}
           style={{ minWidth: '2rem' }}
         >
           <span
-            className={`inline-block h-3 w-3 cursor-pointer transform rounded-full bg-white shadow transition-transform ${
-              autoReveal ? 'translate-x-4' : 'translate-x-1'
-            }`}
+            className={`inline-block h-3 w-3 cursor-pointer transform rounded-full bg-white shadow transition-transform ${autoReveal ? 'translate-x-4' : 'translate-x-1'
+              }`}
           />
         </button>
       </label>
@@ -312,7 +315,7 @@ const AverageComponent: React.FC<{ game: Game; players: Player[] }> = ({ game, p
           <>
             <span className='relative group ml-1'>
               <span className='cursor-pointer group ml-1 flex'>
-                <InfoSVG className='h-4 w-4 text-gray-600 dark:text-gray-300' />
+                <Info className='h-4 w-4 text-gray-600 dark:text-gray-300' />
               </span>
               <span className='absolute left-1/2 top-full mt-2 z-10 -translate-x-1/2 w-max min-w-[80px] rounded bg-white dark:bg-gray-900 bg-opacity-90 px-2 py-1 text-xs font-semibold border border-gray-200 dark:border-gray-700 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none'>
                 {`Rounded Average : ${Math.round(gameAverage) || 0}`}

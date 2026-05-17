@@ -4,7 +4,6 @@ import { updatePlayerValue } from '../../../service/players';
 import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
-import { GoogleAd } from '../../GoogleAd/GoogleAd';
 import { CardConfig, getCards, getRandomEmoji } from './CardConfigs';
 
 interface CardPickerProps {
@@ -55,16 +54,14 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
               w-15 h-23
               md:w-20 md:h-30
               sm:w-15 sm:h-23
-              ${
-                isSelected
+              ${isSelected
                   ? 'border-dashed border-2 border-gray-800 z-10 shadow-lg scale-115'
                   : 'shadow-md scale-100'
-              }
-              ${
-                game.gameStatus === Status.Finished
+                }
+              ${game.gameStatus === Status.Finished
                   ? 'pointer-events-none opacity-50 cursor-not-allowed'
                   : ''
-              }
+                }
             `}
               style={{
                 backgroundColor: card.color,
@@ -99,7 +96,7 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
         })}
       </div>
       <div className='flex justify-center'>
-        <GoogleAd />
+        {/* <GoogleAd /> */}
       </div>
     </div>
   );

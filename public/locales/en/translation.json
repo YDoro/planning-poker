@@ -1,5 +1,15 @@
 {
   "toolbar": {
+    "history": {
+      "title": "Recent Sessions",
+      "noGames": "No recent sessions found",
+      "deletionDialog": {
+        "title": "Are you sure?",
+        "description": "This will delete this session and remove all players.",
+        "continueButton": "Continue",
+        "cancelButton": "Cancel"
+      }
+    },
     "menu": {
       "about": "What is planning poker?",
       "guide": "Guide",
@@ -11,7 +21,10 @@
   "HomePage": {
     "heroSection": {
       "title": "Free Planning Poker App",
-      "description": "Free / Open source Planning Poker Web App to estimate user stories for your Agile/Scrum teams. Create a session and invite your team members to estimate user stories efficiently."
+      "description": "Free &Open source Planning Poker Web App to estimate user stories for your Agile teams.",
+      "sub": " Create a session and invite your team members to estimate user stories efficiently.",
+      "createSessionButton": "Create Session",
+      "joinSessionButton": "Join Session"
     }
   },
   "GameController": {
@@ -25,9 +38,14 @@
     "storyName": "Story Name",
     "enterStoryName": "Enter story name or number",
     "inviteLinkCopied": "Invite Link copied to clipboard",
-    "areYouSureDelete": "Are you sure? This will delete this session and remove all players.",
     "inProgress": "In Progress",
     "finished": "Finished",
+    "deleteDialog": {
+      "title": "Are you sure?",
+      "description": "This will delete this session and remove all players.",
+      "continueButton": "Continue",
+      "cancelButton": "Cancel"
+    },
     "Timer": {
       "soundDisabledMod": "Enable sound",
       "soundEnabledMod": "Disable sound",
@@ -46,7 +64,9 @@
   "CreateGame": {
     "newSessionHeader": "Create new session",
     "sessionNameLabel": "Session name",
+    "sessionNamePlaceholder": "Enter a session name",
     "yourNameLabel": "Your name",
+    "yourNamePlaceholder": "Enter your name",
     "sessionSizingType": "Session Sizing Type",
     "fibonacci": "Fibonacci (0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89)",
     "shortFibonacci": "Short Fibonacci (0, ½, 1, 2, 3, 5, 8, 13, 20, 40, 100)",
@@ -56,6 +76,19 @@
     "pleaseEnterValues": "Please enter values for at least two custom option.",
     "allowMembersToManageSession": "Allow members to manage session",
     "creating": "Creating...",
-    "create": "Create"
+    "create": "Create",
+    "gameNameRequired": "Game name is required",
+    "createdByRequired": "Your name is required"
+  },
+  "JoinGame": {
+    "cardHeader": "Join a Session",
+    "sessionIdLabel": "Session ID",
+    "sessionIdPlaceholder": "Enter session ID",
+    "playerNameLabel": "Your Name",
+    "playerNamePlaceholder": "Enter your name",
+    "joinGameButton": "Join Game",
+    "joinging": "Joining...",
+    "sessionNotFound": "Session not found, check the ID",
+    "sessionDeleted": "Session was deleted and doesn't exist anymore!"
   }
 }

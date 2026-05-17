@@ -15,6 +15,18 @@ Object.assign(navigator, {
   },
 });
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: true,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+})
+
 i18n.use(initReactI18next).init({
   lng: 'en', // set your default language here
   fallbackLng: 'en',
@@ -25,3 +37,18 @@ i18n.use(initReactI18next).init({
   },
   interpolation: { escapeValue: false },
 });
+
+global.ResizeObserver = vi.fn().mockImplementation(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+});
+
+if (typeof window !== 'undefined') {
+  HTMLElement.prototype.hasPointerCapture = vi.fn();
+  HTMLElement.prototype.setPointerCapture = vi.fn();
+  HTMLElement.prototype.releasePointerCapture = vi.fn();
+  HTMLElement.prototype.scrollIntoView = vi.fn();
+}

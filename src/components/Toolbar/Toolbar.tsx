@@ -3,22 +3,16 @@ import { GamesSVG } from '../SVGs/GamesSVG';
 
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useBreakpoint } from '../../hooks/useBreakpoint';
-import { LanguageControl } from '../LanguageControl/LanguageControl';
-import { ExampleSVG } from '../SVGs/Example';
+import { LanguageControl } from './components/LanguageControl';
 import { GithubSVG } from '../SVGs/Github';
-import { GuideSVG } from '../SVGs/Guide';
-import { InfoSVG } from '../SVGs/Info';
-import { JoinSVG } from '../SVGs/Join';
-import { MenuSVG } from '../SVGs/Menu';
-import { PlusSVG } from '../SVGs/Plus';
-import { ThemeControl } from '../ThemeControl/ThemeControl';
-import { MenuItem } from './MenuItem';
+import { ThemeControl } from './components/ThemeControl';
+import { MenuItem } from './components/MenuItem';
+import { Info, List, Menu, Search, SquareArrowRightEnter, SquarePlus } from 'lucide-react'
+import { HistoryButton } from './components/History';
 export const title = 'Planning Poker';
 
 export const Toolbar = () => {
   const navigate = useNavigate();
-  const screenSize = useBreakpoint();
   const { t } = useTranslation();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -49,53 +43,57 @@ export const Toolbar = () => {
 
   const menuItems = [
     {
-      icon: <InfoSVG />,
+      icon: <Info />,
       label: t('toolbar.menu.about'),
       onClick: () => handleNavigation('/about-planning-poker'),
     },
     {
-      icon: <GuideSVG />,
+      icon: <Search />,
       label: t('toolbar.menu.guide'),
       onClick: () => handleNavigation('/guide'),
     },
     {
-      icon: <ExampleSVG />,
+      icon: <List />,
       label: t('toolbar.menu.examples'),
       onClick: () => handleNavigation('/examples'),
     },
     {
-      icon: <PlusSVG />,
+      icon: <SquarePlus />,
       label: t('toolbar.menu.newSession'),
       onClick: () => handleNavigation('/'),
       testId: 'toolbar.menu.newSession',
+      hiddenLabel: true
     },
     {
-      icon: <JoinSVG />,
+      icon: <SquareArrowRightEnter />,
       label: t('toolbar.menu.joinSession'),
       onClick: () => handleNavigation('/join'),
       testId: 'toolbar.menu.joinSession',
+      hiddenLabel: true
     },
     {
       icon: <GithubSVG />,
       label: 'GitHub',
-      onClick: () => (window.location.href = 'https://github.com/hellomuthu23/planning-poker'),
+      onClick: () => (window.location.href = 'https://github.com/ydoro/planning-poker'),
+      hiddenLabel: true
     },
   ];
   return (
-    <div className='flex w-full items-center shadow-sm dark:shadow-gray-800'>
-      <div className='inline-flex items-center'>
-        <button className='button-ghost flex items-center' onClick={() => navigate('/')}>
-          <div className='pr-1'>
-            <GamesSVG />
-          </div>
-          <p className='md:text-2xl text-sm font-normal'>{title}</p>
-        </button>
-      </div>
+    <div className='flex w-full justify-center shadow-sm bg-background'>
+      <div className='flex w-full items-center p-2 max-w-7xl'>
+        <div className='inline-flex items-center'>
+          <button className='button-ghost flex items-center' onClick={() => navigate('/')}>
+            <div className='pr-1'>
+              <GamesSVG />
+            </div>
+            <p className='md:text-2xl text-sm font-normal'>{title}</p>
+          </button>
+        </div>
 
-      {/* Right Section */}
-      <div className='inline-flex items-center justify-end flex-1'>
-        {screenSize === 'md' || screenSize === 'sm' || screenSize === 'xs' ? (
+        {/* Right Section */}
+        <div className='inline-flex items-center justify-end flex-1'>
           <div className='flex relative' ref={dropdownRef}>
+            <HistoryButton />
             <ThemeControl />
             <LanguageControl />
             <button
@@ -103,37 +101,21 @@ export const Toolbar = () => {
               onClick={toggleDropdown}
               aria-label='Toggle Menu'
             >
-              <MenuSVG />
+              <Menu />
             </button>
             {isDropdownOpen && (
               <div className='absolute right-0 mt-10 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg z-50 flex flex-col'>
                 {menuItems.map((item, index) => (
                   <MenuItem
-                    icon={item.icon}
-                    label={item.label}
-                    onClick={item.onClick}
-                    key={index}
-                    testId={item.testId}
+                    {...item}
+                    key={item.label}
+                    hiddenLabel={false}
                   />
                 ))}
               </div>
             )}
           </div>
-        ) : (
-          <>
-            {menuItems.map((item, index) => (
-              <MenuItem
-                icon={item.icon}
-                label={item.label}
-                onClick={item.onClick}
-                key={index}
-                testId={item.testId}
-              />
-            ))}
-            <ThemeControl />
-            <LanguageControl />
-          </>
-        )}
+        </div>
       </div>
     </div>
   );
