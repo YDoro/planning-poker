@@ -1,14 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { Footer } from './Footer';
 
-const mockHistoryPush = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
-}));
-
 describe('Footer component', () => {
   it('should render copyright', () => {
     render(<Footer />);

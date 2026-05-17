@@ -1,7 +1,8 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { TimerProgress } from './TimerProgressPopup';
+import { vi } from 'vitest';
 
-jest.mock('../../../../elements/CircularProgressBar', () => ({
+vi.mock('../../../../elements/CircularProgressBar', () => ({
   __esModule: true,
   default: ({ percentage, children }: any) => (
     <div data-testid='circular-progress-bar' data-percentage={percentage}>
@@ -17,20 +18,20 @@ describe('TimerProgress', () => {
     totalSeconds: 120,
     soundOn: true,
     timerPaused: false,
-    onTimerClose: jest.fn(),
-    onTimerStateUpdate: jest.fn(),
+    onTimerClose: vi.fn(),
+    onTimerStateUpdate: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.clearAllMocks();
+    vi.useFakeTimers();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
     act(() => {
-      jest.runOnlyPendingTimers();
+      vi.runOnlyPendingTimers();
     });
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('renders timer UI correctly for mod', () => {
@@ -78,7 +79,7 @@ describe('TimerProgress', () => {
     // Start timer
     fireEvent.click(screen.getByTitle('Start Timer'));
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
     expect(screen.getByTitle('Pause Timer')).toBeInTheDocument();
 
@@ -97,7 +98,7 @@ describe('TimerProgress', () => {
 
     fireEvent.click(screen.getByTitle('Start Timer'));
     act(() => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
 
     expect(baseProps.onTimerStateUpdate).toHaveBeenCalledWith(

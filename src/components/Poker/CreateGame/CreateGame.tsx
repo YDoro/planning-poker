@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { animals, colors, Config, starWars, uniqueNamesGenerator } from 'unique-names-generator';
 import { addNewGame } from '../../../service/games';
 import { GameType, NewGame } from '../../../types/game';
@@ -16,7 +16,7 @@ const userNameConfig: Config = {
 };
 
 export const CreateGame = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [gameName, setGameName] = useState(uniqueNamesGenerator(gameNameConfig));
   const [createdBy, setCreatedBy] = useState(
     localStorage.getItem('recentPlayerName') || uniqueNamesGenerator(userNameConfig),
@@ -55,7 +55,7 @@ export const CreateGame = () => {
       localStorage.setItem('recentPlayerName', createdBy);
       setLoading(false);
     }
-    history.push(`/game/${newGameId}`);
+    navigate(`/game/${newGameId}`);
   };
 
   const handleCustomOptionChange = (index: number, value: string) => {

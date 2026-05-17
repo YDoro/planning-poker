@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 import { Divider } from '../../components/Divider/Divider';
 import { Footer } from '../../components/Footer/Footer';
 import { GoogleAd } from '../../components/GoogleAd/GoogleAd';
@@ -59,7 +58,7 @@ const Column = ({ children, className = '', ...props }: ColumnProps) => (
 );
 
 const HeroSection = () => {
-  const isJoin = useRouteMatch('/join');
+  const isJoin = useMatch('/join');
   const { t } = useTranslation();
   return (
     <Section className='pt-8'>
@@ -68,7 +67,7 @@ const HeroSection = () => {
           {t('HomePage.heroSection.title')}
         </h1>
         <div className='p-4'>
-          <LazyLoadImage
+          <img
             loading='lazy'
             alt={t('HomePage.heroSection.title')}
             className='w-[500px] h-auto rounded-lg shadow-md'

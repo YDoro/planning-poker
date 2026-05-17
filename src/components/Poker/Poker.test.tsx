@@ -1,35 +1,40 @@
 import { render, screen } from '@testing-library/react';
-import reactRouter from 'react-router';
 import * as gamesService from '../../service/games';
 import * as playersService from '../../service/players';
 import { Game } from '../../types/game';
 import { Player } from '../../types/player';
 import { Status } from '../../types/status';
-import { Poker } from './Poker';
+import { Poker } from './Poker'
+import { vi } from 'vitest';
 
-jest.mock('../../service/players');
-// jest.mock('../../service/games');
-const mockHistoryPush = jest.fn();
-const mockUnblock = jest.fn();
-const mockHistory = {
-  push: mockHistoryPush,
-  goBack: jest.fn(),
-  block: () => mockUnblock,
-};
+vi.mock('../../service/players');
+// vi.mock('../../service/games');
+const mockNavigate = vi.fn();
+let blockCallback: ((params: { historyAction: string }) => boolean) | undefined;
+
+vi.mock('react-router-dom', () => ({
+  useParams: () => ({ id: 'zz' }),
+  useNavigate: () => mockNavigate,
+  useBlocker: (blocker: unknown) => {
+    blockCallback = blocker as (params: { historyAction: string }) => boolean;
+    return {} as any;
+  },
+}));
+
 describe('Poker component', () => {
   beforeEach(() => {
-    jest.spyOn(reactRouter, 'useParams').mockReturnValue({ Id: 'zz' } as any);
-    jest.spyOn(reactRouter, 'useHistory').mockReturnValue(mockHistory as any);
+    mockNavigate.mockClear();
+    blockCallback = undefined;
   });
   it('should display game not found', async () => {
-    jest.spyOn(gamesService, 'streamGame').mockImplementation(() => {
+    vi.spyOn(gamesService, 'streamGame').mockImplementation(() => {
       return {
-        onSnapshot: jest.fn((success) => success({ exists: false })),
+        onSnapshot: vi.fn((success) => success({ exists: false })),
       } as any;
     });
-    jest.spyOn(gamesService, 'streamPlayers').mockImplementation(() => {
+    vi.spyOn(gamesService, 'streamPlayers').mockImplementation(() => {
       return {
-        onSnapshot: jest.fn(() => Promise.resolve(true)),
+        onSnapshot: vi.fn(() => Promise.resolve(true)),
       } as any;
     });
     render(<Poker />);
@@ -55,18 +60,18 @@ describe('Poker component', () => {
         value: 0,
       },
     ] as Player[];
-    jest.spyOn(gamesService, 'streamGame').mockImplementation(() => {
+    vi.spyOn(gamesService, 'streamGame').mockImplementation(() => {
       return {
-        onSnapshot: jest.fn((success) => success({ exists: true, data: () => mockGame })),
+        onSnapshot: vi.fn((success) => success({ exists: true, data: () => mockGame })),
       } as any;
     });
-    jest.spyOn(gamesService, 'streamPlayers').mockImplementation(() => {
+    vi.spyOn(gamesService, 'streamPlayers').mockImplementation(() => {
       return {
-        onSnapshot: jest.fn((success) => success({ exists: true, forEach: () => mockPlayers })),
+        onSnapshot: vi.fn((success) => success({ exists: true, forEach: () => mockPlayers })),
       } as any;
     });
 
-    jest.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('xx');
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('xx');
     render(<Poker />);
 
     await screen.findByText(mockGame.name);
@@ -96,42 +101,29 @@ describe('Poker component', () => {
       },
     ] as Player[];
 
-    jest.spyOn(gamesService, 'streamGame').mockImplementation(() => {
+    vi.spyOn(gamesService, 'streamGame').mockImplementation(() => {
       return {
-        onSnapshot: jest.fn((success) => success({ exists: true, data: () => mockGame })),
+        onSnapshot: vi.fn((success) => success({ exists: true, data: () => mockGame })),
       } as any;
     });
 
-    jest.spyOn(gamesService, 'streamPlayers').mockImplementation(() => {
+    vi.spyOn(gamesService, 'streamPlayers').mockImplementation(() => {
       return {
-        onSnapshot: jest.fn((success) => success({ exists: true, forEach: () => mockPlayers })),
+        onSnapshot: vi.fn((success) => success({ exists: true, forEach: () => mockPlayers })),
       } as any;
     });
 
-    jest.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('xx');
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('xx');
 
     // Mock window.confirm
-    const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
-
-    // Mock history.block
-    let blockCallback: (location: any, action: string) => void;
-    const unblockMock = jest.fn();
-    const mockHistory = {
-      push: jest.fn(),
-      goBack: jest.fn(),
-      block: jest.fn((callback) => {
-        blockCallback = callback; // Capture the callback
-        return unblockMock;
-      }),
-    };
-    jest.spyOn(reactRouter, 'useHistory').mockReturnValue(mockHistory as any);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
     render(<Poker />);
 
     await screen.findByText(mockGame.name);
 
-    // Simulate back navigation by invoking the block callback
-    blockCallback!({}, 'POP'); // Simulate the 'POP' action (back navigation)
+    // Simulate back navigation by invoking the blocker callback
+    blockCallback?.({ historyAction: 'POP' });
 
     // Assert that the confirmation dialog was shown
     expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to go back?');

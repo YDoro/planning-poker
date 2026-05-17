@@ -1,5 +1,5 @@
 import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 import EnvironmentPlugin from 'vite-plugin-environment';
 
@@ -9,7 +9,15 @@ delete process.env['ProgramFiles(x86)'];
 export default defineConfig({
   base: '/',
   plugins: [react(), tailwindcss(), EnvironmentPlugin('all')],
+  server: {
+    host: true,
+  },
   build: {
     outDir: 'build',
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
   },
 });

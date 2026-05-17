@@ -1,6 +1,6 @@
 import { polyfillCountryFlagEmojis } from 'country-flag-emoji-polyfill';
 import { Suspense } from 'react';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { Loading } from './components/Loading/Loading';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { AboutPage } from './pages/AboutPage/AboutPage';
@@ -13,6 +13,26 @@ import JoinPage from './pages/JoinPage/JoinPage';
 
 polyfillCountryFlagEmojis();
 
+const router = createBrowserRouter([
+  {
+    element: (
+      <>
+        <Toolbar />
+        <Outlet />
+      </>
+    ),
+    children: [
+      { path: '/game/:id', element: <GamePage /> },
+      { path: '/delete-old-games', element: <DeleteOldGames /> },
+      { path: '/join/:id', element: <JoinPage /> },
+      { path: '/about-planning-poker', element: <AboutPage /> },
+      { path: '/examples', element: <ExamplesPage /> },
+      { path: '/guide', element: <GuidePage /> },
+      { path: '*', element: <HomePage /> },
+    ],
+  },
+]);
+
 function App() {
   return (
     <div className='bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen'>
@@ -23,18 +43,7 @@ function App() {
           </div>
         }
       >
-        <Router>
-          <Toolbar />
-          <Switch>
-            <Route path='/game/:id' component={GamePage} />
-            <Route path='/delete-old-games' component={DeleteOldGames} />
-            <Route path='/join/:id' component={JoinPage} />
-            <Route path='/about-planning-poker' component={AboutPage} />
-            <Route path='/examples' component={ExamplesPage} />
-            <Route path='/guide' component={GuidePage} />
-            <Route exact path='/*' component={HomePage} />
-          </Switch>
-        </Router>
+        <RouterProvider router={router} />
       </Suspense>
     </div>
   );
