@@ -26,7 +26,6 @@
       "vitest/globals",
       "jest"
     ],
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"

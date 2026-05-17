@@ -103,10 +103,13 @@ const DraggableTaskItem: React.FC<DraggableTaskItemProps> = ({
   });
 
   drag(drop(ref));
+  const setPreviewRef = useCallback((node: HTMLDivElement | null) => {
+    preview(node);
+  }, [preview]);
 
   return (
     <div
-      ref={isModerator ? preview : null}
+      ref={setPreviewRef}
       style={{ opacity: isDragging ? 0.4 : 1 }}
       className={`flex flex-col p-3 rounded-lg border text-sm transition-colors ${isCurrent ? 'bg-primary/10 border-primary' : 'bg-background hover:bg-secondary/50'
         }`}

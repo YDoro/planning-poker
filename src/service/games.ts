@@ -12,7 +12,7 @@ import {
 } from '../repository/firebase';
 import { NewGame } from '../types/game';
 import { Player } from '../types/player';
-import { Task } from '../types/task';
+import { Task, TaskStatus } from '../types/task';
 import { Status } from '../types/status';
 import { removeGameFromCache, resetPlayers, updatePlayerGames } from './players';
 
@@ -193,7 +193,7 @@ export const nextTask = async (gameId: string, score?: string, skipped?: boolean
     const currentTaskIndex = game.tasks.findIndex(t => t.id === game.currentTaskId);
     if (currentTaskIndex !== -1) {
       const tasks = [...game.tasks];
-      const newStatus = skipped ? 'skipped' : 'voted';
+      const newStatus: TaskStatus = skipped ? 'skipped' : 'voted';
       const updatedTask = { ...tasks[currentTaskIndex], status: newStatus };
       if (score !== undefined) {
         updatedTask.score = score;
