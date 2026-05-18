@@ -66,7 +66,7 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
     }
 
     return (
-        <div className={`flex flex-col md:flex-row gap-4 w-full justify-between max-w-7xl max-h-[50dvh] rounded-md aspect-9/16 md:aspect-video self-center items-center bg-popover ${className}`} {...props}>
+        <div className={`flex flex-col bg-background md:flex-row gap-4 w-full justify-between max-w-7xl md:max-h-[50dvh] rounded-md aspect-9/16 md:aspect-video self-center items-center md:bg-popover ${className}`} {...props}>
             <div className="w-full flex justify-center">
                 <StoryCard
                     key={story.cod}

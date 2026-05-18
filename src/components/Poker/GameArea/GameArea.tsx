@@ -37,8 +37,8 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
         }}
         onTimerUpdate={handleTimerUpdate}
       />
-      <div className='flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden'>
-        <div className='flex-1 flex flex-col overflow-auto p-0.5 justify-center relative pb-32'>
+      <div className='flex flex-col md:flex-row h-[calc(100vh-64px)] p-4 overflow-hidden'>
+        <div className='flex-1 flex flex-col overflow-auto p-0.5 justify-start md:justify-center relative pb-32'>
           <Players game={game} players={players} currentPlayerId={currentPlayerId} />
           <GameBoard
             className='mt-6'

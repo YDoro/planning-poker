@@ -243,12 +243,12 @@ export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth
   };
 
   return (
-    <Card className={`flex flex-col h-full p-4 gap-4 bg-card/50 overflow-hidden ${fullWidth ? 'w-full' : 'w-full md:w-80'}`}>
+    <Card className={`flex flex-col h-full p-4 gap-4 bg-card overflow-hidden ${fullWidth ? 'w-full' : 'w-full md:w-80'}`}>
       <div className="flex justify-between items-center">
         <h3 className="font-semibold text-lg">{t('GameController.tasks.title', 'Tasks')}</h3>
         {isModerator && (
           <Button variant="ghost" size="icon" onClick={() => setIsAdding(true)} title={t('GameController.tasks.add', 'Add Task')}>
-            <Plus size={20} />
+            <Plus size={20} className='size-7 md:size-5' />
           </Button>
         )}
       </div>
@@ -264,7 +264,7 @@ export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth
               placeholder={t('GameController.tasks.newTaskPlaceholder', 'Task title...')}
               className="text-sm h-8"
             />
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600" onClick={handleAddTask}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-green-700" onClick={handleAddTask}>
               <Check size={16} />
             </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setIsAdding(false)}>
