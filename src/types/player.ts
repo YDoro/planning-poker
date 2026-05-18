@@ -5,6 +5,7 @@ export interface Player {
   id: string;
   status: Status;
   value?: number;
+  isNonVoter?: boolean;
   emoji?: string;
 }
 

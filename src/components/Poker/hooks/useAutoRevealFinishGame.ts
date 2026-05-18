@@ -16,7 +16,7 @@ export const useAutoRevealFinishGame = ({ game, players }: UseAutoRevealFinishGa
       game.gameStatus === Status.InProgress &&
       Array.isArray(players) &&
       players.length > 0 &&
-      players.every((p: Player) => p.status === Status.Finished)
+      players.every((p: Player) => p.status === Status.Finished || p.isNonVoter)
     ) {
       finishGame(game.id)
     }

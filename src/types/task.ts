@@ -7,4 +7,5 @@ export interface Task {
   score?: string;
   taskCode?: string;
   status: TaskStatus;
+  revealed?: boolean;
 }

@@ -6,7 +6,6 @@ import {
   finishGame,
   getGame,
   getGameStatus,
-  resetGame,
   streamGame,
   streamPlayers,
   updateGame,
@@ -135,32 +134,6 @@ describe('games service', () => {
     expect(spy).toHaveBeenCalledWith(mockId, 'banana');
   });
 
-  describe('reset the game', () => {
-    it('should update the game and reset the players', async () => {
-      const expectGame = { average: 0, gameStatus: Status.Started, storyName: '' };
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
-      const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
-      const playerSpy = vi.spyOn(players, 'resetPlayers');
-
-      await resetGame(mockId);
-
-      expect(updateSpy).toHaveBeenCalledWith(mockId, expectGame);
-      expect(playerSpy).toHaveBeenCalledWith(mockId);
-    });
-
-    it("should not touch the DB if the game doesn't exist", async () => {
-      vi.resetAllMocks();
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(undefined);
-      const updateSpy = vi.spyOn(fb, 'updateGameDataInStore');
-      const playerSpy = vi.spyOn(players, 'resetPlayers');
-
-      await resetGame(mockId);
-
-      expect(updateSpy).toHaveBeenCalledTimes(0);
-      expect(playerSpy).toHaveBeenCalledTimes(0);
-    });
-  });
-
   describe('finish the game', () => {
     it('update the game with the average and finished status', async () => {
       vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
@@ -253,8 +226,8 @@ describe('games service', () => {
 
       await addTask(mockId, { title: 'New Task', description: '', status: 'pending' });
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
-         tasks: [{ id: mockUlid, title: 'New Task', description: '', status: 'voting' }],
-         currentTaskId: mockUlid
+        tasks: [{ id: mockUlid, title: 'New Task', description: '', status: 'voting' }],
+        currentTaskId: mockUlid
       }));
     });
 
@@ -265,7 +238,7 @@ describe('games service', () => {
 
       await editTask(mockId, 'task1', { title: 'New' });
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
-         tasks: [{ id: 'task1', title: 'New', description: '', status: 'pending' }]
+        tasks: [{ id: 'task1', title: 'New', description: '', status: 'pending' }]
       }));
     });
 
@@ -276,10 +249,10 @@ describe('games service', () => {
 
       await deleteTask(mockId, 'task1');
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
-         tasks: []
+        tasks: []
       }));
     });
-    
+
     it('should change current task', async () => {
       vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ ...mockGame, tasks: [{ id: 'task1', title: 'Task 1', description: '', status: 'pending' }] });
       const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
@@ -287,55 +260,55 @@ describe('games service', () => {
 
       await changeCurrentTask(mockId, 'task1');
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
-         currentTaskId: 'task1',
-         tasks: [{ id: 'task1', title: 'Task 1', description: '', status: 'voting' }],
-         gameStatus: Status.Started
+        currentTaskId: 'task1',
+        tasks: [{ id: 'task1', title: 'Task 1', description: '', status: 'voting' }],
+        gameStatus: Status.Started
       }));
     });
 
     it('should go to next task', async () => {
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ 
-         ...mockGame, 
-         currentTaskId: 'task1',
-         tasks: [
-            { id: 'task1', title: 'Task 1', description: '', status: 'voting' },
-            { id: 'task2', title: 'Task 2', description: '', status: 'pending' }
-         ] 
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        currentTaskId: 'task1',
+        tasks: [
+          { id: 'task1', title: 'Task 1', description: '', status: 'voting' },
+          { id: 'task2', title: 'Task 2', description: '', status: 'pending' }
+        ]
       });
       const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
       const { nextTask } = await import('./games');
 
       await nextTask(mockId, '5');
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
-         currentTaskId: 'task2',
-         tasks: [
-            { id: 'task1', title: 'Task 1', description: '', status: 'voted', score: '5' },
-            { id: 'task2', title: 'Task 2', description: '', status: 'voting' }
-         ],
-         gameStatus: Status.Started
+        currentTaskId: 'task2',
+        tasks: [
+          { id: 'task1', title: 'Task 1', description: '', status: 'voted', score: '5' },
+          { id: 'task2', title: 'Task 2', description: '', status: 'voting' }
+        ],
+        gameStatus: Status.Started
       }));
     });
 
     it('should skip task', async () => {
-      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({ 
-         ...mockGame, 
-         currentTaskId: 'task1',
-         tasks: [
-            { id: 'task1', title: 'Task 1', description: '', status: 'voting' },
-            { id: 'task2', title: 'Task 2', description: '', status: 'pending' }
-         ] 
+      vi.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce({
+        ...mockGame,
+        currentTaskId: 'task1',
+        tasks: [
+          { id: 'task1', title: 'Task 1', description: '', status: 'voting' },
+          { id: 'task2', title: 'Task 2', description: '', status: 'pending' }
+        ]
       });
       const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
       const { nextTask } = await import('./games');
 
       await nextTask(mockId, undefined, true);
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
-         currentTaskId: 'task2',
-         tasks: [
-            { id: 'task1', title: 'Task 1', description: '', status: 'skipped' },
-            { id: 'task2', title: 'Task 2', description: '', status: 'voting' }
-         ],
-         gameStatus: Status.Started
+        currentTaskId: 'task2',
+        tasks: [
+          { id: 'task1', title: 'Task 1', description: '', status: 'skipped' },
+          { id: 'task2', title: 'Task 2', description: '', status: 'voting' }
+        ],
+        gameStatus: Status.Started
       }));
     });
   });

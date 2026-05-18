@@ -59,18 +59,6 @@ export const updateGame = async (gameId: string, updatedGame: any): Promise<bool
   return true;
 };
 
-export const resetGame = async (gameId: string) => {
-  const game = await getGameFromStore(gameId);
-  if (game) {
-    const updatedGame = {
-      average: 0,
-      gameStatus: Status.Started,
-      storyName: '',
-    };
-    await updateGame(gameId, updatedGame);
-    await resetPlayers(gameId);
-  }
-};
 
 export const finishGame = async (gameId: string) => {
   const game = await getGameFromStore(gameId);
@@ -142,7 +130,7 @@ export const addTask = async (gameId: string, task: Omit<Task, 'id'>) => {
   if (game) {
     const newTask: Task = { ...task, id: ulid() };
     const tasks = game.tasks || [];
-    
+
     // If it's the first task, set it as current
     const isFirstTask = tasks.length === 0;
     const currentTaskId = isFirstTask ? newTask.id : game.currentTaskId;
@@ -178,7 +166,7 @@ export const changeCurrentTask = async (gameId: string, taskId: string) => {
   if (game && game.tasks) {
     const tasks = game.tasks.map((t) => {
       if (t.id === taskId && t.status === 'pending') {
-         return { ...t, status: 'voting' };
+        return { ...t, status: 'voting' };
       }
       return t;
     });
@@ -186,6 +174,8 @@ export const changeCurrentTask = async (gameId: string, taskId: string) => {
     await resetPlayers(gameId);
   }
 };
+
+
 
 export const nextTask = async (gameId: string, score?: string, skipped?: boolean) => {
   const game = await getGameFromStore(gameId);
@@ -199,10 +189,10 @@ export const nextTask = async (gameId: string, score?: string, skipped?: boolean
         updatedTask.score = score;
       }
       tasks[currentTaskIndex] = updatedTask;
-      
+
       const nextPendingTask = tasks.find((t, idx) => idx > currentTaskIndex && (t.status === 'pending' || t.status === 'skipped'));
       let newCurrentTaskId = game.currentTaskId;
-      
+
       if (nextPendingTask) {
         newCurrentTaskId = nextPendingTask.id;
         const nextIndex = tasks.findIndex(t => t.id === newCurrentTaskId);

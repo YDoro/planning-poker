@@ -4,12 +4,12 @@ import { Game } from '../../../types/game';
 import { Player } from '../../../types/player';
 import { Status } from '../../../types/status';
 import { isModerator } from '../../../utils/isModerator';
-import { TrashSVG } from '../../SVGs/Trash';
 import { getCards } from '../CardPicker/CardConfigs';
 import { Card } from '../../ui/card';
 import { Text, MarqueeText } from '../../Typography';
-import { Cross, Trash2, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '../../ui/button';
+import { getCurrentTask } from '@/src/service/tasks';
 
 interface PlayerCardProps {
   game: Game;
@@ -70,21 +70,22 @@ const getCardColor = (game: Game, value: number | undefined): string => {
   return '';
 };
 
-const getCardValue = (player: Player, game: Game) => {
-  if (game.gameStatus !== Status.Finished) {
-    return player.status === Status.Finished ? '👍' : '🤔';
+const getCardValue = async (player: Player, game: Game) => {
+  const currentTask = await getCurrentTask(game.id);
+
+  if (currentTask?.status === 'voted' && currentTask?.revealed) {
+    return getCardDisplayValue(game, player.value);
   }
 
-  if (game.gameStatus === Status.Finished) {
-    if (player.status === Status.Finished) {
-      if (player.value && player.value === -1) {
-        return player.emoji || '☕'; // coffee emoji
-      }
-      return getCardDisplayValue(game, player.value);
-    }
-    return '🤔';
-  }
-  return '';
+  return '🤔';
+
+  // if (player.status === Status.Finished) {
+  //   if (player.value && player.value === -1) {
+  //     return player.emoji || '☕'; // coffee emoji
+  //   }
+  //   return getCardDisplayValue(game, player.value);
+  // }
+
 };
 
 const getCardDisplayValue = (game: Game, cardValue: number | undefined): string => {

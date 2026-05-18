@@ -1,6 +1,6 @@
 import { Game, TimerProps } from '@/src/types/game'
 import { Timer } from './Timer/TimerInput/Timer'
-import { finishGame, removeGame, updateGame } from '@/src/service/games'
+import { removeGame, updateGame } from '@/src/service/games'
 import { useCallback, useState } from 'react'
 import { ControllerButton } from './ControllerButton'
 import { Eye, Trash2, SkipForward, CheckCheck } from 'lucide-react'
@@ -19,6 +19,7 @@ import {
 } from '../../ui/alert-dialog'
 import { AutoReveal } from './AutoReveal'
 import { toast } from 'sonner'
+import { revealCurrentTaskCards } from '@/src/service/tasks'
 
 export type ControlDockProps = {
   game: Game
@@ -102,7 +103,7 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
         onAutoReveal={(value) => handleAutoReveal(value)}
       />
       <ControllerButton
-        onClick={() => finishGame(game.id)}
+        onClick={() => revealCurrentTaskCards(game.id)}
         icon={<Eye />}
         label={t('GameController.reveal')}
         className='text-green-700'

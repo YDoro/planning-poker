@@ -9,6 +9,7 @@ export interface TimerProps {
   timerVisible?: boolean;
   timerPaused?: boolean;
 }
+
 export interface Game {
   id: string;
   name: string;

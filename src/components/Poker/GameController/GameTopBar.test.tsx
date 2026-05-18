@@ -148,17 +148,6 @@ describe('GameTopBar component', () => {
       await userEvent.click(screen.getByTestId('reveal-button'))
       expect(gamesService.finishGame).toHaveBeenCalled()
     })
-    it('should restart game when player click on Restart button', async () => {
-      render(
-        <GameTopBar
-          game={mockGame}
-          currentPlayerId={mockCurrentPlayerId}
-          players={mockPlayers}
-        />,
-      )
-      await userEvent.click(screen.getByTestId('restart-button'))
-      expect(gamesService.resetGame).toHaveBeenCalled()
-    })
     it('should call finish game when auto reveal is true and all players has voted', () => {
       const mockPlayersWithVotes: Player[] = [
         { id: 'abc', name: 'Player1', value: 2, emoji: '😀', status: Status.Finished },
@@ -182,20 +171,20 @@ describe('GameTopBar component', () => {
   describe('AutoReveal', () => {
     it('renders the auto reveal switch', () => {
       const { getByRole, getByText } = render(
-        <AutoReveal autoReveal={true} onAutoReveal={() => {}} />,
+        <AutoReveal autoReveal={true} onAutoReveal={() => { }} />,
       )
       expect(getByText(/auto reveal/i)).toBeInTheDocument()
       expect(getByRole('switch')).toBeInTheDocument()
     })
 
     it('shows OFF when switch is off and ON when switch is on', () => {
-      const { getByRole } = render(<AutoReveal autoReveal={false} onAutoReveal={() => {}} />)
+      const { getByRole } = render(<AutoReveal autoReveal={false} onAutoReveal={() => { }} />)
       const switchBtn = getByRole('switch')
       expect(switchBtn).toHaveAttribute('aria-checked', 'false')
     })
 
     it('shows ON when switch is on', () => {
-      const { getByRole } = render(<AutoReveal autoReveal={true} onAutoReveal={() => {}} />)
+      const { getByRole } = render(<AutoReveal autoReveal={true} onAutoReveal={() => { }} />)
       const switchBtn = getByRole('switch')
       expect(switchBtn).toHaveAttribute('aria-checked', 'true')
     })
