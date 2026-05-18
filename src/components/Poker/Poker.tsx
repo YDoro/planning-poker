@@ -9,6 +9,7 @@ import { Game } from '../../types/game';
 import { Player } from '../../types/player';
 import { Loading } from '../Loading/Loading';
 import { GameArea } from './GameArea/GameArea';
+import { TasksProvider } from '../../context/TasksContext';
 
 export const Poker = () => {
   const { t } = useTranslation();
@@ -87,7 +88,9 @@ export const Poker = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       {game && players && currentPlayerId ? (
-        <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
+        <TasksProvider game={game}>
+          <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
+        </TasksProvider>
       ) : (
         <p>{t('Poker.gameNotFound')}</p>
       )}

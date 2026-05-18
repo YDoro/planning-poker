@@ -52,3 +52,31 @@ if (typeof window !== 'undefined') {
   HTMLElement.prototype.releasePointerCapture = vi.fn();
   HTMLElement.prototype.scrollIntoView = vi.fn();
 }
+
+vi.mock('@/src/context/TasksContext', () => ({
+  useTasks: () => ({
+    currentTask: undefined,
+    revealCurrentTask: vi.fn(),
+    setTaskVoted: vi.fn(),
+  }),
+  TasksProvider: ({ children }: any) => children,
+}));
+
+vi.mock('../../context/TasksContext', () => ({
+  useTasks: () => ({
+    currentTask: undefined,
+    revealCurrentTask: vi.fn(),
+    setTaskVoted: vi.fn(),
+  }),
+  TasksProvider: ({ children }: any) => children,
+}));
+
+vi.mock('../../../context/TasksContext', () => ({
+  useTasks: () => ({
+    currentTask: undefined,
+    revealCurrentTask: vi.fn(),
+    setTaskVoted: vi.fn(),
+  }),
+  TasksProvider: ({ children }: any) => children,
+}));
+

@@ -7,7 +7,7 @@ import { Status } from '../../../types/status';
 import { CardConfig, getCards, getRandomEmoji } from './CardConfigs';
 import { HorizontalScroll } from '../../ui/horizontal-scroll';
 import { PokerCard } from './PokerCard';
-import { getCurrentTask, setTaskVoted } from '@/src/service/tasks';
+import { useTasks } from '../../../context/TasksContext';
 
 interface CardPickerProps {
   game: Game;
@@ -18,13 +18,12 @@ interface CardPickerProps {
 export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPlayerId }) => {
   const { t } = useTranslation();
   const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
+  const { currentTask, setTaskVoted } = useTasks();
 
   const playPlayer = async (gameId: string, playerId: string, card: CardConfig) => {
-    const currentTask = await getCurrentTask(gameId);
-
     if (game.gameStatus !== Status.Finished && currentTask?.status === 'voting') {
       await updatePlayerValue(gameId, playerId, card.value, randomEmoji);
-      await setTaskVoted(gameId);
+      await setTaskVoted();
     }
   };
 
@@ -64,3 +63,4 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
     </div>
   );
 };
+

@@ -9,7 +9,8 @@ import { Card } from '../../ui/card';
 import { Text, MarqueeText } from '../../Typography';
 import { X } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { getCurrentTask } from '@/src/service/tasks';
+import { useTasks } from '../../../context/TasksContext';
+import { Task } from '../../../types/task';
 
 interface PlayerCardProps {
   game: Game;
@@ -18,12 +19,13 @@ interface PlayerCardProps {
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPlayerId }) => {
+  const { currentTask } = useTasks();
+
   const removeUser = (gameId: string, playerId: string) => {
     removePlayer(gameId, playerId);
   };
 
   return (
-
     <div className='w-25 flex flex-col items-center justify-around relative group'>
       <div className='flex w-full'>
         <MarqueeText className='text-center w-full font-semibold text-sm py-2' title={player.name}>
@@ -53,7 +55,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
         >
           <div className='flex items-center justify-center m-auto'>
             <Text className='text-5xl font-semibold'>
-              {getCardValue(player, game)}
+              {getCardValue(player, game, currentTask)}
             </Text>
           </div>
         </Card>
@@ -70,22 +72,24 @@ const getCardColor = (game: Game, value: number | undefined): string => {
   return '';
 };
 
-const getCardValue = async (player: Player, game: Game) => {
-  const currentTask = await getCurrentTask(game.id);
+const getCardValue = (player: Player, game: Game, currentTask: Task | undefined) => {
+  const isRevealed = !!currentTask?.revealed || game.gameStatus === Status.Finished;
 
-  if (currentTask?.status === 'voted' && currentTask?.revealed) {
-    return getCardDisplayValue(game, player.value);
+  if (isRevealed) {
+    if (player.status === Status.Finished) {
+      if (player.value && player.value === -1) {
+        return player.emoji || '☕'; // coffee emoji
+      }
+      return getCardDisplayValue(game, player.value);
+    }
+    return '🤔';
+  }
+
+  if (player.status === Status.Finished) {
+    return '👍';
   }
 
   return '🤔';
-
-  // if (player.status === Status.Finished) {
-  //   if (player.value && player.value === -1) {
-  //     return player.emoji || '☕'; // coffee emoji
-  //   }
-  //   return getCardDisplayValue(game, player.value);
-  // }
-
 };
 
 const getCardDisplayValue = (game: Game, cardValue: number | undefined): string => {
@@ -94,3 +98,4 @@ const getCardDisplayValue = (game: Game, cardValue: number | undefined): string 
     cards.find((card) => card.value === cardValue)?.displayValue || cardValue?.toString() || ''
   );
 };
+

@@ -19,7 +19,7 @@ import {
 } from '../../ui/alert-dialog'
 import { AutoReveal } from './AutoReveal'
 import { toast } from 'sonner'
-import { revealCurrentTaskCards } from '@/src/service/tasks'
+import { useTasks } from '@/src/context/TasksContext'
 
 export type ControlDockProps = {
   game: Game
@@ -30,6 +30,7 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
   const { t } = useTranslation()
   const [showSkipPrompt, setShowSkipPrompt] = useState(false)
   const [showFinishPrompt, setShowFinishPrompt] = useState(false)
+  const { revealCurrentTask } = useTasks()
 
   const tasks = game.tasks || []
   const currentTaskIndex = tasks.findIndex(t => t.id === game.currentTaskId)
@@ -103,7 +104,7 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
         onAutoReveal={(value) => handleAutoReveal(value)}
       />
       <ControllerButton
-        onClick={() => revealCurrentTaskCards(game.id)}
+        onClick={revealCurrentTask}
         icon={<Eye />}
         label={t('GameController.reveal')}
         className='text-green-700'
