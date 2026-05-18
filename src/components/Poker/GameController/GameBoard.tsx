@@ -7,6 +7,7 @@ import { TaskList } from "./TaskList";
 import { updateStoryName, editTask, addTask } from '../../../service/games';
 import { useTranslation } from 'react-i18next';
 import { CheckCheck } from 'lucide-react';
+import { Status } from "@/src/types/status";
 
 type GameBoardProps = FC<{
     game: Game;
@@ -18,7 +19,7 @@ type GameBoardProps = FC<{
 const isPlanningFinished = (game: Game): boolean => {
     const tasks = game.tasks;
     if (!tasks || tasks.length === 0) return false;
-    return tasks.every(t => t.status === 'voted' || t.status === 'skipped');
+    return tasks.every(t => t.status === 'voted' || t.status === 'skipped') && game.gameStatus === Status.Finished;
 };
 
 export const GameBoard: GameBoardProps = ({ className, game, players, isModerator, ...props }) => {

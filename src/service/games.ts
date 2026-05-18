@@ -175,36 +175,6 @@ export const changeCurrentTask = async (gameId: string, taskId: string) => {
   }
 };
 
-
-
-export const nextTask = async (gameId: string, score?: string, skipped?: boolean) => {
-  const game = await getGameFromStore(gameId);
-  if (game && game.tasks && game.currentTaskId) {
-    const currentTaskIndex = game.tasks.findIndex(t => t.id === game.currentTaskId);
-    if (currentTaskIndex !== -1) {
-      const tasks = [...game.tasks];
-      const newStatus: TaskStatus = skipped ? 'skipped' : 'voted';
-      const updatedTask = { ...tasks[currentTaskIndex], status: newStatus };
-      if (score !== undefined) {
-        updatedTask.score = score;
-      }
-      tasks[currentTaskIndex] = updatedTask;
-
-      const nextPendingTask = tasks.find((t, idx) => idx > currentTaskIndex && (t.status === 'pending' || t.status === 'skipped'));
-      let newCurrentTaskId = game.currentTaskId;
-
-      if (nextPendingTask) {
-        newCurrentTaskId = nextPendingTask.id;
-        const nextIndex = tasks.findIndex(t => t.id === newCurrentTaskId);
-        tasks[nextIndex] = { ...tasks[nextIndex], status: 'voting' };
-      }
-
-      await updateGame(gameId, { tasks, currentTaskId: newCurrentTaskId, gameStatus: Status.Started });
-      await resetPlayers(gameId);
-    }
-  }
-};
-
 export const updateTasksOrder = async (gameId: string, orderedTasks: Task[]) => {
   await updateGame(gameId, { tasks: orderedTasks });
 };

@@ -5,7 +5,6 @@ import { useCallback, useState } from 'react'
 import { ControllerButton } from './ControllerButton'
 import { Eye, Trash2, SkipForward, CheckCheck } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { nextTask } from '@/src/service/games'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +19,7 @@ import {
 import { AutoReveal } from './AutoReveal'
 import { toast } from 'sonner'
 import { useTasks } from '@/src/context/TasksContext'
+import { nextTask } from '@/src/service/tasks'
 
 export type ControlDockProps = {
   game: Game
@@ -49,6 +49,7 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
       }
       return
     }
+
     if (currentTask && !currentTask.score) {
       setShowSkipPrompt(true)
     } else {

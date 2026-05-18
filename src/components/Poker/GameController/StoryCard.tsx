@@ -9,6 +9,7 @@ import { Plus, Pencil, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { computeStoryVoteStatistics } from '@/src/domain/game/storyVoteStatistics'
 import { editTask } from '../../../service/games'
+import { useTasks } from '@/src/context/TasksContext'
 
 type StoryCardProps = HTMLAttributes<HTMLDivElement> & {
   story: Story
@@ -30,6 +31,7 @@ export const StoryCard = ({
 }: StoryCardProps) => {
   const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
+  const { currentTask } = useTasks()
 
   const toggleEdit = () => setIsEditing(!isEditing)
 
@@ -39,7 +41,7 @@ export const StoryCard = ({
     }
   }, [story.title, isModerator])
 
-  const isFinished = game?.gameStatus === Status.Finished
+  const isFinished = currentTask?.status === 'voted' && currentTask.revealed
 
   const stats = useMemo(() => {
     if (!isFinished || !game || !players) return null
