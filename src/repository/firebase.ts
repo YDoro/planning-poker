@@ -18,7 +18,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const gamesCollectionName = 'games';
 const playersCollectionName = 'players';
-const db = firebase.firestore();
+export const db = firebase.firestore();
 db.settings({ experimentalAutoDetectLongPolling: true });
 // Use Firestore Emulator if the environment variable is set
 if (process.env.VITE_USE_FIRESTORE_EMULATOR === 'true') {

@@ -1,13 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { Task } from '../../../types/task';
-import { Game } from '../../../types/game';
+import { Task } from '../../../core/domain/entities/Task';
+import { Game } from '../../../core/domain/entities/Game';
 import { Card } from '../../ui/card';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { Plus, Trash2, Pencil, Check, X, Play, GripVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { addTask, deleteTask, editTask, changeCurrentTask, updateTasksOrder } from '../../../service/games';
+import { useGameStore } from '../../../presentation/stores/useGameStore';
 
 interface TaskListProps {
   game: Game;
@@ -52,6 +52,8 @@ const DraggableTaskItem: React.FC<DraggableTaskItemProps> = ({
 }) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
+  const changeCurrentTaskStore = useGameStore((state) => state.changeCurrentTask);
+  const deleteTaskStore = useGameStore((state) => state.deleteTask);
 
   const [{ handlerId }, drop] = useDrop({
     accept: ItemTypes.TASK,
@@ -162,7 +164,7 @@ const DraggableTaskItem: React.FC<DraggableTaskItemProps> = ({
                   size="icon"
                   className="h-6 w-6"
                   title={t('GameController.tasks.play', 'Vote on this task')}
-                  onClick={() => changeCurrentTask(gameId, task.id)}
+                  onClick={() => changeCurrentTaskStore(gameId, task.id)}
                 >
                   <Play size={14} />
                 </Button>
@@ -182,7 +184,7 @@ const DraggableTaskItem: React.FC<DraggableTaskItemProps> = ({
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6 text-destructive"
-                onClick={() => deleteTask(gameId, task.id)}
+                onClick={() => deleteTaskStore(gameId, task.id)}
               >
                 <Trash2 size={14} />
               </Button>
@@ -196,6 +198,10 @@ const DraggableTaskItem: React.FC<DraggableTaskItemProps> = ({
 
 export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth = false }) => {
   const { t } = useTranslation();
+  const addTaskStore = useGameStore((state) => state.addTask);
+  const editTaskStore = useGameStore((state) => state.editTask);
+  const reorderTasksStore = useGameStore((state) => state.reorderTasks);
+
   const tasks = game.tasks || [];
   const [isAdding, setIsAdding] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -210,7 +216,7 @@ export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth
 
   const handleAddTask = async () => {
     if (newTaskTitle.trim()) {
-      await addTask(game.id, { title: newTaskTitle, description: '', status: 'pending' });
+      await addTaskStore(game.id, { title: newTaskTitle, description: '' });
       setNewTaskTitle('');
       setIsAdding(false);
     }
@@ -218,7 +224,7 @@ export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth
 
   const handleEditTask = async (id: string) => {
     if (editTitle.trim()) {
-      await editTask(game.id, id, { title: editTitle });
+      await editTaskStore(game.id, id, { title: editTitle });
       setEditingId(null);
     }
   };
@@ -239,7 +245,7 @@ export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth
   }, []);
 
   const handleDrop = async () => {
-    await updateTasksOrder(game.id, localTasks);
+    await reorderTasksStore(game.id, localTasks);
   };
 
   return (

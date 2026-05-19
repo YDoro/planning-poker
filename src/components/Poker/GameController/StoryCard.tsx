@@ -1,15 +1,13 @@
 import { Story } from './types/story'
-import { Game } from '../../../types/game'
-import { Player } from '../../../types/player'
-import { Status } from '../../../types/status'
+import { Game } from '../../../core/domain/entities/Game'
+import { Player } from '../../../core/domain/entities/Player'
 import { HTMLAttributes, useState, useEffect, useMemo } from 'react'
 import { Card } from '../../ui/card'
 import { H2 } from '../../Typography'
 import { Plus, Pencil, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { computeStoryVoteStatistics } from '@/src/domain/game/storyVoteStatistics'
-import { editTask } from '../../../service/games'
-import { useTasks } from '@/src/context/TasksContext'
+import { useGameStore } from '../../../presentation/stores/useGameStore'
 
 type StoryCardProps = HTMLAttributes<HTMLDivElement> & {
   story: Story
@@ -31,7 +29,10 @@ export const StoryCard = ({
 }: StoryCardProps) => {
   const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
-  const { currentTask } = useTasks()
+  const storeGame = useGameStore((state) => state.game)
+  const activeGame = game || storeGame
+  const currentTask = activeGame?.tasks?.find((t) => t.id === activeGame?.currentTaskId)
+  const editTaskAction = useGameStore((state) => state.editTask)
 
   const toggleEdit = () => setIsEditing(!isEditing)
 
@@ -138,7 +139,7 @@ export const StoryCard = ({
                 defaultValue={story.points || stats.closestFormatted}
                 onBlur={(e) => {
                   if (game && story.cod && story.cod !== 'active') {
-                    editTask(game.id, story.cod, { score: e.target.value });
+                    editTaskAction(game.id, story.cod, { score: e.target.value });
                   }
                 }}
                 onKeyDown={(e) => {

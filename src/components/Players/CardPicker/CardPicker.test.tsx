@@ -2,43 +2,54 @@
 /* eslint-disable testing-library/no-container */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as playersService from '../../../service/players';
-import { Game, GameType } from '../../../types/game';
-import { Player } from '../../../types/player';
-import { Status } from '../../../types/status';
+import { Game } from '../../../core/domain/entities/Game';
+import { Player } from '../../../core/domain/entities/Player';
+import { Task } from '../../../core/domain/entities/Task';
+import { GameType } from '../../../types/game';
 import * as cardConfigs from './CardConfigs';
 import { getCards } from './CardConfigs';
-import { CardPicker } from './CardPicker'
+import { CardPicker } from './CardPicker';
 import { vi } from 'vitest';
 
-vi.mock('../../../service/players');
 describe('CardPicker component', () => {
-  const mockGame: Game = {
-    id: 'xyz',
-    name: 'testGame',
-    createdBy: 'someone',
-    createdAt: new Date(),
-    cards: [
+  beforeEach(() => {
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) {
+      mockStore.voteOnTask.mockClear();
+    }
+  });
+
+  const createMockGame = () => {
+    const game = new Game('xyz', 'testGame', false);
+    game.createdById = 'abc';
+    game.cards = [
       { value: 1, displayValue: '1', color: 'red' },
       { value: 2, displayValue: '2', color: 'blue' },
       { value: 3, displayValue: 'xl', color: 'green' },
-    ],
-    gameType: GameType.Fibonacci,
-    average: 0,
-    createdById: 'abc',
-    gameStatus: Status.InProgress,
+    ];
+    game.gameType = GameType.Fibonacci;
+    const task = new Task('task-1', 'Story 1', '', 'voting');
+    game.tasks = [task];
+    game.currentTaskId = 'task-1';
+    return game;
   };
-  const mockPlayers: Player[] = [
-    { id: 'a1', name: 'SpiderMan', status: Status.InProgress, value: 0 },
-    { id: 'a2', name: 'IronMan', status: Status.Finished, value: 3 },
-  ];
-  const currentPlayerId = mockPlayers[0].id;
+
+  const createMockPlayers = () => {
+    const p1 = new Player('a1', 'SpiderMan');
+    p1.value = 0;
+    const p2 = new Player('a2', 'IronMan');
+    p2.value = 3;
+    return [p1, p2];
+  };
+
   it('should display correct card values', () => {
+    const game = createMockGame();
+    game.cards = getCards(GameType.Fibonacci);
     const view = render(
       <CardPicker
-        game={{ ...mockGame, cards: getCards(GameType.Fibonacci) }}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
+        game={game}
+        players={createMockPlayers()}
+        currentPlayerId="a1"
       />,
     );
 
@@ -51,16 +62,16 @@ describe('CardPicker component', () => {
         expect(cardValueElement.length).toBeGreaterThan(0);
       });
   });
+
   it('should display correct card values for ShortFibonacci game type', () => {
+    const game = createMockGame();
+    game.cards = getCards(GameType.ShortFibonacci);
+    game.gameType = GameType.ShortFibonacci;
     const view = render(
       <CardPicker
-        game={{
-          ...mockGame,
-          cards: getCards(GameType.ShortFibonacci),
-          gameType: GameType.ShortFibonacci,
-        }}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
+        game={game}
+        players={createMockPlayers()}
+        currentPlayerId="a1"
       />,
     );
 
@@ -73,12 +84,16 @@ describe('CardPicker component', () => {
         expect(cardValueElement.length).toBeGreaterThan(0);
       });
   });
+
   it('should display correct card values TShirt game type', () => {
+    const game = createMockGame();
+    game.cards = getCards(GameType.TShirt);
+    game.gameType = GameType.TShirt;
     const view = render(
       <CardPicker
-        game={{ ...mockGame, cards: getCards(GameType.TShirt), gameType: GameType.TShirt }}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
+        game={game}
+        players={createMockPlayers()}
+        currentPlayerId="a1"
       />,
     );
 
@@ -91,16 +106,16 @@ describe('CardPicker component', () => {
         expect(cardValueElement.length).toBeGreaterThan(0);
       });
   });
+
   it('should display correct card values TShirt & Numbers game type', () => {
+    const game = createMockGame();
+    game.cards = getCards(GameType.TShirtAndNumber);
+    game.gameType = GameType.TShirtAndNumber;
     const view = render(
       <CardPicker
-        game={{
-          ...mockGame,
-          cards: getCards(GameType.TShirtAndNumber),
-          gameType: GameType.TShirtAndNumber,
-        }}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
+        game={game}
+        players={createMockPlayers()}
+        currentPlayerId="a1"
       />,
     );
 
@@ -113,20 +128,19 @@ describe('CardPicker component', () => {
         expect(cardValueElement.length).toBeGreaterThan(0);
       });
   });
+
   it('should display correct card values for Custom type', () => {
+    const game = createMockGame();
+    game.gameType = GameType.TShirtAndNumber;
     const view = render(
       <CardPicker
-        game={{
-          ...mockGame,
-
-          gameType: GameType.TShirtAndNumber,
-        }}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
+        game={game}
+        players={createMockPlayers()}
+        currentPlayerId="a1"
       />,
     );
 
-    mockGame.cards
+    game.cards
       .filter((a) => a.value >= 0)
       .forEach((card) => {
         const cardElement = view.container.querySelector(`#card-${card.displayValue}`);
@@ -135,61 +149,56 @@ describe('CardPicker component', () => {
         expect(cardValueElement.length).toBeGreaterThan(0);
       });
   });
+
   it('should update player value when player clicks on a card', async () => {
-    const currentPlayerId = mockPlayers[0].id;
-    const updatePlayerValueSpy = vi.spyOn(playersService, 'updatePlayerValue');
+    const game = createMockGame();
+    const players = createMockPlayers();
     vi.spyOn(cardConfigs, 'getRandomEmoji').mockReturnValue('something');
-    render(<CardPicker game={mockGame} players={mockPlayers} currentPlayerId={currentPlayerId} />);
+    render(<CardPicker game={game} players={players} currentPlayerId="a1" />);
     const cardValueElement = screen.queryAllByText(1);
     await userEvent.click(cardValueElement[0]);
-    expect(updatePlayerValueSpy).toHaveBeenCalled();
-    expect(updatePlayerValueSpy).toHaveBeenCalledWith(mockGame.id, currentPlayerId, 1, 'something');
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.voteOnTask).toHaveBeenCalled();
+    expect(mockStore.voteOnTask).toHaveBeenCalledWith('xyz', 'a1', 1, 'something');
   });
 
-  it('should not update player value when player clicks on a card and game is finished', () => {
-    const currentPlayerId = mockPlayers[0].id;
-    vi.resetAllMocks();
-    const updatePlayerValueSpy = vi.spyOn(playersService, 'updatePlayerValue');
-    const finishedGameMock = {
-      ...mockGame,
-      gameStatus: Status.Finished,
-    };
+  it('should not update player value when player clicks on a card and game is finished', async () => {
+    const game = createMockGame();
+    game.isFinished = true;
+    const players = createMockPlayers();
     render(
       <CardPicker
-        game={finishedGameMock}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
+        game={game}
+        players={players}
+        currentPlayerId="a1"
       />,
     );
     const cardValueElement = screen.queryAllByText(1);
-    userEvent.click(cardValueElement[0]);
-    expect(updatePlayerValueSpy).toHaveBeenCalledTimes(0);
+    await userEvent.click(cardValueElement[0]);
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.voteOnTask).not.toHaveBeenCalled();
   });
+
   it('should display Click on the card to vote when game is not finished', () => {
-    const currentPlayerId = mockPlayers[0].id;
-
-    render(<CardPicker game={mockGame} players={mockPlayers} currentPlayerId={currentPlayerId} />);
+    const game = createMockGame();
+    render(<CardPicker game={game} players={createMockPlayers()} currentPlayerId="a1" />);
     const helperText = screen.getByText('Click on the card to vote');
-
     expect(helperText).toBeInTheDocument();
   });
+
   it('should display wait message to vote when game is finished', () => {
-    const currentPlayerId = mockPlayers[0].id;
-    const finishedGameMock = {
-      ...mockGame,
-      gameStatus: Status.Finished,
-    };
+    const game = createMockGame();
+    game.isFinished = true;
     render(
       <CardPicker
-        game={finishedGameMock}
-        players={mockPlayers}
-        currentPlayerId={currentPlayerId}
+        game={game}
+        players={createMockPlayers()}
+        currentPlayerId="a1"
       />,
     );
     const helperText = screen.getByText(
       'Session not ready for Voting! Wait for moderator to start',
     );
-
     expect(helperText).toBeInTheDocument();
   });
 });

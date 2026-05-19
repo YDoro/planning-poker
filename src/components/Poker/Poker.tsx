@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useNavigate, useParams, useBlocker } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { streamGame, streamPlayers } from '../../service/games';
 import { getCurrentPlayerId } from '../../service/players';
-import { Game } from '../../types/game';
-import { Player } from '../../types/player';
 import { Loading } from '../Loading/Loading';
 import { GameArea } from './GameArea/GameArea';
-import { TasksProvider } from '../../context/TasksContext';
+import { useGameStore } from '../../presentation/stores/useGameStore';
 
 export const Poker = () => {
   const { t } = useTranslation();
   let { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [game, setGame] = useState<Game | undefined>(undefined);
-  const [players, setPlayers] = useState<Player[] | undefined>(undefined);
-  const [loading, setIsLoading] = useState(true);
-  const [currentPlayerId, setCurrentPlayerId] = useState<string | undefined>(undefined);
+
+  const players = useGameStore((state) => state.players);
+  const game = useGameStore((state) => state.game);
+  const isLoading = useGameStore((state) => state.isLoading);
+  const connectToGame = useGameStore((state) => state.connectToGame);
+
+  const currentPlayerId = id ? getCurrentPlayerId(id) : undefined;
 
   useBlocker(({ historyAction }) => {
     if (historyAction === 'POP') {
@@ -32,52 +32,29 @@ export const Poker = () => {
   });
 
   useEffect(() => {
-    let effectCleanup = true;
-
-    if (effectCleanup) {
-      const currentPlayerId = getCurrentPlayerId(id as string);
-      if (!currentPlayerId) {
-        navigate(`/join/${id}`);
-      }
-
-      setCurrentPlayerId(currentPlayerId);
-      setIsLoading(true);
+    if (!id) return;
+    const currentId = getCurrentPlayerId(id);
+    if (!currentId) {
+      navigate(`/join/${id}`);
+      return;
     }
 
-    streamGame(id as string).onSnapshot((snapshot) => {
-      if (effectCleanup) {
-        if (snapshot.exists) {
-          const data = snapshot.data();
-          if (data) {
-            setGame(data as Game);
-            setIsLoading(false);
-            return;
-          }
-        }
-        setIsLoading(false);
-      }
-    });
-
-    streamPlayers(id as string).onSnapshot((snapshot) => {
-      if (effectCleanup) {
-        const players: Player[] = [];
-        snapshot.forEach((snapshot) => {
-          players.push(snapshot.data() as Player);
-        });
-        const currentPlayerId = getCurrentPlayerId(id as string);
-        if (!players.find((player) => player.id === currentPlayerId)) {
-          navigate(`/join/${id}`);
-        }
-        setPlayers(players);
-      }
-    });
-
+    const disconnect = connectToGame(id);
     return () => {
-      effectCleanup = false;
+      disconnect();
     };
-  }, [id, navigate]);
+  }, [id, connectToGame, navigate]);
 
-  if (loading) {
+  useEffect(() => {
+    if (!isLoading && players.length > 0 && id) {
+      const currentId = getCurrentPlayerId(id);
+      if (currentId && !players.find((player) => player.id === currentId)) {
+        navigate(`/join/${id}`);
+      }
+    }
+  }, [isLoading, players, id, navigate]);
+
+  if (isLoading) {
     return (
       <div className='flex items-center justify-center p-10'>
         <Loading />
@@ -88,9 +65,7 @@ export const Poker = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       {game && players && currentPlayerId ? (
-        <TasksProvider game={game}>
-          <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
-        </TasksProvider>
+        <GameArea game={game} players={players} currentPlayerId={currentPlayerId} />
       ) : (
         <p>{t('Poker.gameNotFound')}</p>
       )}

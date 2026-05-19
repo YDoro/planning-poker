@@ -1,8 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { StoryCard } from './StoryCard';
 import { vi } from 'vitest';
-import { Game, GameType } from '../../../types/game';
-import { Status } from '../../../types/status';
+import { Game } from '../../../core/domain/entities/Game';
+import { Player, PlayerStatus } from '../../../core/domain/entities/Player';
+import { Task } from '../../../core/domain/entities/Task';
 import { Story } from './types/story';
 
 vi.mock('react-i18next', () => ({
@@ -12,35 +13,44 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('StoryCard', () => {
+    beforeEach(() => {
+        const mockStore = (globalThis as any).mockStoreState;
+        if (mockStore) {
+            mockStore.editTask.mockClear();
+        }
+    });
+
     const mockStory: Story = {
+        cod: 'task-1',
         title: 'Initial Story',
         description: 'Description',
     };
 
-    const mockGame: Game = {
-        id: 'game-1',
-        name: 'Test Game',
-        cards: [
+    const createMockGame = () => {
+        const game = new Game('game-1', 'Test Game', false);
+        game.createdById = 'user-1';
+        game.cards = [
             { value: 1, displayValue: '1', color: 'blue' },
             { value: 2, displayValue: '2', color: 'green' },
             { value: 3, displayValue: '3', color: 'red' },
-        ],
-        gameStatus: Status.Started,
-        createdBy: 'user-1',
-        createdById: 'user-1',
-        createdAt: new Date(),
-        average: 0,
+        ];
+        return game;
     };
 
-    const mockPlayers = [
-        { id: 'user-1', name: 'User 1', value: 1, status: Status.Finished },
-        { id: 'user-2', name: 'User 2', value: 3, status: Status.Finished },
-    ];
+    const createMockPlayers = () => {
+        const p1 = new Player('user-1', 'User 1');
+        p1.status = PlayerStatus.Finished;
+        p1.value = 1;
+        const p2 = new Player('user-2', 'User 2');
+        p2.status = PlayerStatus.Finished;
+        p2.value = 3;
+        return [p1, p2];
+    };
 
     const defaultProps = {
         story: mockStory,
         isModerator: false,
-        game: mockGame,
+        game: createMockGame(),
         players: [],
         onStoryNameChange: vi.fn(),
     };
@@ -86,8 +96,13 @@ describe('StoryCard', () => {
     });
 
     it('displays statistics when game is finished', () => {
-        const finishedGame = { ...mockGame, gameStatus: Status.Finished };
-        render(<StoryCard {...defaultProps} game={finishedGame} players={mockPlayers} />);
+        const finishedGame = createMockGame();
+        const task = new Task('task-1', 'Initial Story', 'Description', 'voted');
+        task.revealed = true;
+        finishedGame.tasks = [task];
+        finishedGame.currentTaskId = 'task-1';
+
+        render(<StoryCard {...defaultProps} game={finishedGame} players={createMockPlayers()} />);
 
         expect(screen.getByText('GameController.average')).toBeInTheDocument();
         expect(screen.getByText('GameController.storyStats.mode')).toBeInTheDocument();
@@ -103,29 +118,41 @@ describe('StoryCard', () => {
 
     it('picks higher value on closest tie', () => {
         // Average 2.5, values 2 and 3 are equally close. Should pick 3.
-        const tiePlayers = [
-            { id: 'u1', name: 'U1', value: 2, status: Status.Finished },
-            { id: 'u2', name: 'U2', value: 3, status: Status.Finished },
-        ];
-        const finishedGame = { ...mockGame, gameStatus: Status.Finished };
-        render(<StoryCard {...defaultProps} game={finishedGame} players={tiePlayers} />);
+        const finishedGame = createMockGame();
+        const task = new Task('task-1', 'Initial Story', 'Description', 'voted');
+        task.revealed = true;
+        finishedGame.tasks = [task];
+        finishedGame.currentTaskId = 'task-1';
+
+        const p1 = new Player('u1', 'U1');
+        p1.status = PlayerStatus.Finished;
+        p1.value = 2;
+        const p2 = new Player('u2', 'U2');
+        p2.status = PlayerStatus.Finished;
+        p2.value = 3;
+
+        render(<StoryCard {...defaultProps} game={finishedGame} players={[p1, p2]} />);
 
         expect(screen.getByText('2.5')).toBeInTheDocument();
         expect(screen.getByText('3')).toBeInTheDocument(); // Closest picks 3 over 2
     });
 
     it('allows moderator to set final score when game is finished', () => {
-        const finishedGame = { ...mockGame, gameStatus: Status.Finished };
-        render(<StoryCard {...defaultProps} game={finishedGame} players={mockPlayers} isModerator={true} story={{...mockStory, cod: 't1'}} />);
+        const finishedGame = createMockGame();
+        const task = new Task('task-1', 'Initial Story', 'Description', 'voted');
+        task.revealed = true;
+        finishedGame.tasks = [task];
+        finishedGame.currentTaskId = 'task-1';
+
+        render(<StoryCard {...defaultProps} game={finishedGame} players={createMockPlayers()} isModerator={true} story={{...mockStory, cod: 'task-1'}} />);
 
         const input = screen.getByLabelText('GameController.finalScore:');
         expect(input).toBeInTheDocument();
         
-        fireEvent.change(input, { target: { value: '5' } });
+        fireEvent.change(input, { target: { value: '3' } });
         fireEvent.blur(input);
 
-        // Expect the service to have been called (since we mock it)
-        // Note: we'd need to mock editTask in this test file to assert it properly
-        // For now, we just ensure it doesn't crash and the input is there
+        const mockStore = (globalThis as any).mockStoreState;
+        expect(mockStore.editTask).toHaveBeenCalledWith('game-1', 'task-1', { score: '3' });
     });
 });

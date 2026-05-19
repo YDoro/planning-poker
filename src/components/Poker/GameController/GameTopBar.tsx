@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Game } from '../../../types/game'
-import { Player } from '../../../types/player'
+import { Game } from '../../../core/domain/entities/Game'
+import { Player } from '../../../core/domain/entities/Player'
 import { isModerator } from '../../../utils/isModerator'
 import { LogOut, Share2 } from 'lucide-react'
 import { H1 } from '../../Typography'
 import { ControlDock } from './ControlDock'
 import { ControllerButton } from './ControllerButton'
-import { useAutoRevealFinishGame } from '../hooks/useAutoRevealFinishGame'
 import { sessionStatusEmoji, sessionStatusTranslationKey } from '@/src/domain/game/sessionStatusPresentation'
 
 export type GameTopBarProps = {
@@ -26,8 +25,6 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
   const { t } = useTranslation()
   const [showCopiedMessage, setShowCopiedMessage] = useState(false)
 
-  useAutoRevealFinishGame({ game, players })
-
   const handleCopyInviteLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/join/${game.id}`)
     setShowCopiedMessage(true)
@@ -38,7 +35,7 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
 
   const isMod = isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession)
 
-  const statusLabel = t(sessionStatusTranslationKey(game.gameStatus))
+  const statusLabel = t(sessionStatusTranslationKey(game.gameStatus as any))
 
   return (
     <div className='flex w-full bg-secondary relative top-0'>
@@ -46,7 +43,7 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
         <div className='flex items-center gap-2'>
           <H1 className='text-lg font-semibold truncate'>{game.name}</H1>
           <span className='text-sm font-medium text-muted-foreground'>
-            {statusLabel} {sessionStatusEmoji(game.gameStatus)}
+            {statusLabel} {sessionStatusEmoji(game.gameStatus as any)}
           </span>
         </div>
         <div className='flex items-center gap-1'>

@@ -53,30 +53,51 @@ if (typeof window !== 'undefined') {
   HTMLElement.prototype.scrollIntoView = vi.fn();
 }
 
-vi.mock('@/src/context/TasksContext', () => ({
-  useTasks: () => ({
-    currentTask: undefined,
-    revealCurrentTask: vi.fn(),
-    setTaskVoted: vi.fn(),
-  }),
-  TasksProvider: ({ children }: any) => children,
+export const mockStoreState = {
+  game: null as any,
+  players: [] as any[],
+  isLoading: false,
+  connectToGame: vi.fn(() => vi.fn()),
+  createGame: vi.fn().mockResolvedValue({ gameId: 'mockGameId', creatorId: 'mockCreatorId' }),
+  addPlayer: vi.fn().mockResolvedValue('mockPlayerId'),
+  voteOnTask: vi.fn(),
+  revealCards: vi.fn(),
+  nextTask: vi.fn(),
+  finishGame: vi.fn(),
+  removePlayer: vi.fn(),
+  changeCurrentTask: vi.fn(),
+  addTask: vi.fn(),
+  editTask: vi.fn(),
+  deleteTask: vi.fn(),
+  reorderTasks: vi.fn(),
+  updateStoryName: vi.fn(),
+  updateGame: vi.fn(),
+  deleteGame: vi.fn(),
+};
+
+(globalThis as any).mockStoreState = mockStoreState;
+
+const mockUseGameStore = Object.assign(
+  (selector: any) => selector(mockStoreState),
+  {
+    getState: () => mockStoreState,
+    setState: (fnOrState: any) => {
+      const next = typeof fnOrState === 'function' ? fnOrState(mockStoreState) : fnOrState;
+      Object.assign(mockStoreState, next);
+    },
+    subscribe: vi.fn(),
+  }
+);
+
+vi.mock('../../presentation/stores/useGameStore', () => ({
+  useGameStore: mockUseGameStore,
 }));
 
-vi.mock('../../context/TasksContext', () => ({
-  useTasks: () => ({
-    currentTask: undefined,
-    revealCurrentTask: vi.fn(),
-    setTaskVoted: vi.fn(),
-  }),
-  TasksProvider: ({ children }: any) => children,
+vi.mock('../../../presentation/stores/useGameStore', () => ({
+  useGameStore: mockUseGameStore,
 }));
 
-vi.mock('../../../context/TasksContext', () => ({
-  useTasks: () => ({
-    currentTask: undefined,
-    revealCurrentTask: vi.fn(),
-    setTaskVoted: vi.fn(),
-  }),
-  TasksProvider: ({ children }: any) => children,
+vi.mock('@/src/presentation/stores/useGameStore', () => ({
+  useGameStore: mockUseGameStore,
 }));
 

@@ -1,62 +1,79 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as playerService from '../../../service/players';
-import { Game } from '../../../types/game';
-import { Player } from '../../../types/player';
-import { Status } from '../../../types/status';
+import { Game } from '../../../core/domain/entities/Game';
+import { Player, PlayerStatus } from '../../../core/domain/entities/Player';
+import { Task } from '../../../core/domain/entities/Task';
 import { PlayerCard } from './PlayerCard';
 import { vi } from 'vitest';
 
-
 describe('PlayerCard component', () => {
-  const mockGame: Game = {
-    id: 'xyz',
-    name: 'testGame',
-    cards: [
+  beforeEach(() => {
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) {
+      mockStore.removePlayer.mockClear();
+    }
+  });
+
+  const createMockGame = () => {
+    const game = new Game('xyz', 'testGame', false);
+    game.createdById = 'abc';
+    game.cards = [
       { value: 1, displayValue: '1', color: 'red' },
       { value: 2, displayValue: '2', color: 'blue' },
       { value: 3, displayValue: '3', color: 'green' },
-    ],
-    createdBy: 'someone',
-    createdAt: new Date(),
-    average: 0,
-    createdById: 'abc',
-    gameStatus: Status.InProgress,
+    ];
+    const task = new Task('task-1', 'Story 1', '', 'voting');
+    game.tasks = [task];
+    game.currentTaskId = 'task-1';
+    return game;
   };
-  const mockPlayer: Player = { id: 'a1', name: 'SpiderMan', status: Status.InProgress, value: 0 };
-  let mockCurrentPlayerId = mockPlayer.id;
+
+  const createMockPlayer = () => {
+    const player = new Player('a1', 'SpiderMan');
+    player.status = PlayerStatus.InProgress;
+    player.value = 0;
+    return player;
+  };
+
   it('should display Player name', () => {
+    const player = createMockPlayer();
     render(
-      <PlayerCard game={mockGame} player={mockPlayer} currentPlayerId={mockCurrentPlayerId} />,
+      <PlayerCard game={createMockGame()} player={player} currentPlayerId="a1" />,
     );
 
-    expect(screen.getAllByText(mockPlayer.name)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(player.name)[0]).toBeInTheDocument();
   });
 
   it('should display thinking emoji when Player has not voted', () => {
     render(
-      <PlayerCard game={mockGame} player={mockPlayer} currentPlayerId={mockCurrentPlayerId} />,
+      <PlayerCard game={createMockGame()} player={createMockPlayer()} currentPlayerId="a1" />,
     );
 
     expect(screen.getByText('🤔')).toBeInTheDocument();
   });
+
   it('should display thumbs up emoji when Player has voted', () => {
-    const votedPlayer = { ...mockPlayer, status: Status.Finished };
+    const player = createMockPlayer();
+    player.status = PlayerStatus.Finished;
     render(
-      <PlayerCard game={mockGame} player={votedPlayer} currentPlayerId={mockCurrentPlayerId} />,
+      <PlayerCard game={createMockGame()} player={player} currentPlayerId="a1" />,
     );
 
     expect(screen.getByText('👍')).toBeInTheDocument();
   });
 
   it('should display coffee up emoji when Player has voted but value is -1 and Game is finished', () => {
-    const coffeePlayer = { ...mockPlayer, status: Status.Finished, value: -1 };
-    const finishedGame = { ...mockGame, gameStatus: Status.Finished };
+    const player = createMockPlayer();
+    player.status = PlayerStatus.Finished;
+    player.value = -1;
+    const game = createMockGame();
+    game.isFinished = true;
+
     render(
       <PlayerCard
-        game={finishedGame}
-        player={coffeePlayer}
-        currentPlayerId={mockCurrentPlayerId}
+        game={game}
+        player={player}
+        currentPlayerId="a1"
       />,
     );
 
@@ -64,87 +81,103 @@ describe('PlayerCard component', () => {
   });
 
   it('should display correct when Player has voted and Game is finished', () => {
-    const coffeePlayer = { ...mockPlayer, status: Status.Finished, value: 5 };
-    const finishedGame = { ...mockGame, gameStatus: Status.Finished };
+    const player = createMockPlayer();
+    player.status = PlayerStatus.Finished;
+    player.value = 3; // displayValue is '3'
+    const game = createMockGame();
+    game.isFinished = true;
+
     render(
       <PlayerCard
-        game={finishedGame}
-        player={coffeePlayer}
-        currentPlayerId={mockCurrentPlayerId}
+        game={game}
+        player={player}
+        currentPlayerId="a1"
       />,
     );
 
-    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
+
   it('should display thinking emoji when Player has not voted and Game is finished', () => {
-    const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
-    const finishedGame = { ...mockGame, gameStatus: Status.Finished };
+    const player = createMockPlayer();
+    player.status = PlayerStatus.InProgress;
+    const game = createMockGame();
+    game.isFinished = true;
+
     render(
       <PlayerCard
-        game={finishedGame}
-        player={coffeePlayer}
-        currentPlayerId={mockCurrentPlayerId}
+        game={game}
+        player={player}
+        currentPlayerId="a1"
       />,
     );
 
     expect(screen.getByText('🤔')).toBeInTheDocument();
   });
+
   it('should display remove icon for moderator', () => {
-    const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
-    const finishedGame = { ...mockGame, gameStatus: Status.Finished };
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+
     render(
       <PlayerCard
-        game={finishedGame}
-        player={coffeePlayer}
-        currentPlayerId={mockGame.createdById}
+        game={game}
+        player={player}
+        currentPlayerId="moderator-1"
       />,
     );
 
     expect(screen.getByTestId('remove-button')).toBeInTheDocument();
   });
+
   it('should not display remove icon for non moderator', () => {
-    const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
-    const finishedGame = { ...mockGame, gameStatus: Status.Finished };
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+
     render(
       <PlayerCard
-        game={finishedGame}
-        player={coffeePlayer}
-        currentPlayerId={mockCurrentPlayerId}
+        game={game}
+        player={player}
+        currentPlayerId="a2" // not moderator, not own card
       />,
     );
 
     expect(screen.queryByTestId('remove-button')).not.toBeInTheDocument();
   });
+
   it('should not display remove icon for moderator card', () => {
-    const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
-    const finishedGame = {
-      ...mockGame,
-      createdBy: mockCurrentPlayerId,
-      gameStatus: Status.Finished,
-    };
+    const player = new Player('moderator-1', 'SpiderMan');
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+
     render(
       <PlayerCard
-        game={finishedGame}
-        player={coffeePlayer}
-        currentPlayerId={mockCurrentPlayerId}
+        game={game}
+        player={player}
+        currentPlayerId="moderator-1"
       />,
     );
 
     expect(screen.queryByTestId('remove-button')).not.toBeInTheDocument();
   });
+
   it('should call remove function on Remove action', async () => {
-    const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
-    const finishedGame = { ...mockGame, gameStatus: Status.Finished };
-    vi.spyOn(playerService, 'removePlayer').mockResolvedValue();
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+
     render(
       <PlayerCard
-        game={finishedGame}
-        player={coffeePlayer}
-        currentPlayerId={mockGame.createdById}
+        game={game}
+        player={player}
+        currentPlayerId="moderator-1"
       />,
     );
 
     await userEvent.click(screen.getByTestId('remove-button'));
-    expect(playerService.removePlayer).toHaveBeenCalledWith(finishedGame.id, coffeePlayer.id);
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.removePlayer).toHaveBeenCalledWith('xyz', 'a1');
   });
 });

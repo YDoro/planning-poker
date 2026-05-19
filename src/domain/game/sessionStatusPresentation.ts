@@ -1,25 +1,25 @@
-import { Status } from '@/src/types/status'
+export type DomainStatus = 'NotStarted' | 'Started' | 'InProgress' | 'Finished';
 
-export const sessionStatusTranslationKey = (status: Status): string => {
+export const sessionStatusTranslationKey = (status: DomainStatus): string => {
   switch (status) {
-    case Status.NotStarted:
+    case 'NotStarted':
       return 'GameController.sessionStatus.notStarted'
-    case Status.Started:
+    case 'Started':
       return 'GameController.sessionStatus.started'
-    case Status.InProgress:
+    case 'InProgress':
       return 'GameController.sessionStatus.inProgress'
-    case Status.Finished:
+    case 'Finished':
       return 'GameController.sessionStatus.finished'
     default:
       return 'GameController.sessionStatus.notStarted'
   }
 }
 
-export const sessionStatusEmoji = (status: Status): string => {
+export const sessionStatusEmoji = (status: DomainStatus): string => {
   switch (status) {
-    case Status.InProgress:
+    case 'InProgress':
       return '⏱️'
-    case Status.Finished:
+    case 'Finished':
       return '🎉'
     default:
       return '🚀'

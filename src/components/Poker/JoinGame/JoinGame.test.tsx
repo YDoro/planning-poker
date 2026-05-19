@@ -1,13 +1,20 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as gameService from '../../../service/games';
-import * as playersService from '../../../service/players';
-import { Game } from '../../../types/game';
 import { JoinGame } from './JoinGame';
 import { vi } from 'vitest';
+import * as playersService from '../../../service/players';
+
+const mockGetById = vi.fn();
+
+vi.mock('../../../infrastructure/firebase/FirebaseGameRepository', () => {
+  return {
+    FirebaseGameRepository: class {
+      getById = mockGetById;
+    },
+  };
+});
 
 vi.mock('../../../service/players');
-vi.mock('../../../service/games');
 
 const mockNavigate = vi.fn();
 let mockParams: Record<string, string> = { id: '' };
@@ -28,10 +35,15 @@ describe('JoinGame component', () => {
     mockNavigate.mockClear();
     mockParams = { id: '' };
     localStorage.clear();
+    mockGetById.mockReset().mockResolvedValue(null);
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) {
+      mockStore.addPlayer.mockClear();
+    }
   });
 
   it('should render the form correctly', () => {
-    vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue(undefined);
 
     render(<JoinGame open={true} onClose={() => { }} />);
 
@@ -42,15 +54,16 @@ describe('JoinGame component', () => {
 
   it('should pre-fill the name field from localStorage', () => {
     localStorage.setItem('recentPlayerName', 'Alice');
-    vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue(undefined);
 
     render(<JoinGame open={true} onClose={() => { }} />);
     expect(screen.getByPlaceholderText('JoinGame.playerNamePlaceholder')).toHaveValue('Alice');
   });
 
   it('should be able to join a session', async () => {
-    vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
-    vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
+    const mockStore = (globalThis as any).mockStoreState;
+    mockStore.addPlayer.mockResolvedValue('mockPlayerId');
+
     render(<JoinGame open={true} onClose={() => { }} />);
     const sessionID = screen.getByPlaceholderText('JoinGame.sessionIdPlaceholder');
     await userEvent.clear(sessionID);
@@ -63,20 +76,20 @@ describe('JoinGame component', () => {
 
     await userEvent.click(joinButton);
 
-    expect(playersService.addPlayerToGame).toHaveBeenCalled();
-
-    expect(playersService.addPlayerToGame).toHaveBeenCalledWith('gameId', 'Rock');
+    expect(mockStore.addPlayer).toHaveBeenCalled();
+    expect(mockStore.addPlayer).toHaveBeenCalledWith('gameId', 'Rock');
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/game/gameId'));
-    // Check that the name is saved to localStorage
     expect(localStorage.getItem('recentPlayerName')).toBe('Rock');
   });
 
   it('should automatically join the game when player has already joined', async () => {
     const gameId = 'abc';
     mockParams = { id: gameId };
-    vi.spyOn(gameService, 'getGame').mockResolvedValue({ id: gameId } as Game);
-    vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
-    vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(true);
+    mockGetById.mockResolvedValue({
+      id: gameId,
+      players: [{ id: 'currentPlayerId', name: 'Alice' }],
+    });
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('currentPlayerId');
 
     render(<JoinGame open={true} onClose={() => { }} />);
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/game/abc'));
@@ -85,9 +98,11 @@ describe('JoinGame component', () => {
   it('should not automatically join the game when player it not in the game', async () => {
     const gameId = 'abc';
     mockParams = { id: gameId };
-    vi.spyOn(gameService, 'getGame').mockResolvedValue({ id: gameId } as Game);
-    vi.spyOn(playersService, 'addPlayerToGame').mockResolvedValue(true);
-    vi.spyOn(playersService, 'isCurrentPlayerInGame').mockResolvedValue(false);
+    mockGetById.mockResolvedValue({
+      id: gameId,
+      players: [{ id: 'otherPlayerId', name: 'Bob' }],
+    });
+    vi.spyOn(playersService, 'getCurrentPlayerId').mockReturnValue('currentPlayerId');
 
     render(<JoinGame open={true} onClose={() => { }} />);
 

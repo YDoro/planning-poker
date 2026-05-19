@@ -1,16 +1,14 @@
 import React from 'react';
-import { removePlayer } from '../../../service/players';
-import { Game } from '../../../types/game';
-import { Player } from '../../../types/player';
-import { Status } from '../../../types/status';
+import { Game } from '../../../core/domain/entities/Game';
+import { Player, PlayerStatus } from '../../../core/domain/entities/Player';
+import { Task } from '../../../core/domain/entities/Task';
 import { isModerator } from '../../../utils/isModerator';
 import { getCards } from '../CardPicker/CardConfigs';
 import { Card } from '../../ui/card';
 import { Text, MarqueeText } from '../../Typography';
 import { X } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { useTasks } from '../../../context/TasksContext';
-import { Task } from '../../../types/task';
+import { useGameStore } from '../../../presentation/stores/useGameStore';
 
 interface PlayerCardProps {
   game: Game;
@@ -19,10 +17,13 @@ interface PlayerCardProps {
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPlayerId }) => {
-  const { currentTask } = useTasks();
+  const storeGame = useGameStore((state) => state.game);
+  const activeGame = game || storeGame;
+  const currentTask = activeGame?.tasks?.find((t) => t.id === activeGame?.currentTaskId);
+  const removePlayerAction = useGameStore((state) => state.removePlayer);
 
   const removeUser = (gameId: string, playerId: string) => {
-    removePlayer(gameId, playerId);
+    removePlayerAction(gameId, playerId);
   };
 
   return (
@@ -65,7 +66,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
 };
 
 const getCardColor = (game: Game, value: number | undefined): string => {
-  if (game.gameStatus == Status.Finished) {
+  if (game.isFinished) {
     const card = getCards(game.gameType).find((card) => card.value === value);
     return card ? card.color : '';
   }
@@ -73,10 +74,10 @@ const getCardColor = (game: Game, value: number | undefined): string => {
 };
 
 const getCardValue = (player: Player, game: Game, currentTask: Task | undefined) => {
-  const isRevealed = !!currentTask?.revealed || game.gameStatus === Status.Finished;
+  const isRevealed = !!currentTask?.revealed || game.isFinished;
 
   if (isRevealed) {
-    if (player.status === Status.Finished) {
+    if (player.status === PlayerStatus.Finished) {
       if (player.value && player.value === -1) {
         return player.emoji || '☕'; // coffee emoji
       }
@@ -85,7 +86,7 @@ const getCardValue = (player: Player, game: Game, currentTask: Task | undefined)
     return '🤔';
   }
 
-  if (player.status === Status.Finished) {
+  if (player.status === PlayerStatus.Finished) {
     return '👍';
   }
 

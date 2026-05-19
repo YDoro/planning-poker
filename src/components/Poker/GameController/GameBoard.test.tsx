@@ -1,9 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { GameBoard } from './GameBoard';
 import { vi } from 'vitest';
-import { Game } from '../../../types/game';
-import { Status } from '../../../types/status';
-import * as gamesService from '../../../service/games';
+import { Game } from '../../../core/domain/entities/Game';
+import { Task } from '../../../core/domain/entities/Task';
 
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
@@ -11,40 +10,39 @@ vi.mock('react-i18next', () => ({
     }),
 }));
 
-vi.mock('../../../service/games', () => ({
-    editTask: vi.fn(),
-    updateStoryName: vi.fn(),
+vi.mock('react-dnd', () => ({
+    useDrag: () => [{}, vi.fn(), vi.fn()],
+    useDrop: () => [{}, vi.fn()],
 }));
 
 describe('GameBoard', () => {
-    const mockGame: Game = {
-        id: 'game-1',
-        name: 'Test Game',
-        cards: [],
-        gameStatus: Status.Started,
-        createdBy: 'user-1',
-        createdById: 'user-1',
-        createdAt: new Date(),
-        average: 0,
-        tasks: [
-            { id: 't1', title: 'Task 1', description: '', status: 'voting' }
-        ],
-        currentTaskId: 't1'
+    beforeEach(() => {
+        const mockStore = (globalThis as any).mockStoreState;
+        if (mockStore) {
+            mockStore.editTask.mockClear();
+            mockStore.updateStoryName.mockClear();
+            mockStore.addTask.mockClear();
+        }
+    });
+
+    const createMockGame = () => {
+        const game = new Game('game-1', 'Test Game', false);
+        game.createdById = 'user-1';
+        const task = new Task('t1', 'Task 1', '', 'voting');
+        game.tasks = [task];
+        game.currentTaskId = 't1';
+        return game;
     };
 
     const defaultProps = {
-        game: mockGame,
+        game: createMockGame(),
         players: [],
         isModerator: true,
     };
 
-    afterEach(() => {
-        vi.clearAllMocks();
-    });
-
     it('renders current task correctly', () => {
         render(<GameBoard {...defaultProps} />);
-        expect(screen.getByText('Task 1')).toBeInTheDocument();
+        expect(screen.getAllByText('Task 1').length).toBeGreaterThan(0);
     });
 
     it('calls editTask when current task name is changed', () => {
@@ -56,11 +54,16 @@ describe('GameBoard', () => {
         const input = screen.getByTestId('story-name-input');
         fireEvent.change(input, { target: { value: 'Updated Task 1' } });
         
-        expect(gamesService.editTask).toHaveBeenCalledWith('game-1', 't1', { title: 'Updated Task 1' });
+        const mockStore = (globalThis as any).mockStoreState;
+        expect(mockStore.editTask).toHaveBeenCalledWith('game-1', 't1', { title: 'Updated Task 1' });
     });
 
     it('calls updateStoryName if there is no current task', () => {
-        const gameNoTasks = { ...mockGame, tasks: [], currentTaskId: undefined };
+        const gameNoTasks = createMockGame();
+        gameNoTasks.tasks = [];
+        gameNoTasks.currentTaskId = undefined;
+        gameNoTasks.storyName = 'Initial Story';
+
         render(<GameBoard {...defaultProps} game={gameNoTasks} />);
         
         const editButton = screen.getByTitle('common.edit');
@@ -69,6 +72,7 @@ describe('GameBoard', () => {
         const input = screen.getByTestId('story-name-input');
         fireEvent.change(input, { target: { value: 'New Global Story' } });
         
-        expect(gamesService.updateStoryName).toHaveBeenCalledWith('game-1', 'New Global Story');
+        const mockStore = (globalThis as any).mockStoreState;
+        expect(mockStore.updateStoryName).toHaveBeenCalledWith('game-1', 'New Global Story');
     });
 });

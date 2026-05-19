@@ -1,6 +1,6 @@
 import React from 'react';
-import { Game } from '../../types/game';
-import { Player } from '../../types/player';
+import { Game } from '../../core/domain/entities/Game';
+import { Player } from '../../core/domain/entities/Player';
 import { PlayerCard } from './PlayerCard/PlayerCard';
 import { HorizontalScroll } from '../ui/horizontal-scroll';
 

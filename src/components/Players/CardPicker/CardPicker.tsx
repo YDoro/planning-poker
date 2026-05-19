@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { updatePlayerValue } from '../../../service/players';
-import { Game } from '../../../types/game';
-import { Player } from '../../../types/player';
-import { Status } from '../../../types/status';
+import { Game } from '../../../core/domain/entities/Game';
+import { Player } from '../../../core/domain/entities/Player';
 import { CardConfig, getCards, getRandomEmoji } from './CardConfigs';
 import { HorizontalScroll } from '../../ui/horizontal-scroll';
 import { PokerCard } from './PokerCard';
-import { useTasks } from '../../../context/TasksContext';
+import { useGameStore } from '../../../presentation/stores/useGameStore';
 
 interface CardPickerProps {
   game: Game;
@@ -18,27 +16,29 @@ interface CardPickerProps {
 export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPlayerId }) => {
   const { t } = useTranslation();
   const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
-  const { currentTask, setTaskVoted } = useTasks();
+  const voteOnTask = useGameStore((state) => state.voteOnTask);
+  const storeGame = useGameStore((state) => state.game);
+  const activeGame = game || storeGame;
+  const currentTask = activeGame?.tasks?.find((t) => t.id === activeGame?.currentTaskId);
 
   const playPlayer = async (gameId: string, playerId: string, card: CardConfig) => {
-    if (game.gameStatus !== Status.Finished && currentTask?.status === 'voting') {
-      await updatePlayerValue(gameId, playerId, card.value, randomEmoji);
-      await setTaskVoted();
+    if (!game.isFinished && currentTask?.status === 'voting') {
+      await voteOnTask(gameId, playerId, card.value, randomEmoji);
     }
   };
 
   useEffect(() => {
-    if (game.gameStatus === Status.Started) {
+    if (!game.isFinished) {
       setRandomEmoji(getRandomEmoji);
     }
-  }, [game.gameStatus]);
+  }, [game.isFinished]);
 
   const cards = game.cards?.length ? game.cards : getCards(game.gameType);
 
   return (
     <div className='fixed bottom-0 w-full max-w-full animate-fade-in-down'>
       <div className='hidden md:block text-center text-lg font-semibold my-4'>
-        {game.gameStatus !== Status.Finished
+        {!game.isFinished
           ? t('CardPicker.ClickOnTheCardToVote')
           : t('CardPicker.SessionNotReadyForVotingWaitForModeratorToStart')}
       </div>
@@ -50,7 +50,7 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
               key={card.value}
               card={card}
               isSelected={isSelected}
-              isFinished={game.gameStatus === Status.Finished}
+              isFinished={game.isFinished}
               randomEmoji={randomEmoji}
               onClick={() => playPlayer(game.id, currentPlayerId, card)}
             />

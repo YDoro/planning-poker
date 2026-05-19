@@ -3,11 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { getGame } from '../../../service/games';
-import { addPlayerToGame, isCurrentPlayerInGame } from '../../../service/players';
-import { Input } from '@ui/input';
-import { Button } from '@ui/button';
-import { Label } from '@ui/label';
+import { FirebaseGameRepository } from '../../../infrastructure/firebase/FirebaseGameRepository';
+import { useGameStore } from '../../../presentation/stores/useGameStore';
+import { getCurrentPlayerId } from '../../../service/players';
+import { Input } from '../../ui/input';
+import { Button } from '../../ui/button';
+import { Label } from '../../ui/label';
 import { H3 } from '../../Typography';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../ui/dialog';
@@ -26,6 +27,8 @@ export const JoinGame = ({ open, onClose }: JoinGameProps) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
+  const addPlayer = useGameStore((state) => state.addPlayer);
+  const gameRepository = useMemo(() => new FirebaseGameRepository(), []);
 
   const joinSchema = useMemo(
     () =>
@@ -53,21 +56,27 @@ export const JoinGame = ({ open, onClose }: JoinGameProps) => {
   useEffect(() => {
     async function fetchData() {
       if (watchedJoinGameId) {
-        if (await getGame(watchedJoinGameId)) {
-          setGameFound(true);
-          if (await isCurrentPlayerInGame(watchedJoinGameId)) {
-            navigate(`/game/${watchedJoinGameId}`);
-          }
-        } else {
-          // If it was already in the URL and not found
-          if (watchedJoinGameId === id) {
-            setShowNotExistMessage(true);
-            setTimeout(() => {
-              navigate('/');
-            }, 5000);
+        try {
+          const game = await gameRepository.getById(watchedJoinGameId);
+          if (game) {
+            setGameFound(true);
+            const currentPlayerId = getCurrentPlayerId(watchedJoinGameId);
+            const isInGame = currentPlayerId && game.players.some((p) => p.id === currentPlayerId);
+            if (isInGame) {
+              navigate(`/game/${watchedJoinGameId}`);
+            }
           } else {
-            setGameFound(false);
+            if (watchedJoinGameId === id) {
+              setShowNotExistMessage(true);
+              setTimeout(() => {
+                navigate('/');
+              }, 5000);
+            } else {
+              setGameFound(false);
+            }
           }
+        } catch (err) {
+          setGameFound(false);
         }
       }
     }
@@ -76,11 +85,12 @@ export const JoinGame = ({ open, onClose }: JoinGameProps) => {
 
   const onSubmit = async (values: JoinValues) => {
     localStorage.setItem('recentPlayerName', values.playerName);
-    const res = await addPlayerToGame(values.joinGameId, values.playerName);
-
-    setGameFound(res);
-    if (res) {
+    try {
+      await addPlayer(values.joinGameId, values.playerName);
+      setGameFound(true);
       navigate(`/game/${values.joinGameId}`);
+    } catch (err) {
+      setGameFound(false);
     }
   };
 

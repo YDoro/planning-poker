@@ -1,6 +1,5 @@
-import { Game } from '@/src/types/game'
-import { Player } from '@/src/types/player'
-import { Status } from '@/src/types/status'
+import { Game } from '@/src/core/domain/entities/Game'
+import { Player, PlayerStatus } from '@/src/core/domain/entities/Player'
 
 export type StoryVoteStatistics = {
   averageFormatted: string
@@ -13,7 +12,7 @@ export const computeStoryVoteStatistics = (
   players: Player[],
 ): StoryVoteStatistics | null => {
   const finishedPlayers = players.filter(
-    (p) => p.status === Status.Finished && p.value !== undefined,
+    (p) => p.status === PlayerStatus.Finished && p.value !== undefined,
   )
   if (finishedPlayers.length === 0) return null
 

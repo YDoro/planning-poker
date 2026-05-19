@@ -1,6 +1,5 @@
-import { Game, TimerProps } from '@/src/types/game'
+import { Game, TimerProps } from '@/src/core/domain/entities/Game'
 import { Timer } from './Timer/TimerInput/Timer'
-import { removeGame, updateGame } from '@/src/service/games'
 import { useCallback, useState } from 'react'
 import { ControllerButton } from './ControllerButton'
 import { Eye, Trash2, SkipForward, CheckCheck } from 'lucide-react'
@@ -18,8 +17,7 @@ import {
 } from '../../ui/alert-dialog'
 import { AutoReveal } from './AutoReveal'
 import { toast } from 'sonner'
-import { useTasks } from '@/src/context/TasksContext'
-import { nextTask } from '@/src/service/tasks'
+import { useGameStore } from '@/src/presentation/stores/useGameStore'
 
 export type ControlDockProps = {
   game: Game
@@ -30,7 +28,10 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
   const { t } = useTranslation()
   const [showSkipPrompt, setShowSkipPrompt] = useState(false)
   const [showFinishPrompt, setShowFinishPrompt] = useState(false)
-  const { revealCurrentTask } = useTasks()
+  const revealCards = useGameStore((state) => state.revealCards)
+  const nextTaskStore = useGameStore((state) => state.nextTask)
+  const deleteGameStore = useGameStore((state) => state.deleteGame)
+  const updateGameStore = useGameStore((state) => state.updateGame)
 
   const tasks = game.tasks || []
   const currentTaskIndex = tasks.findIndex(t => t.id === game.currentTaskId)
@@ -53,40 +54,40 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
     if (currentTask && !currentTask.score) {
       setShowSkipPrompt(true)
     } else {
-      nextTask(game.id)
+      nextTaskStore(game.id)
     }
   }
 
   const handleSkipTask = () => {
     if (isLastTask) {
-      nextTask(game.id, undefined, true).then(() => {
+      nextTaskStore(game.id, undefined, true).then(() => {
         toast.success(t('GameController.planningFinished'))
       })
     } else {
-      nextTask(game.id, undefined, true)
+      nextTaskStore(game.id, undefined, true)
     }
     setShowSkipPrompt(false)
   }
 
   const handleFinishPlanning = async () => {
-    await nextTask(game.id, currentTask?.score)
+    await nextTaskStore(game.id, currentTask?.score)
     setShowFinishPrompt(false)
     toast.success(t('GameController.planningFinished'))
   }
 
   const handleAutoReveal = (value: boolean) => {
-    updateGame(game.id, { autoReveal: value })
+    updateGameStore(game.id, { autoReveal: value })
   }
 
   const onUpdatedTimerProps = useCallback(
     (timer: TimerProps) => {
-      updateGame(game.id, { timerProps: timer })
+      updateGameStore(game.id, { timerProps: timer })
     },
-    [game.id],
+    [game.id, updateGameStore],
   )
 
   const handleRemoveGame = async (id: string) => {
-    await removeGame(id)
+    await deleteGameStore(id)
     window.location.href = '/'
   }
 
@@ -105,7 +106,7 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
         onAutoReveal={(value) => handleAutoReveal(value)}
       />
       <ControllerButton
-        onClick={revealCurrentTask}
+        onClick={() => revealCards(game.id)}
         icon={<Eye />}
         label={t('GameController.reveal')}
         className='text-green-700'

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { Game, TimerProps as GameTimerProps } from '../../../types/game';
-import { Player } from '../../../types/player';
+import { Game } from '../../../core/domain/entities/Game';
+import { Player } from '../../../core/domain/entities/Player';
+import { TimerProps as GameTimerProps } from '../../../types/game';
 import { CardPicker } from '../../Players/CardPicker/CardPicker';
 import { Players } from '../../Players/Players';
 import { GameTopBar } from '../GameController/GameTopBar';

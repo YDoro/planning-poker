@@ -1,33 +1,31 @@
 import { render, screen } from '@testing-library/react';
-import { Game } from '../../types/game';
-import { Player } from '../../types/player';
-import { Status } from '../../types/status';
+import { Game } from '../../core/domain/entities/Game';
+import { Player } from '../../core/domain/entities/Player';
 import { Players } from './Players';
 
 describe('Players component', () => {
-  const mockGame: Game = {
-    id: 'xyz',
-    name: 'testGame',
-    cards: [
+  const createMockGame = () => {
+    const game = new Game('xyz', 'testGame', false);
+    game.createdById = 'abc';
+    game.cards = [
       { value: 1, displayValue: '1', color: 'red' },
       { value: 2, displayValue: '2', color: 'blue' },
       { value: 3, displayValue: '3', color: 'green' },
-    ],
-    createdBy: 'someone',
-    createdAt: new Date(),
-    average: 0,
-    createdById: 'abc',
-    gameStatus: Status.InProgress,
+    ];
+    return game;
   };
-  const mockPlayers: Player[] = [
-    { id: 'a1', name: 'SpiderMan', status: Status.InProgress, value: 0 },
-    { id: 'a2', name: 'IronMan', status: Status.Finished, value: 3 },
-  ];
-  const mockCurrentPlayerId = mockPlayers[0].id;
-  it('should display all players', () => {
-    render(<Players game={mockGame} players={mockPlayers} currentPlayerId={mockCurrentPlayerId} />);
 
-    mockPlayers.forEach((player: Player) => {
+  const createMockPlayers = () => {
+    const p1 = new Player('a1', 'SpiderMan');
+    const p2 = new Player('a2', 'IronMan');
+    return [p1, p2];
+  };
+
+  it('should display all players', () => {
+    const players = createMockPlayers();
+    render(<Players game={createMockGame()} players={players} currentPlayerId="a1" />);
+
+    players.forEach((player: Player) => {
       expect(screen.getAllByText(player.name)[0]).toBeInTheDocument();
     });
   });

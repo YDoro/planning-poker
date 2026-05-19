@@ -5,14 +5,14 @@ import { animals, colors, Config, starWars, uniqueNamesGenerator } from 'unique-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { addNewGame } from '../../../service/games';
-import { GameType, NewGame } from '../../../types/game';
+import { useGameStore } from '../../../presentation/stores/useGameStore';
+import { GameType } from '../../../core/domain/entities/Game';
 import { getCards, getCustomCards } from '../../Players/CardPicker/CardConfigs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui/select';
-import { Input } from '@ui/input';
-import { Checkbox } from '@ui/checkbox';
-import { Button } from '@ui/button';
-import { Label } from '@ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { Input } from '../../ui/input';
+import { Checkbox } from '../../ui/checkbox';
+import { Button } from '../../ui/button';
+import { Label } from '../../ui/label';
 import { H3 } from '../../Typography';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../ui/dialog';
 
@@ -35,6 +35,7 @@ export const CreateGame = ({ open, onClose }: CreateGameProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [hasDefaults, setHasDefaults] = useState({ game: true, name: true });
+  const createGame = useGameStore((state) => state.createGame);
 
 
   const formSchema = z.object({
@@ -72,19 +73,17 @@ export const CreateGame = ({ open, onClose }: CreateGameProps) => {
   const customOptions = watch('customOptions');
 
   const onSubmit = async (values: FormValues) => {
-    const game: NewGame = {
+    const result = await createGame({
       name: values.gameName,
       createdBy: values.createdBy,
-      gameType: values.gameType,
+      gameType: values.gameType as any,
       isAllowMembersToManageSession: values.allowMembersToManageSession,
-      cards: values.gameType === GameType.Custom ? getCustomCards(values.customOptions) : getCards(values.gameType),
-      createdAt: new Date(),
-    };
-    const newGameId = await addNewGame(game);
-    if (newGameId) {
+      cards: values.gameType === GameType.Custom ? getCustomCards(values.customOptions) : getCards(values.gameType as any),
+    });
+    if (result.gameId) {
       localStorage.setItem('recentPlayerName', values.createdBy);
+      navigate(`/game/${result.gameId}`);
     }
-    navigate(`/game/${newGameId}`);
   };
 
   const emptyGameName = () => {

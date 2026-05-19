@@ -1,11 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { uniqueNamesGenerator } from 'unique-names-generator';
-import * as gamesService from '../../../service/games';
 import { CreateGame } from './CreateGame';
 import { vi, Mock } from 'vitest';
 
-vi.mock('../../../service/games');
 const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', () => ({
@@ -30,6 +28,10 @@ describe('CreateGame component', () => {
   beforeEach(() => {
     mockNavigate.mockClear();
     localStorage.clear();
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) {
+      mockStore.createGame.mockClear();
+    }
   });
 
   it('should render the form correctly', () => {
@@ -82,9 +84,10 @@ describe('CreateGame component', () => {
     const createButton = screen.getByRole('button', { name: /CreateGame.create/i });
     await userEvent.click(createButton);
 
-    expect(gamesService.addNewGame).toHaveBeenCalled();
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.createGame).toHaveBeenCalled();
 
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
+    expect(mockStore.createGame).toHaveBeenCalledWith(
       expect.objectContaining({
         createdBy: 'Rock',
         gameType: 'Fibonacci',
@@ -110,9 +113,10 @@ describe('CreateGame component', () => {
     const createButton = screen.getByRole('button', { name: /CreateGame.create/i });
     await userEvent.click(createButton);
 
-    expect(gamesService.addNewGame).toHaveBeenCalled();
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.createGame).toHaveBeenCalled();
 
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
+    expect(mockStore.createGame).toHaveBeenCalledWith(
       expect.objectContaining({
         createdBy: 'Rock',
         gameType: 'Fibonacci',
@@ -140,9 +144,10 @@ describe('CreateGame component', () => {
     const createButton = screen.getByRole('button', { name: /CreateGame.create/i });
     await userEvent.click(createButton);
 
-    expect(gamesService.addNewGame).toHaveBeenCalled();
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.createGame).toHaveBeenCalled();
 
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
+    expect(mockStore.createGame).toHaveBeenCalledWith(
       expect.objectContaining({ createdBy: 'Rock', gameType: 'TShirt', name: 'Marvels' }),
     );
   });
@@ -165,9 +170,10 @@ describe('CreateGame component', () => {
     const createButton = screen.getByRole('button', { name: /CreateGame.create/i });
     await userEvent.click(createButton);
 
-    expect(gamesService.addNewGame).toHaveBeenCalled();
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.createGame).toHaveBeenCalled();
 
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
+    expect(mockStore.createGame).toHaveBeenCalledWith(
       expect.objectContaining({ createdBy: 'Rock', gameType: 'ShortFibonacci', name: 'Marvels' }),
     );
   });
@@ -190,9 +196,10 @@ describe('CreateGame component', () => {
     const createButton = screen.getByRole('button', { name: /CreateGame.create/i });
     await userEvent.click(createButton);
 
-    expect(gamesService.addNewGame).toHaveBeenCalled();
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.createGame).toHaveBeenCalled();
 
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
+    expect(mockStore.createGame).toHaveBeenCalledWith(
       expect.objectContaining({ createdBy: 'Rock', gameType: 'TShirtAndNumber', name: 'Marvels' }),
     );
   });
@@ -222,9 +229,10 @@ describe('CreateGame component', () => {
     const createButton = screen.getByRole('button', { name: /CreateGame.create/i });
     await userEvent.click(createButton);
 
-    expect(gamesService.addNewGame).toHaveBeenCalled();
+    const mockStore = (globalThis as any).mockStoreState;
+    expect(mockStore.createGame).toHaveBeenCalled();
 
-    expect(gamesService.addNewGame).toHaveBeenCalledWith(
+    expect(mockStore.createGame).toHaveBeenCalledWith(
       expect.objectContaining({
         createdBy: 'Rock',
         gameType: 'Custom',

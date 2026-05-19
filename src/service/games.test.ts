@@ -276,7 +276,7 @@ describe('games service', () => {
         ]
       });
       const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
-      const { nextTask } = await import('./games');
+      const { nextTask } = await import('./tasks');
 
       await nextTask(mockId, '5');
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({
@@ -299,7 +299,7 @@ describe('games service', () => {
         ]
       });
       const spy = vi.spyOn(fb, 'updateGameDataInStore').mockResolvedValueOnce(true);
-      const { nextTask } = await import('./games');
+      const { nextTask } = await import('./tasks');
 
       await nextTask(mockId, undefined, true);
       expect(spy).toHaveBeenCalledWith(mockId, expect.objectContaining({

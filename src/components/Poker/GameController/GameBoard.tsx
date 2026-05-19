@@ -1,13 +1,12 @@
 import { FC, HTMLAttributes } from "react";
 import { StoryCard } from "./StoryCard";
 import { Story } from "./types/story";
-import { Game } from "../../../types/game";
-import { Player } from "../../../types/player";
+import { Game } from "../../../core/domain/entities/Game";
+import { Player } from "../../../core/domain/entities/Player";
 import { TaskList } from "./TaskList";
-import { updateStoryName, editTask, addTask } from '../../../service/games';
 import { useTranslation } from 'react-i18next';
 import { CheckCheck } from 'lucide-react';
-import { Status } from "@/src/types/status";
+import { useGameStore } from "../../../presentation/stores/useGameStore";
 
 type GameBoardProps = FC<{
     game: Game;
@@ -19,11 +18,15 @@ type GameBoardProps = FC<{
 const isPlanningFinished = (game: Game): boolean => {
     const tasks = game.tasks;
     if (!tasks || tasks.length === 0) return false;
-    return tasks.every(t => t.status === 'voted' || t.status === 'skipped') && game.gameStatus === Status.Finished;
+    return tasks.every(t => t.status === 'voted' || t.status === 'skipped') && game.isFinished;
 };
 
 export const GameBoard: GameBoardProps = ({ className, game, players, isModerator, ...props }) => {
     const { t } = useTranslation();
+    const editTaskStore = useGameStore((state) => state.editTask);
+    const updateStoryNameStore = useGameStore((state) => state.updateStoryName);
+    const addTaskStore = useGameStore((state) => state.addTask);
+
     const currentTask = game.tasks?.find((t) => t.id === game.currentTaskId);
     const storyTitle = currentTask ? currentTask.title : game.storyName || '';
     const finished = isPlanningFinished(game);
@@ -37,16 +40,16 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
 
     const handleStoryNameChange = (name: string) => {
         if (currentTask) {
-            editTask(game.id, currentTask.id, { title: name });
+            editTaskStore(game.id, currentTask.id, { title: name });
         } else {
-            updateStoryName(game.id, name);
+            updateStoryNameStore(game.id, name);
         }
     };
 
     const handleStoryNameConfirm = (name: string) => {
         if (currentTask) return;
         if (name.trim()) {
-            addTask(game.id, { title: name.trim(), description: '', status: 'pending' });
+            addTaskStore(game.id, { title: name.trim(), description: '' });
         }
     };
 
