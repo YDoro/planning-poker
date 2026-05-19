@@ -52,6 +52,10 @@
     "inviteLinkCopied": "¡Enlace de invitación copiado al portapapeles!",
     "inProgress": "En progreso",
     "finished": "Finalizado",
+    "dontVote": "No voto",
+    "vote": "Voto",
+    "voteOffMessage": "Has cambiado tu estado a no-votante",
+    "voteOnMessage": "Has cambiado tu estado a votante",
     "sessionStatus": {
       "notStarted": "No iniciado",
       "started": "Iniciado",

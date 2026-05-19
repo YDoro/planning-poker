@@ -19,6 +19,7 @@ import { DeleteTask } from '../../core/use-cases/DeleteTask';
 import { ReorderTasks } from '../../core/use-cases/ReorderTasks';
 import { UpdateStoryName } from '../../core/use-cases/UpdateStoryName';
 import { updatePlayerGames, removeGameFromCache } from '../../infrastructure/cache/localStorage';
+import { SetDontVote } from '@/src/core/use-cases/SetDontVote';
 
 const gameRepository = new FirebaseGameRepository();
 const createGameUC = new CreateGame(gameRepository);
@@ -34,6 +35,7 @@ const editTaskUC = new EditTask(gameRepository);
 const deleteTaskUC = new DeleteTask(gameRepository);
 const reorderTasksUC = new ReorderTasks(gameRepository);
 const updateStoryNameUC = new UpdateStoryName(gameRepository);
+const setDontVoteUC = new SetDontVote(gameRepository);
 
 interface GameState {
   game: Game | null;
@@ -42,6 +44,7 @@ interface GameState {
 
   // Getters
   getCurrentTask: () => Task | undefined;
+  getCurrentPlayer: (playerId: string) => Player | undefined;
 
   // Real-time connections
   connectToGame: (gameId: string) => () => void;
@@ -68,6 +71,7 @@ interface GameState {
   updateStoryName: (gameId: string, storyName: string) => Promise<void>;
   deleteGame: (gameId: string) => Promise<void>;
   updateGame: (gameId: string, updates: Partial<Game>) => Promise<void>;
+  setDontVote: (gameId: string, playerId: string) => Promise<void>;
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -230,5 +234,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       Object.assign(game, updates);
       await gameRepository.save(game);
     }
+  },
+
+  setDontVote: async (gameId, playerId) => {
+    await setDontVoteUC.execute(gameId, playerId);
+  },
+
+  getCurrentPlayer: (playerId: string) => {
+    const { players } = get();
+    return players.find((p) => p.id === playerId);
   },
 }));

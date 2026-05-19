@@ -53,6 +53,10 @@
     "inviteLinkCopied": "Invite link copied to clipboard!",
     "inProgress": "In Progress",
     "finished": "Finished",
+    "dontVote": "I don't vote",
+    "voteOffMessage": "You changed your status to non-voter",
+    "voteOnMessage": "You changed your status to voter",
+    "vote": "Vote",
     "sessionStatus": {
       "notStarted": "Not started",
       "started": "Started",

@@ -8,7 +8,6 @@ import { GameTopBar } from '../GameController/GameTopBar';
 import { GameBoard } from '../GameController/GameBoard';
 import { Timer } from '../GameController/Timer/TimerInput/Timer';
 import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator';
-import { TaskList } from '../GameController/TaskList';
 import { useGameStore } from '../../../presentation/stores/useGameStore';
 
 interface GameAreaProps {
@@ -34,7 +33,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
 
   return (
     <>
-      <GameTopBar game={game} players={players} currentPlayerId={currentPlayerId} />
+      <GameTopBar game={game} currentPlayerId={currentPlayerId} />
       <Timer
         variant='overlay'
         timerProps={{

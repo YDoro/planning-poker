@@ -59,7 +59,6 @@ describe('GameTopBar component', () => {
       <GameTopBar
         game={createMockGame()}
         currentPlayerId={mockCurrentPlayerId}
-        players={mockPlayers}
       />,
     )
     expect(screen.getByText('testGame')).toBeInTheDocument()
@@ -70,7 +69,6 @@ describe('GameTopBar component', () => {
       <GameTopBar
         game={createMockGame()}
         currentPlayerId={mockCurrentPlayerId}
-        players={mockPlayers}
       />,
     )
 
@@ -83,7 +81,6 @@ describe('GameTopBar component', () => {
       <GameTopBar
         game={createMockGame()}
         currentPlayerId={mockCurrentPlayerId}
-        players={mockPlayers}
       />,
     )
 
@@ -95,7 +92,6 @@ describe('GameTopBar component', () => {
       <GameTopBar
         game={createMockGame()}
         currentPlayerId={mockCurrentPlayerId}
-        players={mockPlayers}
       />,
     )
 
@@ -107,7 +103,6 @@ describe('GameTopBar component', () => {
       <GameTopBar
         game={createMockGame()}
         currentPlayerId={mockCurrentPlayerId}
-        players={mockPlayers}
       />,
     )
 
@@ -122,7 +117,6 @@ describe('GameTopBar component', () => {
       <GameTopBar
         game={createMockGame()}
         currentPlayerId={mockCurrentPlayerId}
-        players={mockPlayers}
       />,
     )
 
@@ -136,7 +130,6 @@ describe('GameTopBar component', () => {
         <GameTopBar
           game={createMockGame()}
           currentPlayerId={mockCurrentPlayerId}
-          players={mockPlayers}
         />,
       )
 
@@ -148,12 +141,48 @@ describe('GameTopBar component', () => {
         <GameTopBar
           game={createMockGame()}
           currentPlayerId={mockCurrentPlayerId}
-          players={mockPlayers}
         />,
       )
       await userEvent.click(screen.getByTestId('reveal-button'))
       const mockStore = (globalThis as any).mockStoreState
       expect(mockStore.revealCards).toHaveBeenCalledWith('xyz')
+    })
+  })
+
+  describe('When toggling isNonVoter (don\'t vote option)', () => {
+    it('should call setDontVote when "don\'t vote" button is clicked', async () => {
+      const mockPlayer = new Player('abc', 'Player1', PlayerStatus.NotStarted, undefined, false)
+      const mockStore = (globalThis as any).mockStoreState
+      mockStore.getCurrentPlayer.mockReturnValue(mockPlayer)
+
+      render(
+        <GameTopBar
+          game={createMockGame()}
+          currentPlayerId={mockCurrentPlayerId}
+        />,
+      )
+
+      const dontVoteButton = screen.getByTestId('dont-vote-button')
+      expect(dontVoteButton).toHaveAttribute('title', 'GameController.dontVote')
+
+      await userEvent.click(dontVoteButton)
+      expect(mockStore.setDontVote).toHaveBeenCalledWith('xyz', 'abc')
+    })
+
+    it('should show "Vote" label and checkmark if player is currently a non-voter', () => {
+      const mockPlayer = new Player('abc', 'Player1', PlayerStatus.NotStarted, undefined, true)
+      const mockStore = (globalThis as any).mockStoreState
+      mockStore.getCurrentPlayer.mockReturnValue(mockPlayer)
+
+      render(
+        <GameTopBar
+          game={createMockGame()}
+          currentPlayerId={mockCurrentPlayerId}
+        />,
+      )
+
+      const voteButton = screen.getByTestId('vote-button')
+      expect(voteButton).toHaveAttribute('title', 'GameController.vote')
     })
   })
 })

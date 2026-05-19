@@ -90,7 +90,7 @@ const getCardValue = (player: Player, game: Game, currentTask: Task | undefined)
     return '🤔';
   }
 
-  if (player.status === PlayerStatus.Finished) {
+  if (player.status === PlayerStatus.Finished || player.isNonVoter) {
     return '👍';
   }
 

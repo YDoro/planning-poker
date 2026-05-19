@@ -2,28 +2,29 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Game } from '../../../core/domain/entities/Game'
-import { Player } from '../../../core/domain/entities/Player'
 import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator'
-import { LogOut, Share2 } from 'lucide-react'
+import { Lightbulb, LightbulbOff, LogOut, Share2, StopCircle } from 'lucide-react'
 import { H1 } from '../../Typography'
 import { ControlDock } from './ControlDock'
 import { ControllerButton } from './ControllerButton'
 import { sessionStatusEmoji, sessionStatusTranslationKey } from '@/src/domain/game/sessionStatusPresentation'
+import { useGameStore } from '@/src/presentation/stores/useGameStore'
+import { toast } from 'sonner'
 
 export type GameTopBarProps = {
   game: Game
-  players: Player[]
   currentPlayerId: string
 }
 
 export const GameTopBar: React.FC<GameTopBarProps> = ({
   game,
-  players,
   currentPlayerId,
 }) => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [showCopiedMessage, setShowCopiedMessage] = useState(false)
+  const setDontVote = useGameStore((state) => state.setDontVote);
+  const currentPlayer = useGameStore((state) => state.getCurrentPlayer(currentPlayerId))
 
   const handleCopyInviteLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/join/${game.id}`)
@@ -38,6 +39,15 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
     currentPlayerId,
     isAllowMembersToManageSession: game.isAllowMembersToManageSession,
   })
+
+  const handleDontVote = () => {
+    setDontVote(game.id, currentPlayerId)
+    if (currentPlayer?.isNonVoter) {
+      toast.info(t('GameController.voteOnMessage'))
+    } else {
+      toast.info(t('GameController.voteOffMessage'))
+    }
+  }
 
   const statusLabel = t(sessionStatusTranslationKey(game.gameStatus as any))
 
@@ -60,6 +70,26 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
             testId='invite-button'
             title={t('GameController.invite')}
           />
+          {
+            currentPlayer?.isNonVoter ?
+              <ControllerButton
+                onClick={handleDontVote}
+                icon={<Lightbulb />}
+                label=''
+                className='text-green-800'
+                testId='vote-button'
+                title={t('GameController.vote')}
+              />
+              :
+              <ControllerButton
+                onClick={handleDontVote}
+                icon={<LightbulbOff />}
+                label=''
+                className='text-destructive'
+                testId='dont-vote-button'
+                title={t('GameController.dontVote')}
+              />
+          }
           <ControllerButton
             onClick={handleLeaveGame}
             icon={<LogOut />}

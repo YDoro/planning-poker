@@ -73,6 +73,8 @@ export const mockStoreState = {
   updateStoryName: vi.fn(),
   updateGame: vi.fn(),
   deleteGame: vi.fn(),
+  getCurrentPlayer: vi.fn((playerId) => mockStoreState.players.find(p => p.id === playerId)),
+  setDontVote: vi.fn(),
 };
 
 (globalThis as any).mockStoreState = mockStoreState;
