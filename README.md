@@ -1,6 +1,6 @@
 <h1 align="center">Planning Poker App</h1>
 
-Free / Open source Scrum/Agile Planning Poker Web App to estimate user stories for the Agile/Scrum teams. Create session and invite team members to estimate user stories efficiently. Intuitive UI/UX for voting the story points, showing team members voting status with emojis(👍 - Voting Done, 🤔 - Yet to Vote). Session Moderator has full control on revealing story points and restarting the session.
+Free / Open source Scrum/Agile Planning Poker Web App to estimate user stories for the Agile/Scrum teams. Create sessions and invite team members to estimate user stories efficiently. Intuitive UI/UX for voting story points, showing team members' voting status with emojis (👍 - Voting Done, 🤔 - Yet to Vote). The Session Moderator has full control to reveal story points and restart the session.
 
 <div align="center">
   
@@ -15,112 +15,180 @@ Free / Open source Scrum/Agile Planning Poker Web App to estimate user stories f
 
 ## Home Page
 
-<img src="docs/HomePage.jpg"  />
+<img src="docs/HomePage.jpg" alt="Home Page Screenshot" />
 
 ## Active Session
 
-<img src="docs/ActiveSession.jpg"  />
+<img src="docs/ActiveSession.jpg" alt="Active Session Screenshot" />
 
-## Features
+---
 
-1. Create new Session(Fibonacci, Short Fibonacci, TShirt size or Custom)
-2. Join Session
-3. Invite Link
-4. Share User story name/number with others using the board
-5. Session controller - Moderator can Reveal and restart the session anytime.
-6. Reveal - Reveal the cards for all users
-7. Voting status - Users Cards show voting status using emojis - 👍 - Voting Done, 🤔 - Yet to Vote
-8. Remove user from session
-9. Delete Session - Moderator can delete the session completely
-10. Dark Theme Support
-11. Multiple language support
-12. Mobile/Tablet screen support
-13. Timer 
+## Architecture & Project Structure
+
+The project has been refactored to follow **Clean Architecture** and **Domain-Driven Design (DDD)** principles, separating pure business logic and models from framework/infrastructure details.
+
+### Directory Mapping
+
+```text
+src/
+├── core/                   # Pure business logic and domain models (Framework-agnostic)
+│   ├── domain/             # Domain entities, value objects, interfaces, and exceptions
+│   │   ├── entities/       # Rich domain models: Game.ts, Player.ts, Task.ts
+│   │   ├── value-objects/  # Simple schemas: CardConfig.ts, TimerProps.ts
+│   │   └── repositories/   # Port definitions: IGameRepository.ts (repository interface)
+│   └── use-cases/          # Application business rules / orchestrators
+│       ├── CreateGame.ts   # Creates a new game session
+│       ├── AddPlayer.ts    # Joins a player to a game
+│       ├── VoteOnTask.ts   # Submits a player's estimate
+│       ├── RevealCards.ts  # Reveals estimated story cards
+│       ├── NextTask.ts     # Proceeds to the next user story task
+│       ├── FinishGame.ts   # Completes the poker planning session
+│       └── CheckIsModerator.ts # Checks player's host/moderator privileges
+│
+├── infrastructure/         # External tools, framework drivers, database drivers
+│   ├── firebase/           # Google Cloud Firestore repository driver & connections
+│   │   ├── FirebaseGameRepository.ts # Implementation of IGameRepository
+│   │   └── firebase.ts     # Firebase initializations & configurations
+│   └── cache/              # Local browser storage cache integrations
+│       └── localStorage.ts # Cache helper for user preferences & active sessions
+│
+├── presentation/           # React Layer - Components, Styling, Routing, and Stores
+│   ├── components/         # Reusable design system / presentation widgets
+│   ├── pages/              # Application pages (PokerPage, HomePage, DeleteOldGames)
+│   └── stores/             # Zustand stores for state management & real-time DB syncs
+│       └── useGameStore.ts # Central React/Zustand game store
+```
+
+### Core Design Decisions
+
+* **Rich Domain Model:** Aggregates (like `Game`) and Entities (like `Player` and `Task`) contain their own internal business rules, invariants, and state transitions (e.g., verifying if a vote can be submitted or calculating averages).
+* **Decoupled Persistence (Ports & Adapters):** The presentation and domain layers depend solely on the repository interface `IGameRepository` (Port). The Firestore repository implementation resides in the `infrastructure` directory (Adapter).
+* **Zustand State Management:** Real-time listeners and store events are decoupled from React Contexts, allowing performant component rendering through selective store selectors.
+
+---
 
 ## Tech Stack
 
-1. React - Frontend
-2. Tailwind CSS - For styling
-3. Firestore - Database
-4. Firebase - Hosting
+The application is built using a modern, performant frontend stack:
 
-## How to run the app locally for development
+1. **Framework:** [React 19](https://react.dev/) — Declarative UI with functional components and hooks.
+2. **Bundler:** [Vite 8](https://vite.dev/) — Fast compilation, hot reloading, and optimized production builds.
+3. **State Management:** [Zustand 5](https://github.com/pmndrs/zustand) — React-independent, lightweight real-time state management.
+4. **Database & Sync:** [Google Cloud Firestore](https://firebase.google.com/docs/firestore) — Real-time document database syncing active games.
+5. **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) — Modern utility-first CSS styling.
+6. **Form Validation:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/) — Strict schema validation for inputs.
+7. **Testing:** [Vitest](https://vitest.dev/) & [React Testing Library](https://testing-library.com/) — High-performance testing suite matching JSDOM environments.
+8. **Hosting:** [Firebase Hosting](https://firebase.google.com/docs/hosting).
 
-Pre-req
+---
 
-- Node.js version 16.0 or higher.
-- Yarn
-- Java JDK version 11 or higher.(for firestore db emulator)
+## How to Run the App Locally
 
-1. Clone the repo
+### Prerequisites
+
+* **Node.js** version 20.x or higher.
+* **Yarn** package manager.
+* **Java JDK** version 11 or higher (required to run the Firestore local emulator).
+
+### Step-by-Step Setup
+
+1. **Clone the repository:**
 
    ```bash
    git clone https://github.com/ydoro/planning-poker.git
+   cd planning-poker
    ```
 
-2. Run `yarn` command to install the required npm package.
-3. Install the Firebase CLI
+2. **Install dependencies:**
+
+   ```bash
+   yarn install
+   ```
+
+3. **Install the Firebase CLI globally:**
 
    ```bash
    npm install -g firebase-tools
    ```
 
-4. Start the firebase db emulator
+4. **Start the Firestore Local Emulator:**
 
    ```bash
    npm run start:emulator
    ```
 
-5. Copy `.env.example` file as `.env` file and make sure `REACT_APP_USE_FIRESTORE_EMULATOR` is set to `true`
-6. Run `yarn start` to start the app.
-7. Access the app at `http://localhost:3000`.
+5. **Configure environment variables:**
+   Copy `.env.example` to `.env` and ensure `VITE_USE_FIRESTORE_EMULATOR` is set to `true`:
 
-## Creating docker container
+   ```bash
+   cp .env.example .env
+   ```
 
-pre-req
+6. **Start the Vite development server:**
 
-- docker desktop
+   ```bash
+   yarn start
+   ```
 
-1. Build the app using below command. Make sure `REACT_APP_USE_FIRESTORE_EMULATOR` env variable is set to true.
+7. **Access the application:**
+   Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## Docker Support
+
+### Prerequisites
+
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
+
+### Instructions
+
+1. **Build the production bundle:**
+   Ensure your `.env` specifies the production configurations or emulator options accordingly.
 
    ```bash
    npm run build
    ```
 
-2. Build docker image
+2. **Build the Docker Image:**
 
    ```bash
    docker build -t planning-poker .
    ```
 
-3. Running the container
+3. **Run the Docker Container:**
 
-   ```
-   docker run -it -p 8080:8080 -p 3000:3000  planning-poker
+   ```bash
+   docker run -it -p 8080:8080 -p 3000:3000 planning-poker
    ```
 
-4. Wait for both emulator and app to start
-5. Access the app from local container using <http://localhost:3000>
+4. **Access the application:**
+   Wait for both the emulator and Vite dev server to start. Open [http://localhost:3000](http://localhost:3000).
+
+---
 
 ## Development Guidelines
 
-1. Keep it simple as much as possible
-2. Add required unit tests
-3. Use strong type always
-4. Use functional and hooks based approach for components
-5. Avoid adding new colors
-6. Use tailwind utility classes for styling the components
-7. Don't duplicate code and use service folder to keep non-component/shared codes
+1. **Follow Clean Architecture/DDD:** Avoid importing files from `infrastructure` or `presentation` inside `src/core`. Maintain pure domain rules in core entities.
+2. **Write Unit Tests:** Always add unit tests for domain entities, use-cases, and component presentations.
+3. **Strict Type Safety:** Keep types strictly typed using TypeScript schemas; avoid using `any`.
+4. **Use Zustand Selectors:** Always select minimal state slices from `useGameStore` to prevent unnecessary component updates.
+5. **Linting & Formatting:** Ensure code is formatted using Prettier and linted before committing.
 
-## Pending features open to development
+---
 
-1. Export options
-2. Preserve history of voting and show it in session
-3. Ask AI Option
+## Pending Features
+
+1. Export voting statistics options.
+2. Preserve game voting history.
+3. Ask AI integration.
+
+---
 
 ## Tech Debts
 
-1. Add Semantic Release to generate changelog and release notes
-2. Add missing unit tests for services
+1. Add Semantic Release to generate automated changelogs and release tags.
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ydoro)
+---
+
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ydoro)
