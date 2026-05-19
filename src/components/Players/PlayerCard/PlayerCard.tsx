@@ -2,7 +2,7 @@ import React from 'react';
 import { Game } from '../../../core/domain/entities/Game';
 import { Player, PlayerStatus } from '../../../core/domain/entities/Player';
 import { Task } from '../../../core/domain/entities/Task';
-import { isModerator } from '../../../utils/isModerator';
+import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator';
 import { getCards } from '../CardPicker/CardConfigs';
 import { Card } from '../../ui/card';
 import { Text, MarqueeText } from '../../Typography';
@@ -35,7 +35,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
       </div>
 
       <div className="relative w-full">
-        {isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession) &&
+        {checkIsModerator.execute({
+          moderatorId: game.createdById,
+          currentPlayerId,
+          isAllowMembersToManageSession: game.isAllowMembersToManageSession,
+        }) &&
           player.id !== currentPlayerId && (
             <Button
               title='Remove'

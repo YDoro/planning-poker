@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import * as playersService from '../../service/players';
+import * as playersService from '../../infrastructure/cache/localStorage';
 import { Game } from '../../core/domain/entities/Game';
 import { Player, PlayerStatus } from '../../core/domain/entities/Player';
 import { Poker } from './Poker'
 import { vi } from 'vitest';
 
-vi.mock('../../service/players');
+vi.mock('../../infrastructure/cache/localStorage');
 const mockNavigate = vi.fn();
 let blockCallback: ((params: { historyAction: string }) => boolean) | undefined;
 

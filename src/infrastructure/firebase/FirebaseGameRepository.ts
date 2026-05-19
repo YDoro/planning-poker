@@ -5,8 +5,7 @@ import { Player as DomainPlayer, PlayerStatus } from '../../core/domain/entities
 import { Task as DomainTask, TaskStatus } from '../../core/domain/entities/Task';
 import { IGameRepository } from '../../core/domain/repositories/IGameRepository';
 
-// Import initialized db from the original firebase file to maintain the same connection/emulator settings
-import { db } from '../../repository/firebase';
+import { db } from './firebase';
 
 function mapFirestoreTaskToDomain(t: any): DomainTask {
   return new DomainTask(

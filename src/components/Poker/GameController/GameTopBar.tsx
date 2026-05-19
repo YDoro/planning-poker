@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Game } from '../../../core/domain/entities/Game'
 import { Player } from '../../../core/domain/entities/Player'
-import { isModerator } from '../../../utils/isModerator'
+import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator'
 import { LogOut, Share2 } from 'lucide-react'
 import { H1 } from '../../Typography'
 import { ControlDock } from './ControlDock'
@@ -33,7 +33,11 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
 
   const handleLeaveGame = () => navigate(`/`)
 
-  const isMod = isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession)
+  const isMod = checkIsModerator.execute({
+    moderatorId: game.createdById,
+    currentPlayerId,
+    isAllowMembersToManageSession: game.isAllowMembersToManageSession,
+  })
 
   const statusLabel = t(sessionStatusTranslationKey(game.gameStatus as any))
 

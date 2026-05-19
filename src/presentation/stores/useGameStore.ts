@@ -18,7 +18,7 @@ import { EditTask } from '../../core/use-cases/EditTask';
 import { DeleteTask } from '../../core/use-cases/DeleteTask';
 import { ReorderTasks } from '../../core/use-cases/ReorderTasks';
 import { UpdateStoryName } from '../../core/use-cases/UpdateStoryName';
-import { updatePlayerGames, removeGameFromCache } from '../../service/players';
+import { updatePlayerGames, removeGameFromCache } from '../../infrastructure/cache/localStorage';
 
 const gameRepository = new FirebaseGameRepository();
 const createGameUC = new CreateGame(gameRepository);

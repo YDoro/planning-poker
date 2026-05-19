@@ -3,7 +3,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useNavigate, useParams, useBlocker } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getCurrentPlayerId } from '../../service/players';
+import { getCurrentPlayerId } from '../../infrastructure/cache/localStorage';
 import { Loading } from '../Loading/Loading';
 import { GameArea } from './GameArea/GameArea';
 import { useGameStore } from '../../presentation/stores/useGameStore';

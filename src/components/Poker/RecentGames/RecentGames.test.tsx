@@ -1,15 +1,17 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as playersService from '../../../service/players';
-import * as gamesService from '../../../service/games';
+import * as playersService from '../../../infrastructure/cache/localStorage';
 import { PlayerGame } from '../../../types/player';
 import { RecentGames } from './RecentGames';
 import { vi } from 'vitest';
-import { isModerator } from '../../../utils/isModerator';
+import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator';
 
-vi.mock('../../../service/players');
-vi.mock('../../../service/games');
-vi.mock('../../../utils/isModerator');
+vi.mock('../../../infrastructure/cache/localStorage');
+vi.mock('../../../core/use-cases/CheckIsModerator', () => ({
+  checkIsModerator: {
+    execute: vi.fn(),
+  },
+}));
 
 const mockNavigate = vi.fn();
 
@@ -97,8 +99,9 @@ describe('RecentGames component', () => {
       },
     ];
     vi.spyOn(playersService, 'getPlayerRecentGames').mockResolvedValue(mockGames);
-    (isModerator as any).mockReturnValue(true);
-    const removeGameSpy = vi.spyOn(gamesService, 'removeGame').mockResolvedValue(undefined);
+    (checkIsModerator.execute as any).mockReturnValue(true);
+    const mockStore = (globalThis as any).mockStoreState;
+    mockStore.deleteGame.mockClear();
 
     render(<RecentGames />);
 
@@ -113,6 +116,6 @@ describe('RecentGames component', () => {
     const confirmButton = screen.getByText('toolbar.history.deletionDialog.continueButton');
     await userEvent.click(confirmButton);
 
-    expect(removeGameSpy).toHaveBeenCalledWith('abc');
+    expect(mockStore.deleteGame).toHaveBeenCalledWith('abc');
   });
 });

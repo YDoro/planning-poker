@@ -1,9 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from './App';
-vi.mock('./service/players');
-vi.mock('./service/games');
-vi.mock('./repository/firebase');
+vi.mock('./infrastructure/cache/localStorage');
+vi.mock('./infrastructure/firebase/firebase');
 
 // eslint-disable-next-line jest/valid-describe-callback
 

@@ -7,9 +7,9 @@ import { Players } from '../../Players/Players';
 import { GameTopBar } from '../GameController/GameTopBar';
 import { GameBoard } from '../GameController/GameBoard';
 import { Timer } from '../GameController/Timer/TimerInput/Timer';
-import { isModerator } from '../../../utils/isModerator';
-import { updateGame } from '../../../service/games';
+import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator';
 import { TaskList } from '../GameController/TaskList';
+import { useGameStore } from '../../../presentation/stores/useGameStore';
 
 interface GameAreaProps {
   game: Game;
@@ -17,14 +17,19 @@ interface GameAreaProps {
   currentPlayerId: string;
 }
 export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayerId }) => {
-  const isMod = isModerator(game.createdById, currentPlayerId, game.isAllowMembersToManageSession);
+  const isMod = checkIsModerator.execute({
+    moderatorId: game.createdById,
+    currentPlayerId,
+    isAllowMembersToManageSession: game.isAllowMembersToManageSession,
+  });
+  const updateGameAction = useGameStore((state) => state.updateGame);
 
   const handleTimerUpdate = useCallback(
     (timer: GameTimerProps) => {
       if (!isMod) return;
-      updateGame(game.id, { timerProps: timer });
+      updateGameAction(game.id, { timerProps: timer });
     },
-    [isMod, game.id],
+    [isMod, game.id, updateGameAction],
   );
 
   return (

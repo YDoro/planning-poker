@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { FirebaseGameRepository } from '../../../infrastructure/firebase/FirebaseGameRepository';
 import { useGameStore } from '../../../presentation/stores/useGameStore';
-import { getCurrentPlayerId } from '../../../service/players';
+import { getCurrentPlayerId } from '../../../infrastructure/cache/localStorage';
 import { Input } from '../../ui/input';
 import { Button } from '../../ui/button';
 import { Label } from '../../ui/label';

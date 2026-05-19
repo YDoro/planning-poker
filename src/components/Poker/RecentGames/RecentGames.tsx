@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { removeGame } from '../../../service/games';
-import { getCurrentPlayerId, getPlayerRecentGames } from '../../../service/players';
+import { getCurrentPlayerId, getPlayerRecentGames } from '../../../infrastructure/cache/localStorage';
+import { useGameStore } from '../../../presentation/stores/useGameStore';
 import { PlayerGame } from '../../../types/player';
-import { isModerator } from '../../../utils/isModerator';
+import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../ui/button';
@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 export const RecentGames = () => {
   const navigate = useNavigate();
+  const deleteGame = useGameStore((state) => state.deleteGame);
   const [recentGames, setRecentGames] = useState<PlayerGame[] | undefined>(undefined);
   const [reloadRecent, setReloadRecent] = useState<Boolean>(false);
   const { t } = useTranslation();
@@ -43,7 +44,7 @@ export const RecentGames = () => {
   };
 
   const handleRemoveGame = async (recentGameId: string) => {
-    await removeGame(recentGameId);
+    await deleteGame(recentGameId);
     setReloadRecent(!reloadRecent);
   };
 
@@ -70,11 +71,11 @@ export const RecentGames = () => {
                       {recentGame.name}
                     </Link>
 
-                    {isModerator(
-                      recentGame.createdById,
-                      getCurrentPlayerId(recentGame.id),
-                      recentGame.isAllowMembersToManageSession,
-                    ) && (
+                    {checkIsModerator.execute({
+                      moderatorId: recentGame.createdById,
+                      currentPlayerId: getCurrentPlayerId(recentGame.id),
+                      isAllowMembersToManageSession: recentGame.isAllowMembersToManageSession,
+                    }) && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { deleteOldGames } from '../../service/games';
+import { removeOldGameFromStore } from '../../infrastructure/firebase/firebase';
 
 export const DeleteOldGames = () => {
   const [isDeleteInProgress, setIsDeleteInProgress] = useState(false);
 
   useEffect(() => {
     async function deleteData() {
-      await deleteOldGames();
+      await removeOldGameFromStore();
       setIsDeleteInProgress(false);
     }
     setIsDeleteInProgress(true);

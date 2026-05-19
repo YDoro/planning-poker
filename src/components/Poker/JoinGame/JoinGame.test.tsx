@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { JoinGame } from './JoinGame';
 import { vi } from 'vitest';
-import * as playersService from '../../../service/players';
+import * as playersService from '../../../infrastructure/cache/localStorage';
 
 const mockGetById = vi.fn();
 
@@ -14,7 +14,7 @@ vi.mock('../../../infrastructure/firebase/FirebaseGameRepository', () => {
   };
 });
 
-vi.mock('../../../service/players');
+vi.mock('../../../infrastructure/cache/localStorage');
 
 const mockNavigate = vi.fn();
 let mockParams: Record<string, string> = { id: '' };
