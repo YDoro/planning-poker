@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Switch } from "../../ui/switch";
+import { Clock, Eye } from "lucide-react";
+import { ControllerButton } from "./ControllerButton";
 
 interface AutoRevealProps {
     autoReveal: boolean;
@@ -10,11 +11,16 @@ export const AutoReveal: React.FC<AutoRevealProps> = ({ autoReveal, onAutoReveal
     const { t } = useTranslation();
 
     return (
-        <div className='flex flex-col items-center gap-2'>
-            <Switch id="auto-reveal-switch" checked={autoReveal} onCheckedChange={(value) => onAutoReveal(value)} />
-            <label htmlFor="auto-reveal-switch">
-                <span className='text-xs leading-none text-center block'>{t('GameController.autoReveal')}</span>
-            </label>
-        </div>
+        <ControllerButton
+            icon={
+                <Clock id="auto-reveal-switch" className={autoReveal ? 'text-green-700' : 'text-muted'}>
+                    <Eye size={15} x={-1} y={11} strokeWidth={3} className=" fill-white dark:fill-gray-900" />
+                </Clock>
+            }
+            label={t('GameController.autoReveal')}
+            onClick={() => onAutoReveal(!autoReveal)}
+            testId='auto-reveal-button'
+            className=''
+        />
     );
 };
