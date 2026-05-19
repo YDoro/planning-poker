@@ -82,11 +82,51 @@ export class Game {
     }
   }
 
+  public calculateClosestScore(): string | undefined {
+    const finishedPlayers = this.players.filter(
+      (p) => p.status === 'Finished' && p.value !== undefined
+    );
+    if (finishedPlayers.length === 0) return undefined;
+
+    const values = finishedPlayers
+      .map((p) => (typeof p.value === 'number' ? p.value : Number(p.value)))
+      .filter((v) => !isNaN(v));
+    if (values.length === 0) return undefined;
+
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+
+    const availableValues = this.cards
+      .map((c) => Number(c.value))
+      .filter((v) => !isNaN(v))
+      .sort((a, b) => a - b);
+
+    if (availableValues.length === 0) return undefined;
+
+    let closest = availableValues[0];
+    let minDiff = Math.abs(avg - closest);
+
+    for (const val of availableValues) {
+      const diff = Math.abs(avg - val);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = val;
+      } else if (Math.abs(diff - minDiff) < 0.0001) {
+        if (val > closest) {
+          closest = val;
+        }
+      }
+    }
+
+    const matchingCard = this.cards.find((c) => Number(c.value) === closest);
+    return matchingCard ? matchingCard.displayValue : String(closest);
+  }
+
   public revealCurrentTask(): void {
     if (!this.currentTaskId) return;
     const task = this.tasks.find((t) => t.id === this.currentTaskId);
     if (task) {
-      task.reveal();
+      const closestScore = this.calculateClosestScore();
+      task.reveal(closestScore);
     }
   }
 
