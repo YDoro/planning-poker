@@ -52,6 +52,22 @@ code {
   animation: fade-in-down 1s ease-out;
 }
 
+@keyframes fade-in-top {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-top {
+  animation: fade-in-top 1s ease-out;
+}
+
 @keyframes fade-in-right {
   0% {
     opacity: 0;
@@ -262,11 +278,18 @@ code {
     scrollbar-width: none;
   }
 }
+
 @layer utilities {
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
   }
+
   .marquee-hover:hover .marquee-content {
     animation: marquee 8s linear infinite;
   }

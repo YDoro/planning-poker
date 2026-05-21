@@ -33,7 +33,12 @@
       "description": "Free &Open source Planning Poker Web App to estimate user stories for your Agile teams.",
       "sub": " Create a session and invite your team members to estimate user stories efficiently.",
       "createSessionButton": "Create Session",
-      "joinSessionButton": "Join Session"
+      "joinSessionButton": "Join Session",
+      "readMore": "See Details"
+    },
+    "uiSection": {
+      "intuitiveTitle": "Intuitive UI Design",
+      "intuitiveDesc": "Beautiful voting interface for story point estimation, featuring emoji-based indicators to show each team member’s voting status in real time. Once the votes are revealed, card colors instantly highlight whether the team is aligned or if there are estimation differences. The Session Moderator has full control over revealing votes and restarting the session whenever needed."
     }
   },
   "GameController": {

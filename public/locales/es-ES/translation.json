@@ -33,7 +33,12 @@
       "description": "Aplicación web gratuita y de código abierto de Planning Poker para estimar historias de usuario en tus equipos Ágiles/Scrum",
       "sub": "Crea una sesión e invita a tus compañeros de equipo para estimar historias de usuario de manera eficiente.",
       "createSessionButton": "Crear Sesión",
-      "joinSessionButton": "Entrar en la Sesión"
+      "joinSessionButton": "Entrar en la Sesión",
+      "readMore": "Saber Más"
+    },
+    "uiSection": {
+      "intuitiveTitle": "Diseño de interfaz de usuario intuitivo",
+      "intuitiveDesc": "Interfaz de votación intuitiva para la estimación de puntos de historia, que muestra el estado de votación de cada miembro del equipo mediante indicadores de emoji en tiempo real. Una vez revelados los valores de las cartas, el color de la carta permite saber si el equipo está alineado o si existen diferencias en la estimación. El moderador de la sesión tiene control total sobre la revelación de las votaciones y el reinicio de la sesión cuando sea necesario."
     }
   },
   "GameController": {

@@ -33,7 +33,12 @@
       "description": "Planning Poker Gratuito e open source para o seu time ágil.",
       "sub": " Crie uma sessão e convide membros do seu time para estimar as histórias com eficiência.",
       "createSessionButton": "Criar Sessão",
-      "joinSessionButton": "Entrar na Sessão"
+      "joinSessionButton": "Entrar na Sessão",
+      "readMore": "Mais Detalhes"
+    },
+    "uiSection": {
+      "intuitiveTitle": "Design Intuitivo",
+      "intuitiveDesc": "Interface de votação intuitiva para a estimativa de pontos de história, com indicadores baseados em emoji para mostrar o status de votação de cada membro da equipe em tempo real. Uma vez revelados os votos, as cores das cartas indicam instantaneamente se a equipe está alinhada ou se há diferenças de estimativa. O moderador da sessão tem controle total sobre a revelação dos votos e o reinício da sessão sempre que necessário."
     }
   },
   "GameController": {

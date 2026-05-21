@@ -6,9 +6,11 @@ import { useTheme } from "@/src/contexts/ThemeContext";
 type ThemedImageProps = FC<PropsWithChildren<{
     imageLight: string;
     imageDark: string;
+    imgClass?: string;
+    alt?: string;
 } & HtmlHTMLAttributes<HTMLDivElement>>>
 
-export const ThemedImage: ThemedImageProps = ({ imageLight, imageDark, ...props }) => {
+export const ThemedImage: ThemedImageProps = ({ imageLight, imageDark, imgClass, alt, ...props }) => {
     const { theme } = useTheme()
 
     const [previewTheme, setPreviewTheme] = useState(theme);
@@ -44,8 +46,8 @@ export const ThemedImage: ThemedImageProps = ({ imageLight, imageDark, ...props 
                     </Button>
                     <img
                         key={previewTheme}
-                        className='animate-fade-in-right w-[600px] h-auto rounded-lg shadow-lg'
-                        alt='Session controller'
+                        className={`animate-fade-in-top h-auto rounded-lg shadow-lg ${imgClass ?? ''}`}
+                        alt={alt}
                         src={previewTheme === 'dark' ? imageDark : imageLight}
                     />
                 </div>
