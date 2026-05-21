@@ -16,9 +16,9 @@ describe('ThemeControl', () => {
     mockMetchMedia(true)
   });
 
-  it('renders theme based on user preference', () => {
+  it('renders with dark label when system prefers dark', () => {
     mockMetchMedia(true)
-    const { unmount } = render(
+    render(
       <ThemeProvider>
         <ThemeControl withLabel />
       </ThemeProvider>
@@ -26,20 +26,19 @@ describe('ThemeControl', () => {
     expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
     expect(screen.getByText('Light')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
 
-    unmount();
-    localStorage.clear();
-    document.documentElement.classList.remove('dark');
-
+  it('renders with light label when system prefers light', () => {
     mockMetchMedia(false)
     render(
       <ThemeProvider>
         <ThemeControl withLabel />
       </ThemeProvider>
     );
+    expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
     expect(screen.getByText('Dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(false);
-  })
+  });
 
   it('renders with light theme by default', () => {
     mockMetchMedia(false)

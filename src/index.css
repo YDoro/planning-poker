@@ -52,6 +52,22 @@ code {
   animation: fade-in-down 1s ease-out;
 }
 
+@keyframes fade-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-right {
+  animation: fade-in-right 1s ease-out;
+}
+
 :root {
   --background: oklch(0.9842 0.0034 247.8575);
   --foreground: oklch(0.2077 0.0398 265.7549);
