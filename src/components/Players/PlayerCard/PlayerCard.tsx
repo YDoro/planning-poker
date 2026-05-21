@@ -29,7 +29,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
   return (
     <div className='w-25 flex flex-col items-center justify-around relative group'>
       <div className='flex w-full'>
-        <MarqueeText className='text-center w-full font-semibold text-sm py-2' title={player.name}>
+        <MarqueeText className='text-left w-full font-semibold text-sm py-2' title={player.name}>
           {player.name}
         </MarqueeText>
       </div>
@@ -53,7 +53,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
             </Button>
           )}
         <Card
-          className='w-full aspect-3/4 shadow-md'
+          className='w-full aspect-3/4 shadow-md mb-1'
           style={{
             backgroundColor: getCardColor(game, player.value),
           }}
