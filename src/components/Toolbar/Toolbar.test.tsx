@@ -1,9 +1,9 @@
-/* eslint-disable testing-library/no-node-access */
-/* eslint-disable testing-library/no-container */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { Toolbar } from './Toolbar';
+import { ThemeProvider } from '../../contexts/ThemeContext';
+
 const mockHistoryPush = vi.fn();
 
 vi.mock('react-router-dom', () => ({
@@ -16,14 +16,23 @@ describe('Toolbar component', () => {
   });
 
   it('should render correct title', () => {
-    render(<Toolbar />);
+    render(
+      <ThemeProvider>
+        <Toolbar />
+      </ThemeProvider>
+    );
     const title = screen.getByText('Planning Poker');
     expect(title).toBeInTheDocument();
   });
   it('should navigate to home page when Title is clicked clicked', async () => {
-    render(<Toolbar />);
+    render(
+      <ThemeProvider>
+        <Toolbar />
+      </ThemeProvider>
+    );
     const title = screen.getByText('Planning Poker');
     await userEvent.click(title);
     expect(mockHistoryPush).toHaveBeenCalledWith('/');
   });
 });
+

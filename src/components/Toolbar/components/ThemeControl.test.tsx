@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ThemeControl } from './ThemeControl';
+import { ThemeProvider } from '../../../contexts/ThemeContext';
 
 const mockMetchMedia = (matches = true) => {
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -17,20 +18,36 @@ describe('ThemeControl', () => {
 
   it('renders theme based on user preference', () => {
     mockMetchMedia(true)
-    render(<ThemeControl withLabel />);
+    const { unmount } = render(
+      <ThemeProvider>
+        <ThemeControl withLabel />
+      </ThemeProvider>
+    );
     expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
     expect(screen.getByText('Light')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
 
+    unmount();
+    localStorage.clear();
+    document.documentElement.classList.remove('dark');
+
     mockMetchMedia(false)
-    render(<ThemeControl withLabel />);
+    render(
+      <ThemeProvider>
+        <ThemeControl withLabel />
+      </ThemeProvider>
+    );
     expect(screen.getByText('Dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(false);
   })
 
   it('renders with light theme by default', () => {
     mockMetchMedia(false)
-    render(<ThemeControl withLabel />);
+    render(
+      <ThemeProvider>
+        <ThemeControl withLabel />
+      </ThemeProvider>
+    );
     expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
     expect(screen.getByText('Dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(false);
@@ -38,14 +55,22 @@ describe('ThemeControl', () => {
 
   it('renders with dark theme if set in localStorage', () => {
     localStorage.setItem('theme', 'dark');
-    render(<ThemeControl withLabel />);
+    render(
+      <ThemeProvider>
+        <ThemeControl withLabel />
+      </ThemeProvider>
+    );
     expect(screen.getByText('Light')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
   it('toggles theme on click', () => {
     mockMetchMedia(false)
-    render(<ThemeControl withLabel />);
+    render(
+      <ThemeProvider>
+        <ThemeControl withLabel />
+      </ThemeProvider>
+    );
     const button = screen.getByTestId('toolbar.menu.theme');
     // Initially light
     expect(document.documentElement.classList.contains('dark')).toBe(false);
@@ -64,9 +89,14 @@ describe('ThemeControl', () => {
   });
 
   it('renders only icon bydefault', () => {
-    render(<ThemeControl />)
+    render(
+      <ThemeProvider>
+        <ThemeControl />
+      </ThemeProvider>
+    )
     expect(screen.getByTestId('toolbar.menu.theme')).toBeInTheDocument();
     expect(screen.queryByText('Light')).not.toBeInTheDocument();
     expect(screen.queryByText('Dark')).not.toBeInTheDocument();
   })
 });
+
