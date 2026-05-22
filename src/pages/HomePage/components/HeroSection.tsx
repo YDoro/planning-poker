@@ -15,9 +15,9 @@ export const HeroSection = () => {
     const { t } = useTranslation();
 
     return (
-        <Section className="h-screen w-full max-w-7xl bg-background flex flex-col justify-center items-center snap-start">
-            <div className='sticky top-0 '>
-                <div className='flex flex-col-reverse md:flex-row p-4 items-stretch gap-4' >
+        <Section className="h-[calc(100dvh-72px)] w-full max-w-7xl bg-background flex flex-col justify-center items-center snap-start">
+            <div className='sticky top-0'>
+                <div className='flex flex-col-reverse md:flex-row p-4 items-stretch gap-4 md:px-12' >
                     <div className='flex flex-1 flex-col'>
                         <H1 className='text-left text-wrap'>{t('HomePage.heroSection.description')}</H1>
                         <H4 className='text-left text-wrap my-6 md:my-4'>{t('HomePage.heroSection.sub')}</H4>
@@ -41,7 +41,7 @@ export const HeroSection = () => {
                         />
                     </div>
                 </div>
-                <H3 className="flex mt-16 md:mt-72 justify-center gap-6">
+                <H3 className="flex mt-16  justify-center gap-6">
                     {t('HomePage.heroSection.readMore')}
                     <ChevronUpCircle size={32} />
                 </H3>

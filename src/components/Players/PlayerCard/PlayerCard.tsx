@@ -27,14 +27,14 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
   };
 
   return (
-    <div className='w-25 flex flex-col items-center justify-around relative group'>
+    <div className='w-18 2xl:w-25 flex flex-col items-center justify-around relative group'>
       <div className='flex w-full'>
-        <MarqueeText className='text-left w-full font-semibold text-sm py-2' title={player.name}>
+        <MarqueeText className='text-left w-full font-semibold text-sm' title={player.name}>
           {player.name}
         </MarqueeText>
       </div>
 
-      <div className="relative w-full">
+      <div className="relative w-full mt-2">
         {checkIsModerator.execute({
           moderatorId: game.createdById,
           currentPlayerId,
@@ -53,7 +53,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
             </Button>
           )}
         <Card
-          className='w-full aspect-3/4 shadow-md mb-1'
+          className='w-full aspect-3/4 shadow-md rounded-md 2xl:rounded-lg'
           style={{
             backgroundColor: getCardColor(game, player.value),
           }}

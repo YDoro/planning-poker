@@ -37,12 +37,12 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
 
   return (
     <div className='fixed bottom-0 w-full max-w-full animate-fade-in-down'>
-      <div className='hidden md:block text-center text-lg font-semibold my-4'>
+      {/* <div className='hidden md:block text-center text-lg font-semibold my-4'>
         {!game.isFinished
           ? t('CardPicker.ClickOnTheCardToVote')
           : t('CardPicker.SessionNotReadyForVotingWaitForModeratorToStart')}
-      </div>
-      <HorizontalScroll className='justify-start p-4 gap-4 w-full md:justify-center'>
+      </div> */}
+      <HorizontalScroll className='justify-start pb-2 2xl:pb-8 gap-4 w-full md:justify-center'>
         {cards.map((card: CardConfig) => {
           const isSelected = players.find((p) => p.id === currentPlayerId)?.value === card.value;
           return (

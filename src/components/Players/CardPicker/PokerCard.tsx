@@ -35,8 +35,8 @@ export const PokerCard: React.FC<PokerCardProps> = ({
         hover:scale-115
         shrink-0
         w-15 h-23
-        md:w-20 md:h-30
-        sm:w-15 sm:h-23
+        2xl:w-20 2xl:h-30
+
         ${isSelected
             ? 'border-dashed border-2 border-border z-10 shadow-lg scale-110'
             : 'shadow-md scale-100'

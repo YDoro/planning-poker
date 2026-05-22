@@ -249,7 +249,7 @@ export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth
   };
 
   return (
-    <Card className={`flex flex-col h-full p-4 gap-4 bg-card overflow-hidden ${fullWidth ? 'w-full' : 'w-full md:w-80'}`}>
+    <Card className={`flex flex-col h-full p-4 gap-4 bg-card overflow-hidden flex-5 ${fullWidth ? 'w-full' : 'w-full md:w-80'}`}>
       <div className="flex justify-between items-center">
         <h3 className="font-semibold text-lg">{t('GameController.tasks.title', 'Tasks')}</h3>
         {isModerator && (

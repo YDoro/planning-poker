@@ -55,7 +55,7 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
 
     if (finished) {
         return (
-            <div className={`flex flex-col gap-4 w-full justify-start max-w-7xl rounded-md self-center items-center ${className}`} {...props}>
+            <div className={`flex flex-col gap-4 w-full justify-start max-w-xl 2xl:max-w-7xl rounded-md self-center ${className}`} {...props}>
                 {/* Planning finished banner */}
                 <div className="flex items-center gap-3 w-full px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400">
                     <CheckCheck size={22} />
@@ -70,18 +70,17 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
     }
 
     return (
-        <div className={`flex flex-col bg-background md:flex-row gap-4 w-full justify-between max-w-7xl md:max-h-[50dvh] rounded-md aspect-9/16 md:aspect-video self-center items-center md:bg-popover ${className}`} {...props}>
-            <div className="w-full flex justify-center">
-                <StoryCard
-                    key={story.cod}
-                    story={story}
-                    game={game}
-                    players={players}
-                    isModerator={isModerator}
-                    onStoryNameChange={handleStoryNameChange}
-                    onStoryNameConfirm={handleStoryNameConfirm}
-                />
-            </div>
+        <div className={`flex flex-col p-2 gap-2 2xl:gap-4 2xl:p-4 h-[60dvh] md:h-[50dvh] md:flex-row w-full justify-center max-w-5xl 2xl:max-w-7xl md:max-h-3/4 2xl:max-h-[50dvh] rounded-md self-center ${className}`} {...props}>
+            <StoryCard
+                key={story.cod}
+                story={story}
+                game={game}
+                players={players}
+                isModerator={isModerator}
+                onStoryNameChange={handleStoryNameChange}
+                onStoryNameConfirm={handleStoryNameConfirm}
+                className="flex-8"
+            />
             <TaskList game={game} isModerator={!!isModerator} />
         </div>
     );
