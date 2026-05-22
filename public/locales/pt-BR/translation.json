@@ -38,7 +38,9 @@
     },
     "uiSection": {
       "intuitiveTitle": "Design Intuitivo",
-      "intuitiveDesc": "Interface de votação intuitiva para a estimativa de pontos de história, com indicadores baseados em emoji para mostrar o status de votação de cada membro da equipe em tempo real. Uma vez revelados os votos, as cores das cartas indicam instantaneamente se a equipe está alinhada ou se há diferenças de estimativa. O moderador da sessão tem controle total sobre a revelação dos votos e o reinício da sessão sempre que necessário."
+      "intuitiveDesc": "Interface de votação intuitiva para a estimativa de pontos de história, com indicadores baseados em emoji para mostrar o status de votação de cada membro da equipe em tempo real. Uma vez revelados os votos, as cores das cartas indicam instantaneamente se a equipe está alinhada ou se há diferenças de estimativa. O moderador da sessão tem controle total sobre a revelação dos votos e o reinício da sessão sempre que necessário.",
+      "responsiveTitle": "Totalmente Responsivo, Sem Complicações",
+      "responsiveDesc": "O Planning Poker OS fica perfeito em qualquer dispositivo, de smartphones a desktops. Um design totalmente responsivo melhora a experiência do usuário. Layouts rápidos e adaptáveis garantem uma navegação suave a qualquer hora e em qualquer lugar. Um design, desempenho perfeito em todas as telas."
     }
   },
   "GameController": {
