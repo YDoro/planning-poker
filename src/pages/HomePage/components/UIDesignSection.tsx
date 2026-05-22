@@ -13,20 +13,20 @@ import { HorizontalScrollWithSnap } from "@/src/components/ui/horizontal-scroll-
 export const UIDesignSection = () => {
     const { t } = useTranslation();
     const IntuitiveDesign = <div className="flex flex-col-reverse md:flex-row max-w-dvw md:max-w-7xl w-full">
-        <div className='p-6 flex flex-col items-center justify-center w-full md:w-2/5'>
-            <H2 className="mb-12">
+        <div className='p-6 flex flex-col items-center justify-center md:justify-start gap-12 w-full md:w-2/5'>
+            <H2>
                 {t('HomePage.uiSection.intuitiveTitle')}
             </H2>
             <H4 className='text-base'>
                 {t('HomePage.uiSection.intuitiveDesc')}
             </H4>
         </div>
-        <ThemedImage className="relative" imageLight={SessionWhite} imageDark={SessionDark} alt='Session controller' imgClass='max-w-[90dvw] md:max-w-2xl' />
+        <ThemedImage imageLight={SessionWhite} imageDark={SessionDark} alt='Session controller' imgClass='max-w-[90dvw] md:max-w-2xl' />
     </div >
 
     const ResponsiveDesign = <div className="flex flex-col-reverse md:flex-row max-w-dvw md:max-w-7xl w-full">
-        <div className='p-6 flex flex-col items-center justify-center w-full md:w-2/5'>
-            <H2 className="mb-12">
+        <div className='p-6 flex flex-col items-center justify-center md:justify-start gap-12 w-full md:w-2/5'>
+            <H2>
                 {t('HomePage.uiSection.responsiveTitle')}
             </H2>
             <H4 className='text-base'>
@@ -39,7 +39,7 @@ export const UIDesignSection = () => {
     return (
         <Section className="h-screen w-full bg-secondary rounded-t-3xl flex justify-center snap-start">
             <div className="sticky top-0 max-w-7xl flex flex-col mt-8 md:m-[10dvh]">
-                <HorizontalScrollWithSnap gap={16} className="w-screen" snapAlign="start" showDots showGlow={false}>
+                <HorizontalScrollWithSnap gap={16} className="w-screen md:w-full" snapAlign="start" showDots showGlow={false}>
                     {IntuitiveDesign}
                     {ResponsiveDesign}
                 </HorizontalScrollWithSnap>
