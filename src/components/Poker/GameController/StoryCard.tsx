@@ -54,7 +54,7 @@ export const StoryCard = ({
       className={`flex flex-col aspect-4/3 w-lg md:w-md 2xl:w-2xl shadow-md p-4 relative group ${isFinished ? 'justify-between' : 'justify-center'}`}
       {...props}
     >
-      <div className='flex flex-col items-center justify-center w-full h-full max-w-full p-4 bg-purple-300'>
+      <div className='flex flex-col items-center justify-center w-full h-full max-w-full p-4'>
         {isModerator && !isEditing && (
           <button
             type='button'
