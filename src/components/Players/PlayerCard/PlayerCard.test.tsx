@@ -49,7 +49,7 @@ describe('PlayerCard component', () => {
       <PlayerCard game={createMockGame()} player={createMockPlayer()} currentPlayerId="a1" />,
     );
 
-    expect(screen.getByText('🤔')).toBeInTheDocument();
+    expect(screen.getByTestId('brain-emoji')).toBeInTheDocument();
   });
 
   it('should display thumbs up emoji when Player has voted', () => {
@@ -59,7 +59,7 @@ describe('PlayerCard component', () => {
       <PlayerCard game={createMockGame()} player={player} currentPlayerId="a1" />,
     );
 
-    expect(screen.getByText('👍')).toBeInTheDocument();
+    expect(screen.getByTestId('check-emoji')).toBeInTheDocument();
   });
 
   it('should display coffee up emoji when Player has voted but value is -1 and Game is finished', () => {
@@ -98,6 +98,25 @@ describe('PlayerCard component', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
+  it('should display correct color when Player card is revealed', () => {
+    const player = createMockPlayer();
+    player.status = PlayerStatus.Finished;
+    player.value = 1; 
+    const game = createMockGame();
+    game.isFinished = true;
+
+    render(
+      <PlayerCard
+        game={game}
+        player={player}
+        currentPlayerId="a1"
+      />,
+    );
+
+    const cardElement = screen.getByTestId('player-card-ui');
+    expect(cardElement).toHaveStyle({ backgroundColor: '#9EC8FE' });
+  });
+
   it('should display thinking emoji when Player has not voted and Game is finished', () => {
     const player = createMockPlayer();
     player.status = PlayerStatus.InProgress;
@@ -112,7 +131,7 @@ describe('PlayerCard component', () => {
       />,
     );
 
-    expect(screen.getByText('🤔')).toBeInTheDocument();
+    expect(screen.getByTestId('minus-emoji')).toBeInTheDocument();
   });
 
   it('should display remove icon for moderator', () => {

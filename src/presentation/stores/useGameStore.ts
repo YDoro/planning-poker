@@ -59,7 +59,7 @@ interface GameState {
   }) => Promise<{ gameId: string; creatorId: string }>;
   addPlayer: (gameId: string, playerName: string) => Promise<string>;
   removePlayer: (gameId: string, playerId: string) => Promise<void>;
-  voteOnTask: (gameId: string, playerId: string, value: number, emoji: string) => Promise<void>;
+  voteOnTask: (gameId: string, playerId: string, value: number) => Promise<void>;
   revealCards: (gameId: string) => Promise<void>;
   nextTask: (gameId: string, score?: string, skipped?: boolean) => Promise<void>;
   finishGame: (gameId: string) => Promise<void>;

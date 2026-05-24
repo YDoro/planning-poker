@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Game } from '../../../core/domain/entities/Game';
 import { Player } from '../../../core/domain/entities/Player';
-import { CardConfig, getCards, getRandomEmoji } from './CardConfigs';
+import { CardConfig, getCards } from './CardConfigs';
 import { HorizontalScroll } from '../../ui/horizontal-scroll';
 import { PokerCard } from './PokerCard';
 import { useGameStore } from '../../../presentation/stores/useGameStore';
@@ -15,7 +15,6 @@ interface CardPickerProps {
 
 export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPlayerId }) => {
   const { t } = useTranslation();
-  const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
   const voteOnTask = useGameStore((state) => state.voteOnTask);
   const storeGame = useGameStore((state) => state.game);
   const activeGame = game || storeGame;
@@ -23,15 +22,9 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
 
   const playPlayer = async (gameId: string, playerId: string, card: CardConfig) => {
     if (!game.isFinished && currentTask?.status === 'voting') {
-      await voteOnTask(gameId, playerId, card.value, randomEmoji);
+      await voteOnTask(gameId, playerId, card.value);
     }
   };
-
-  useEffect(() => {
-    if (!game.isFinished) {
-      setRandomEmoji(getRandomEmoji);
-    }
-  }, [game.isFinished]);
 
   const cards = game.cards?.length ? game.cards : getCards(game.gameType);
 
@@ -51,7 +44,6 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
               card={card}
               isSelected={isSelected}
               isFinished={game.isFinished}
-              randomEmoji={randomEmoji}
               onClick={() => playPlayer(game.id, currentPlayerId, card)}
             />
           );

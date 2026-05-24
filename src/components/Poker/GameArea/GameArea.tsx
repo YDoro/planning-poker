@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Game } from '../../../core/domain/entities/Game';
 import { Player } from '../../../core/domain/entities/Player';
 import { TimerProps as GameTimerProps } from '../../../types/game';
@@ -21,7 +21,18 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
     currentPlayerId,
     isAllowMembersToManageSession: game.isAllowMembersToManageSession,
   });
+
   const updateGameAction = useGameStore((state) => state.updateGame);
+  const [hasForcedScrollOnce, setHasForcedScrollOnce] = useState(false);
+
+  useEffect(() => {
+    if (hasForcedScrollOnce) return;
+    const timeout = setTimeout(() => {
+      setHasForcedScrollOnce(true);
+    }, 1000);
+    window.scrollTo({ behavior: "smooth", top: 60 }) // force scroll to bottom when game load
+    return () => clearTimeout(timeout);
+  }, [game])
 
   const handleTimerUpdate = useCallback(
     (timer: GameTimerProps) => {
