@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes } from "react";
+import { FC } from "react";
 import { StoryCard } from "./StoryCard";
 import { Story } from "./types/story";
 import { Game } from "../../../core/domain/entities/Game";
@@ -10,11 +10,9 @@ import { useGameStore } from "../../../presentation/stores/useGameStore";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../../ui/resizable";
 import { useBreakpoint } from "@/src/hooks/useBreakpoint";
 
-type GameBoardProps = FC<{
-    game: Game;
-    players?: Player[];
+type GameBoardProps = {
     isModerator?: boolean;
-} & HTMLAttributes<HTMLDivElement>>
+}
 
 /** All tasks are done (voted or skipped) — no pending/voting task left */
 const isPlanningFinished = (game: Game): boolean => {
@@ -23,7 +21,11 @@ const isPlanningFinished = (game: Game): boolean => {
     return tasks.every(t => t.status === 'voted' || t.status === 'skipped') && game.isFinished;
 };
 
-export const GameBoard: GameBoardProps = ({ className, game, players, isModerator, ...props }) => {
+export const GameBoard: FC<GameBoardProps> = ({ isModerator }) => {
+    const game = useGameStore(state => state.game);
+
+    if (!game) return null;
+
     const { t } = useTranslation();
     const editTaskStore = useGameStore((state) => state.editTask);
     const updateStoryNameStore = useGameStore((state) => state.updateStoryName);
@@ -56,7 +58,7 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
 
     if (finished) {
         return (
-            <div className={`flex flex-col gap-4 pt-2 w-full justify-start max-w-xl 2xl:max-w-7xl rounded-md self-center ${className}`} {...props}>
+            <div className={`flex flex-col gap-4 pt-2 w-full justify-start max-w-xl 2xl:max-w-7xl rounded-md self-center`}>
                 {/* Planning finished banner */}
                 <div className="flex items-center gap-3 w-full px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400">
                     <CheckCheck size={22} />
@@ -64,7 +66,7 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
                 </div>
                 {/* Full-width task list */}
                 <div className="w-full">
-                    <TaskList game={game} isModerator={!!isModerator} fullWidth />
+                    <TaskList isModerator={!!isModerator} fullWidth />
                 </div>
             </div>
         );
@@ -78,7 +80,7 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
 
         max-h-screen
         max-w-full
-        min-h-[60dvh]
+        min-h-[65dvh]
         
         md:min-h-[50dvh]
         md:max-h-[50dvh]
@@ -91,8 +93,6 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
                 <StoryCard
                     key={story.cod}
                     story={story}
-                    game={game}
-                    players={players}
                     isModerator={isModerator}
                     onStoryNameChange={handleStoryNameChange}
                     onStoryNameConfirm={handleStoryNameConfirm}
@@ -100,7 +100,7 @@ export const GameBoard: GameBoardProps = ({ className, game, players, isModerato
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={30}>
-                <TaskList game={game} isModerator={!!isModerator} fullWidth />
+                <TaskList isModerator={!!isModerator} fullWidth />
             </ResizablePanel>
         </ResizablePanelGroup>
     );

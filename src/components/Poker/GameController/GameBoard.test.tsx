@@ -22,6 +22,8 @@ describe('GameBoard', () => {
             mockStore.editTask.mockClear();
             mockStore.updateStoryName.mockClear();
             mockStore.addTask.mockClear();
+            mockStore.game = createMockGame();
+            mockStore.players = [];
         }
     });
 
@@ -35,8 +37,6 @@ describe('GameBoard', () => {
     };
 
     const defaultProps = {
-        game: createMockGame(),
-        players: [],
         isModerator: true,
     };
 
@@ -64,7 +64,12 @@ describe('GameBoard', () => {
         gameNoTasks.currentTaskId = undefined;
         gameNoTasks.storyName = 'Initial Story';
 
-        render(<GameBoard {...defaultProps} game={gameNoTasks} />);
+        const mockStore = (globalThis as any).mockStoreState;
+        if (mockStore) {
+            mockStore.game = gameNoTasks;
+        }
+
+        render(<GameBoard {...defaultProps} />);
         
         const editButton = screen.getByTitle('common.edit');
         fireEvent.click(editButton);
@@ -72,7 +77,6 @@ describe('GameBoard', () => {
         const input = screen.getByTestId('story-name-input');
         fireEvent.change(input, { target: { value: 'New Global Story' } });
         
-        const mockStore = (globalThis as any).mockStoreState;
         expect(mockStore.updateStoryName).toHaveBeenCalledWith('game-1', 'New Global Story');
     });
 });

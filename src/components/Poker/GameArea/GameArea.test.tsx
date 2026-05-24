@@ -12,6 +12,13 @@ vi.mock('react-router-dom', () => ({
 }));
 
 describe('GameArea component', () => {
+  beforeEach(() => {
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) {
+      mockStore.game = createMockGame();
+      mockStore.players = createMockPlayers();
+    }
+  });
   const createMockGame = () => {
     const game = new Game('xyz', 'testGame', false);
     game.createdById = 'abc';

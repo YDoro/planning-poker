@@ -11,16 +11,18 @@ import { Button } from '../../ui/button';
 import { useGameStore } from '../../../presentation/stores/useGameStore';
 
 interface PlayerCardProps {
-  game: Game;
+
   player: Player;
   currentPlayerId: string;
 }
 
-export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPlayerId }) => {
-  const storeGame = useGameStore((state) => state.game);
-  const activeGame = game || storeGame;
-  const currentTask = activeGame?.tasks?.find((t) => t.id === activeGame?.currentTaskId);
+export const PlayerCard: React.FC<PlayerCardProps> = ({ player, currentPlayerId }) => {
+  const game = useGameStore((state) => state.game);
   const removePlayerAction = useGameStore((state) => state.removePlayer);
+
+  if (!game) return null;
+
+  const currentTask = game.tasks?.find((t) => t.id === game.currentTaskId);
 
   const isRevealed = !!currentTask?.revealed || game.isFinished;
 

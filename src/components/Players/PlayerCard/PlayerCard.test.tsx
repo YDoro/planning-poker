@@ -11,6 +11,7 @@ describe('PlayerCard component', () => {
     const mockStore = (globalThis as any).mockStoreState;
     if (mockStore) {
       mockStore.removePlayer.mockClear();
+      mockStore.game = createMockGame();
     }
   });
 
@@ -38,7 +39,7 @@ describe('PlayerCard component', () => {
   it('should display Player name', () => {
     const player = createMockPlayer();
     render(
-      <PlayerCard game={createMockGame()} player={player} currentPlayerId="a1" />,
+      <PlayerCard player={player} currentPlayerId="a1" />,
     );
 
     expect(screen.getAllByText(player.name)[0]).toBeInTheDocument();
@@ -46,7 +47,7 @@ describe('PlayerCard component', () => {
 
   it('should display thinking emoji when Player has not voted', () => {
     render(
-      <PlayerCard game={createMockGame()} player={createMockPlayer()} currentPlayerId="a1" />,
+      <PlayerCard player={createMockPlayer()} currentPlayerId="a1" />,
     );
 
     expect(screen.getByTestId('brain-emoji')).toBeInTheDocument();
@@ -56,7 +57,7 @@ describe('PlayerCard component', () => {
     const player = createMockPlayer();
     player.status = PlayerStatus.Finished;
     render(
-      <PlayerCard game={createMockGame()} player={player} currentPlayerId="a1" />,
+      <PlayerCard player={player} currentPlayerId="a1" />,
     );
 
     expect(screen.getByTestId('check-emoji')).toBeInTheDocument();
@@ -68,10 +69,11 @@ describe('PlayerCard component', () => {
     player.value = -1;
     const game = createMockGame();
     game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a1"
       />,
@@ -86,10 +88,11 @@ describe('PlayerCard component', () => {
     player.value = 3; // displayValue is '3'
     const game = createMockGame();
     game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a1"
       />,
@@ -104,10 +107,11 @@ describe('PlayerCard component', () => {
     player.value = 1; 
     const game = createMockGame();
     game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a1"
       />,
@@ -122,10 +126,11 @@ describe('PlayerCard component', () => {
     player.status = PlayerStatus.InProgress;
     const game = createMockGame();
     game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a1"
       />,
@@ -138,10 +143,11 @@ describe('PlayerCard component', () => {
     const player = createMockPlayer();
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="moderator-1"
       />,
@@ -154,10 +160,11 @@ describe('PlayerCard component', () => {
     const player = createMockPlayer();
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a2" // not moderator, not own card
       />,
@@ -170,10 +177,11 @@ describe('PlayerCard component', () => {
     const player = new Player('moderator-1', 'SpiderMan');
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="moderator-1"
       />,
@@ -186,17 +194,17 @@ describe('PlayerCard component', () => {
     const player = createMockPlayer();
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="moderator-1"
       />,
     );
 
     await userEvent.click(screen.getByTestId('remove-button'));
-    const mockStore = (globalThis as any).mockStoreState;
     expect(mockStore.removePlayer).toHaveBeenCalledWith('xyz', 'a1');
   });
 });
