@@ -104,7 +104,6 @@ function mapFirestorePlayerToDomain(p: any): DomainPlayer {
     p.status as PlayerStatus,
     p.value,
     p.isNonVoter,
-    p.emoji
   );
 }
 
@@ -115,7 +114,6 @@ function mapDomainPlayerToFirestore(p: DomainPlayer): any {
     status: p.status,
     value: p.value !== undefined ? p.value : null,
     isNonVoter: p.isNonVoter || false,
-    emoji: p.emoji || null,
   };
 }
 

@@ -49,7 +49,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, currentPlayerId 
     if (isRevealed) {
       if (player.status === PlayerStatus.Finished) {
         if (player.value && player.value === -1) {
-          return player.emoji || '☕'; // coffee emoji
+          return '☕'; // coffee emoji
         }
         return getCardDisplayValue(player.value);
       }

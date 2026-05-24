@@ -1,3 +1,4 @@
+import { emoji } from 'zod';
 import { Player } from './Player';
 import { Task } from './Task';
 
@@ -42,7 +43,7 @@ export class Game {
     public updatedAt?: Date,
     public timerProps?: TimerProps,
     public autoReveal?: boolean
-  ) {}
+  ) { }
 
   public get gameStatus(): string {
     if (this.isFinished) return 'Finished';
@@ -62,7 +63,7 @@ export class Game {
     this.players = this.players.filter((p) => p.id !== playerId);
   }
 
-  public submitVote(playerId: string, value: number, emoji?: string): void {
+  public submitVote(playerId: string, value: number): void {
     if (this.isFinished) {
       throw new Error('Cannot vote on a finished game');
     }
@@ -70,7 +71,7 @@ export class Game {
     if (!player) {
       throw new Error('Player not found in game');
     }
-    player.vote(value, emoji);
+    player.vote(value);
 
     // If autoReveal is true, check if all players have voted
     if (this.autoReveal) {

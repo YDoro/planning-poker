@@ -183,8 +183,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     await removePlayerUC.execute(gameId, playerId);
   },
 
-  voteOnTask: async (gameId, playerId, value, emoji) => {
-    await voteOnTaskUC.execute(gameId, playerId, value, emoji);
+  voteOnTask: async (gameId, playerId, value) => {
+    await voteOnTaskUC.execute(gameId, playerId, value);
   },
 
   revealCards: async (gameId) => {
