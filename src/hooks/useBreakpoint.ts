@@ -1,41 +1,56 @@
 import { useEffect, useState } from 'react';
 
 const breakpoints = {
-  sm: 640, // Tailwind's `sm` breakpoint
-  md: 768, // Tailwind's `md` breakpoint
-  lg: 1024, // Tailwind's `lg` breakpoint
-  xl: 1280, // Tailwind's `xl` breakpoint
-  '2xl': 1536, // Tailwind's `2xl` breakpoint
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536,
 };
 
 export const useBreakpoint = () => {
-  const [screenSize, setScreenSize] = useState<string | null>(null);
+  const [windowState, setWindowState] = useState({
+    screenWidth: typeof window !== 'undefined' ? window.innerWidth : 0,
+    screenHeight: typeof window !== 'undefined' ? window.innerHeight : 0,
+    scrollX: typeof window !== 'undefined' ? window.scrollX : 0,
+    scrollY: typeof window !== 'undefined' ? window.scrollY : 0,
+    isSm: false,
+    isMd: false,
+    isLg: false,
+    isXl: false,
+    is2xl: false,
+  });
 
   useEffect(() => {
-    const getBreakpoint = () => {
+    const handleResizeOrScroll = () => {
       const width = window.visualViewport?.width || window.innerWidth;
+      const height = window.visualViewport?.height || window.innerHeight;
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
 
-      if (width >= breakpoints['2xl']) return '2xl';
-      if (width >= breakpoints.xl) return 'xl';
-      if (width >= breakpoints.lg) return 'lg';
-      if (width >= breakpoints.md) return 'md';
-      if (width >= breakpoints.sm) return 'sm';
-      return 'xs'; // Default for screens smaller than `sm`
+      setWindowState({
+        screenWidth: width,
+        screenHeight: height,
+        scrollX,
+        scrollY,
+        isSm: width >= breakpoints.sm,
+        isMd: width >= breakpoints.md,
+        isLg: width >= breakpoints.lg,
+        isXl: width >= breakpoints.xl,
+        is2xl: width >= breakpoints['2xl'],
+      });
     };
 
-    const handleResize = () => {
-      setScreenSize(getBreakpoint());
+    handleResizeOrScroll();
+    
+    window.addEventListener('resize', handleResizeOrScroll);
+    window.addEventListener('scroll', handleResizeOrScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('resize', handleResizeOrScroll);
+      window.removeEventListener('scroll', handleResizeOrScroll);
     };
-
-    // Set initial screen size
-    handleResize();
-
-    // Add resize event listener
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup event listener on unmount
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return screenSize;
+  return windowState;
 };

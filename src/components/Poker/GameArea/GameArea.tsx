@@ -57,7 +57,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
         <div className='flex-1 flex flex-col overflow-auto p-0.5 justify-start md:justify-center relative pb-32'>
           <Players game={game} players={players} currentPlayerId={currentPlayerId} />
           <GameBoard
-            className='mt-2 2xl:mt-4'
+            className=''
             game={game}
             players={players}
             isModerator={isMod}
