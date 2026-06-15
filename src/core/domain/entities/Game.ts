@@ -1,4 +1,3 @@
-import { emoji } from 'zod';
 import { Player } from './Player';
 import { Task } from './Task';
 
@@ -14,6 +13,25 @@ export interface TimerProps {
   soundOn?: boolean;
   timerVisible?: boolean;
   timerPaused?: boolean;
+}
+
+export interface ModeratorCheck {
+  createdById: string;
+  playerId?: string;
+  moderatorIds?: string[];
+  isAllowMembersToManageSession?: boolean;
+}
+
+/**
+ * Canonical rule for deciding whether a player can manage a session.
+ * Single source of truth — used by both the Game entity and the
+ * CheckIsModerator use-case so the rule can never drift between call sites.
+ */
+export function isPlayerModerator(check: ModeratorCheck): boolean {
+  if (check.isAllowMembersToManageSession) return true;
+  if (!check.playerId) return false;
+  if (check.createdById === check.playerId) return true;
+  return !!check.moderatorIds?.includes(check.playerId);
 }
 
 export enum GameType {
@@ -42,7 +60,8 @@ export class Game {
     public storyName?: string,
     public updatedAt?: Date,
     public timerProps?: TimerProps,
-    public autoReveal?: boolean
+    public autoReveal?: boolean,
+    public moderatorIds: string[] = []
   ) { }
 
   public get gameStatus(): string {
@@ -61,6 +80,22 @@ export class Game {
 
   public removePlayer(playerId: string): void {
     this.players = this.players.filter((p) => p.id !== playerId);
+    this.moderatorIds = this.moderatorIds.filter((id) => id !== playerId);
+  }
+
+  public promoteToModerator(playerId: string): void {
+    if (!this.moderatorIds.includes(playerId)) {
+      this.moderatorIds.push(playerId);
+    }
+  }
+
+  public isModerator(playerId?: string): boolean {
+    return isPlayerModerator({
+      createdById: this.createdById,
+      playerId,
+      moderatorIds: this.moderatorIds,
+      isAllowMembersToManageSession: this.isAllowMembersToManageSession,
+    });
   }
 
   public submitVote(playerId: string, value: number): void {

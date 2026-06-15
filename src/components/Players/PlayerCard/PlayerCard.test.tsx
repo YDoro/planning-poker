@@ -11,6 +11,7 @@ describe('PlayerCard component', () => {
     const mockStore = (globalThis as any).mockStoreState;
     if (mockStore) {
       mockStore.removePlayer.mockClear();
+      mockStore.promotePlayerToModerator.mockClear();
       mockStore.game = createMockGame();
     }
   });
@@ -206,5 +207,111 @@ describe('PlayerCard component', () => {
 
     await userEvent.click(screen.getByTestId('remove-button'));
     expect(mockStore.removePlayer).toHaveBeenCalledWith('xyz', 'a1');
+  });
+
+  it('should display make-moderator icon for moderator on another player card', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="moderator-1"
+      />,
+    );
+
+    expect(screen.getByTestId('make-moderator-button')).toBeInTheDocument();
+  });
+
+  it('should not display make-moderator icon for non moderator', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="a2" // not moderator
+      />,
+    );
+
+    expect(screen.queryByTestId('make-moderator-button')).not.toBeInTheDocument();
+  });
+
+  it('should not display make-moderator icon on own card', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'a1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="a1"
+      />,
+    );
+
+    expect(screen.queryByTestId('make-moderator-button')).not.toBeInTheDocument();
+  });
+
+  it('should not display make-moderator icon when target player is already a moderator', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    game.moderatorIds = ['a1'];
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="moderator-1"
+      />,
+    );
+
+    expect(screen.queryByTestId('make-moderator-button')).not.toBeInTheDocument();
+  });
+
+  it('should call promote function on Make moderator action', async () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="moderator-1"
+      />,
+    );
+
+    await userEvent.click(screen.getByTestId('make-moderator-button'));
+    expect(mockStore.promotePlayerToModerator).toHaveBeenCalledWith('xyz', 'a1');
+  });
+
+  it('should let a promoted moderator manage other players', () => {
+    const player = createMockPlayer(); // a1
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    game.moderatorIds = ['promoted-1'];
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="promoted-1" // moderator via moderatorIds
+      />,
+    );
+
+    expect(screen.getByTestId('remove-button')).toBeInTheDocument();
+    expect(screen.getByTestId('make-moderator-button')).toBeInTheDocument();
   });
 });

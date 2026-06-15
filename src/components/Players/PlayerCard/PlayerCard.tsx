@@ -2,11 +2,10 @@ import React, { useCallback } from 'react';
 import { Game } from '../../../core/domain/entities/Game';
 import { Player, PlayerStatus } from '../../../core/domain/entities/Player';
 import { Task } from '../../../core/domain/entities/Task';
-import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator';
 import { getCards } from '../CardPicker/CardConfigs';
 import { Card } from '../../ui/card';
 import { Text, MarqueeText } from '../../Typography';
-import { Ban, Brain, Check, Minus, ThumbsUp, Vote, X } from 'lucide-react';
+import { Ban, Brain, Check, Minus, ThumbsUp, UserStar, Vote, X } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { useGameStore } from '../../../presentation/stores/useGameStore';
 
@@ -19,6 +18,8 @@ interface PlayerCardProps {
 export const PlayerCard: React.FC<PlayerCardProps> = ({ player, currentPlayerId }) => {
   const game = useGameStore((state) => state.game);
   const removePlayerAction = useGameStore((state) => state.removePlayer);
+  const promotePlayerToModeratorAction = useGameStore((state) => state.promotePlayerToModerator);
+  const isModerator = useGameStore((state) => state.isModerator);
 
   if (!game) return null;
 
@@ -29,6 +30,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, currentPlayerId 
   const removeUser = (gameId: string, playerId: string) => {
     removePlayerAction(gameId, playerId);
   };
+
+  const promoteUser = (gameId: string, playerId: string) => {
+    promotePlayerToModeratorAction(gameId, playerId);
+  };
+
+  const isCurrentUserModerator = isModerator(currentPlayerId);
+
+  const isPlayerModerator = isModerator(player.id);
+
+  const canManagePlayer = isCurrentUserModerator && player.id !== currentPlayerId;
 
   const getCardColor = useCallback((value: number | undefined): string => {
     if (isRevealed) {
@@ -76,23 +87,30 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, currentPlayerId 
       </div>
 
       <div className="relative w-full mt-2">
-        {checkIsModerator.execute({
-          moderatorId: game.createdById,
-          currentPlayerId,
-          isAllowMembersToManageSession: game.isAllowMembersToManageSession,
-        }) &&
-          player.id !== currentPlayerId && (
-            <Button
-              title='Remove'
-              variant='ghost'
-              size='icon'
-              onClick={() => removeUser(game.id, player.id)}
-              data-testid='remove-button'
-              className='absolute -top-1 -right-1 text-destructive z-30'
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          )}
+        {canManagePlayer && !isPlayerModerator && (
+          <Button
+            title='Make moderator'
+            variant='ghost'
+            size='icon'
+            onClick={() => promoteUser(game.id, player.id)}
+            data-testid='make-moderator-button'
+            className='absolute -top-1 -left-1 text-primary z-30'
+          >
+            <UserStar className="h-3 w-3" />
+          </Button>
+        )}
+        {canManagePlayer && (
+          <Button
+            title='Remove'
+            variant='ghost'
+            size='icon'
+            onClick={() => removeUser(game.id, player.id)}
+            data-testid='remove-button'
+            className='absolute -top-1 -right-1 text-destructive z-30'
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        )}
         <Card
           data-testid="player-card-ui"
           className={`w-full aspect-3/4 shadow-md rounded-md 2xl:rounded-lg ${isRevealed ? 'animate-card-flip' : ''}`}

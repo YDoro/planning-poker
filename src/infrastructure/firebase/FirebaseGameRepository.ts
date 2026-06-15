@@ -71,7 +71,8 @@ function mapFirestoreGameToDomain(id: string, g: any, players: DomainPlayer[]): 
     g.storyName,
     updatedAt,
     g.timerProps,
-    g.autoReveal
+    g.autoReveal,
+    g.moderatorIds || []
   );
 }
 
@@ -94,6 +95,7 @@ function mapDomainGameToFirestore(g: DomainGame): any {
     updatedAt: new Date(),
     timerProps: g.timerProps || null,
     autoReveal: g.autoReveal || false,
+    moderatorIds: g.moderatorIds || [],
   };
 }
 

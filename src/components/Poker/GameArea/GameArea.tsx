@@ -7,8 +7,9 @@ import { Players } from '../../Players/Players';
 import { GameTopBar } from '../GameController/GameTopBar';
 import { GameBoard } from '../GameController/GameBoard';
 import { Timer } from '../GameController/Timer/TimerInput/Timer';
-import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator';
 import { useGameStore } from '../../../presentation/stores/useGameStore';
+import { GoogleAd } from '../../GoogleAd/GoogleAd';
+import { adsMap } from '@/src/config/ads';
 
 interface GameAreaProps {
   game: Game;
@@ -16,13 +17,9 @@ interface GameAreaProps {
   currentPlayerId: string;
 }
 export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayerId }) => {
-  const isMod = checkIsModerator.execute({
-    moderatorId: game.createdById,
-    currentPlayerId,
-    isAllowMembersToManageSession: game.isAllowMembersToManageSession,
-  });
-
   const updateGameAction = useGameStore((state) => state.updateGame);
+  const isModerator = useGameStore((state) => state.isModerator);
+  const isMod = isModerator(currentPlayerId);
   const [hasForcedScrollOnce, setHasForcedScrollOnce] = useState(false);
 
   useEffect(() => {
@@ -63,6 +60,7 @@ export const GameArea: React.FC<GameAreaProps> = ({ game, players, currentPlayer
             <CardPicker game={game} players={players} currentPlayerId={currentPlayerId} />
           </div>
         </div>
+        <GoogleAd slot={adsMap.gameLeft} className='relative max-h-32 mb-26 md:pb-0 md:absolute md:left-0 md:max-w-32 md:max-h-2/3' />
       </div>
     </>
   );
