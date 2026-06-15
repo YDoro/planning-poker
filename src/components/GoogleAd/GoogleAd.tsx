@@ -1,24 +1,31 @@
 import { useEffect } from 'react';
+import { adsMap, clientId } from '../../config/ads';
 
 declare global {
   interface Window {
     adsbygoogle: any;
   }
 }
-export const GoogleAd = () => {
+
+interface GoogleAdProps {
+  slot?: string;
+  className?: string;
+}
+
+export const GoogleAd = ({ slot = adsMap.home, className }: GoogleAdProps) => {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {}
+    } catch (e) { }
   }, []);
 
   return (
     <>
       <ins
-        className='adsbygoogle google_ad_responsive'
-        style={{ display: 'block', margin: '30px' }}
-        data-ad-client='ca-pub-3152802418728088'
-        data-ad-slot='2256716101'
+        className={`adsbygoogle google_ad_responsive ${className}`}
+        data-ad-client={clientId}
+        data-ad-slot={slot}
+        data-adtest="on"
       ></ins>
     </>
   );

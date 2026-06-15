@@ -29,7 +29,7 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
   const cards = game.cards?.length ? game.cards : getCards(game.gameType);
 
   return (
-    <div className='fixed bottom-0 w-full max-w-full animate-fade-in-down'>
+    <div className='fixed bottom-0 z-20 w-full max-w-full animate-fade-in-down'>
       {/* <div className='hidden md:block text-center text-lg font-semibold my-4'>
         {!game.isFinished
           ? t('CardPicker.ClickOnTheCardToVote')

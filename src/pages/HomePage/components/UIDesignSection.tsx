@@ -9,6 +9,7 @@ import { ThemedImage } from "@/src/components/ThemedImage/ThemedImage";
 import { H2, H4 } from "@/src/components/Typography";
 import { Section } from "./Section";
 import { HorizontalScrollWithSnap } from "@/src/components/ui/horizontal-scroll-with-snap";
+import { GoogleAd } from "@/src/components/GoogleAd/GoogleAd";
 
 export const UIDesignSection = () => {
     const { t } = useTranslation();
@@ -37,11 +38,12 @@ export const UIDesignSection = () => {
     </div >
 
     return (
-        <Section className="h-screen w-full bg-secondary rounded-t-3xl flex justify-center snap-start">
+        <Section className="h-screen w-full bg-secondary rounded-t-3xl flex justify-center snap-start" id="ui">
             <div className="sticky top-0 max-w-7xl flex flex-col mt-8 md:m-[10dvh]">
                 <HorizontalScrollWithSnap gap={16} className="w-screen md:w-full" snapAlign="start" showDots showGlow={false}>
                     {IntuitiveDesign}
                     {ResponsiveDesign}
+                    <GoogleAd />
                 </HorizontalScrollWithSnap>
             </div>
         </Section>
