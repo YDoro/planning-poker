@@ -271,17 +271,6 @@ code {
 }
 
 @layer utilities {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-@layer utilities {
   @keyframes marquee {
     from {
       transform: translateX(0);
@@ -320,5 +309,14 @@ code {
 
   .marquee-hover:hover .marquee-content {
     animation: marquee 8s linear infinite;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

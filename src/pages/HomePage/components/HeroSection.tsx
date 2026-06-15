@@ -6,7 +6,7 @@ import { Button } from "@/src/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useMatch, useNavigate } from "react-router-dom";
 import LandingImage from './../../../images/background.jpg';
-import { ChevronDown, ChevronUpCircle } from "lucide-react";
+import { ChevronUpCircle } from "lucide-react";
 
 export const HeroSection = () => {
     const isJoin = !!useMatch('/join');
@@ -41,10 +41,14 @@ export const HeroSection = () => {
                         />
                     </div>
                 </div>
-                <H3 className="flex mt-16  justify-center gap-6">
-                    {t('HomePage.heroSection.readMore')}
-                    <ChevronUpCircle size={32} />
-                </H3>
+                <div className="w-full flex justify-center mt-8 md:mt-[15dvh]">
+                    <Button variant="ghost" className="align-middle gap-2" onClick={() => { document.querySelector('#ui')!.scrollIntoView(); }}>
+                        <H3>
+                            {t('HomePage.heroSection.readMore')}
+                        </H3>
+                        <ChevronUpCircle className="size-8" />
+                    </Button>
+                </div>
             </div>
         </Section>
     );
