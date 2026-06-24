@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// Planning Poker is intentionally auth-less: anyone with a room link can play.
+// Since there is no Firebase Auth, these rules cannot tie writes to a user.
+// Instead they scope all access to the `games` tree and cap document sizes so an
+// abusive client cannot store arbitrary data or blow the free-tier (Spark) quota.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidGame() {
+      let d = request.resource.data;
+      return d.name is string
+        && d.name.size() <= 200
+        && (!('storyName' in d) || d.storyName == null || (d.storyName is string && d.storyName.size() <= 500))
+        && (!('tasks' in d) || (d.tasks is list && d.tasks.size() <= 500))
+        && (!('cards' in d) || (d.cards is list && d.cards.size() <= 100))
+        && (!('moderatorIds' in d) || (d.moderatorIds is list && d.moderatorIds.size() <= 200));
+    }
+
+    function isValidPlayer() {
+      let d = request.resource.data;
+      return (!('name' in d) || (d.name is string && d.name.size() <= 200));
+    }
+
+    match /games/{gameId} {
+      allow read: if true;
+      allow create, update: if isValidGame();
+      allow delete: if true;
+
+      match /players/{playerId} {
+        allow read: if true;
+        allow create, update: if isValidPlayer();
+        allow delete: if true;
+      }
+    }
+  }
+}

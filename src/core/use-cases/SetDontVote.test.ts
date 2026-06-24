@@ -17,6 +17,8 @@ describe('SetDontVote', () => {
       streamGame: vi.fn(),
       streamPlayers: vi.fn(),
       removePlayer: vi.fn(),
+      runGameTransaction: vi.fn(),
+      listPlayerIds: vi.fn(),
     } as unknown as IGameRepository;
 
     useCase = new SetDontVote(gameRepository);
@@ -36,14 +38,21 @@ describe('SetDontVote', () => {
       'player-123'
     );
 
-    vi.spyOn(gameRepository, 'getById').mockResolvedValue(mockGame);
+    vi.spyOn(gameRepository, 'runGameTransaction').mockImplementation(
+      async (_gameId, mutator) => {
+        mutator(mockGame);
+      }
+    );
 
     // Call first time: should toggle isNonVoter from false to true
     await useCase.execute('game-123', 'player-123');
 
     expect(mockPlayer.isNonVoter).toBe(true);
-    expect(gameRepository.savePlayer).toHaveBeenCalledWith('game-123', mockPlayer);
-    expect(gameRepository.save).toHaveBeenCalledWith(mockGame);
+    expect(gameRepository.runGameTransaction).toHaveBeenCalledWith(
+      'game-123',
+      expect.any(Function),
+      { loadPlayerIds: ['player-123'], persistPlayerIds: ['player-123'] }
+    );
 
     // Call second time: should toggle isNonVoter from true to false
     await useCase.execute('game-123', 'player-123');
@@ -51,12 +60,12 @@ describe('SetDontVote', () => {
     expect(mockPlayer.isNonVoter).toBe(false);
   });
 
-  it('should throw an error if the game is not found', async () => {
-    vi.spyOn(gameRepository, 'getById').mockResolvedValue(null);
+  it('should propagate the error when the game is not found', async () => {
+    vi.spyOn(gameRepository, 'runGameTransaction').mockRejectedValue(
+      new Error('Game not found')
+    );
 
     await expect(useCase.execute('invalid-game', 'player-123')).rejects.toThrow('Game not found');
-    expect(gameRepository.savePlayer).not.toHaveBeenCalled();
-    expect(gameRepository.save).not.toHaveBeenCalled();
   });
 
   it('should throw an error if the player is not found inside the game', async () => {
@@ -72,10 +81,12 @@ describe('SetDontVote', () => {
       'player-123'
     );
 
-    vi.spyOn(gameRepository, 'getById').mockResolvedValue(mockGame);
+    vi.spyOn(gameRepository, 'runGameTransaction').mockImplementation(
+      async (_gameId, mutator) => {
+        mutator(mockGame);
+      }
+    );
 
     await expect(useCase.execute('game-123', 'invalid-player')).rejects.toThrow('Player not found');
-    expect(gameRepository.savePlayer).not.toHaveBeenCalled();
-    expect(gameRepository.save).not.toHaveBeenCalled();
   });
 });

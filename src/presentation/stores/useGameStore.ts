@@ -239,11 +239,9 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   updateGame: async (gameId, updates) => {
-    const game = await gameRepository.getById(gameId);
-    if (game) {
+    await gameRepository.runGameTransaction(gameId, (game) => {
       Object.assign(game, updates);
-      await gameRepository.save(game);
-    }
+    });
   },
 
   setDontVote: async (gameId, playerId) => {

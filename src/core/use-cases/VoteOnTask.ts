@@ -4,18 +4,12 @@ export class VoteOnTask {
   constructor(private gameRepository: IGameRepository) { }
 
   async execute(gameId: string, playerId: string, cardValue: number): Promise<void> {
-    const game = await this.gameRepository.getById(gameId);
-    if (!game) throw new Error('Game not found');
-
-    game.submitVote(playerId, cardValue);
-
-    // Save the updated player state
-    const player = game.players.find((p) => p.id === playerId);
-    if (player) {
-      await this.gameRepository.savePlayer(gameId, player);
-    }
-
-    // Save the game (in case auto-reveal modified task statuses)
-    await this.gameRepository.save(game);
+    // Load every player so auto-reveal evaluates fresh votes; persist only the voter.
+    const playerIds = await this.gameRepository.listPlayerIds(gameId);
+    await this.gameRepository.runGameTransaction(
+      gameId,
+      (game) => game.submitVote(playerId, cardValue),
+      { loadPlayerIds: playerIds, persistPlayerIds: [playerId] }
+    );
   }
 }

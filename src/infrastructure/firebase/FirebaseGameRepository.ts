@@ -175,4 +175,49 @@ export class FirebaseGameRepository implements IGameRepository {
   async removePlayer(gameId: string, playerId: string): Promise<void> {
     await db.collection('games').doc(gameId).collection('players').doc(playerId).delete();
   }
+
+  async listPlayerIds(gameId: string): Promise<string[]> {
+    const playersSnap = await db.collection('games').doc(gameId).collection('players').get();
+    return playersSnap.docs.map((doc) => doc.id);
+  }
+
+  async runGameTransaction(
+    gameId: string,
+    mutator: (game: DomainGame) => void,
+    options: { loadPlayerIds?: string[]; persistPlayerIds?: string[] } = {}
+  ): Promise<void> {
+    const gameRef = db.collection('games').doc(gameId);
+    const playerRefs = (options.loadPlayerIds ?? []).map((id) =>
+      gameRef.collection('players').doc(id)
+    );
+
+    await db.runTransaction(async (tx) => {
+      // ----- READS (must all precede writes) -----
+      const gameSnap = await tx.get(gameRef);
+      if (!gameSnap.exists) throw new Error('Game not found');
+
+      const playerSnaps = await Promise.all(playerRefs.map((ref) => tx.get(ref)));
+      const players = playerSnaps
+        .filter((snap) => snap.exists)
+        .map((snap) => mapFirestorePlayerToDomain(snap.data()));
+
+      const game = mapFirestoreGameToDomain(gameId, gameSnap.data(), players);
+
+      // ----- DOMAIN (runs on fresh state; re-runs on retry) -----
+      mutator(game);
+
+      // ----- WRITES -----
+      tx.set(gameRef, mapDomainGameToFirestore(game), { merge: true });
+      for (const id of options.persistPlayerIds ?? []) {
+        const player = game.players.find((p) => p.id === id);
+        if (player) {
+          tx.set(
+            gameRef.collection('players').doc(id),
+            mapDomainPlayerToFirestore(player),
+            { merge: true }
+          );
+        }
+      }
+    });
+  }
 }
