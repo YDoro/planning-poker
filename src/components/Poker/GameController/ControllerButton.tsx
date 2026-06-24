@@ -33,6 +33,6 @@ export const ControllerButton = ({
                 {icon}
             </button>
         )}
-        <span className='text-xs mt-1'>{label}</span>
+        <span className='text-xs mt-1 text-center'>{label}</span>
     </div>
 );

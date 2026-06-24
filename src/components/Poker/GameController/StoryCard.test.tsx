@@ -17,6 +17,8 @@ describe('StoryCard', () => {
         const mockStore = (globalThis as any).mockStoreState;
         if (mockStore) {
             mockStore.editTask.mockClear();
+            mockStore.game = createMockGame();
+            mockStore.players = [];
         }
     });
 
@@ -50,8 +52,6 @@ describe('StoryCard', () => {
     const defaultProps = {
         story: mockStory,
         isModerator: false,
-        game: createMockGame(),
-        players: [],
         onStoryNameChange: vi.fn(),
     };
 
@@ -102,7 +102,13 @@ describe('StoryCard', () => {
         finishedGame.tasks = [task];
         finishedGame.currentTaskId = 'task-1';
 
-        render(<StoryCard {...defaultProps} game={finishedGame} players={createMockPlayers()} />);
+        const mockStore = (globalThis as any).mockStoreState;
+        if (mockStore) {
+            mockStore.game = finishedGame;
+            mockStore.players = createMockPlayers();
+        }
+
+        render(<StoryCard {...defaultProps} />);
 
         expect(screen.getByText('GameController.average')).toBeInTheDocument();
         expect(screen.getByText('GameController.storyStats.mode')).toBeInTheDocument();
@@ -131,7 +137,13 @@ describe('StoryCard', () => {
         p2.status = PlayerStatus.Finished;
         p2.value = 3;
 
-        render(<StoryCard {...defaultProps} game={finishedGame} players={[p1, p2]} />);
+        const mockStore = (globalThis as any).mockStoreState;
+        if (mockStore) {
+            mockStore.game = finishedGame;
+            mockStore.players = [p1, p2];
+        }
+
+        render(<StoryCard {...defaultProps} />);
 
         expect(screen.getByText('2.5')).toBeInTheDocument();
         expect(screen.getByText('3')).toBeInTheDocument(); // Closest picks 3 over 2
@@ -144,7 +156,13 @@ describe('StoryCard', () => {
         finishedGame.tasks = [task];
         finishedGame.currentTaskId = 'task-1';
 
-        render(<StoryCard {...defaultProps} game={finishedGame} players={createMockPlayers()} isModerator={true} story={{...mockStory, cod: 'task-1'}} />);
+        const mockStore = (globalThis as any).mockStoreState;
+        if (mockStore) {
+            mockStore.game = finishedGame;
+            mockStore.players = createMockPlayers();
+        }
+
+        render(<StoryCard {...defaultProps} isModerator={true} story={{...mockStory, cod: 'task-1'}} />);
 
         const input = screen.getByLabelText('GameController.finalScore:');
         expect(input).toBeInTheDocument();
@@ -152,7 +170,6 @@ describe('StoryCard', () => {
         fireEvent.change(input, { target: { value: '3' } });
         fireEvent.blur(input);
 
-        const mockStore = (globalThis as any).mockStoreState;
         expect(mockStore.editTask).toHaveBeenCalledWith('game-1', 'task-1', { score: '3' });
     });
 });

@@ -92,7 +92,30 @@ export const ControlDock = ({ game, isModerator = false }: ControlDockProps) => 
   }
 
   return (
-    <div className='fixed items-baseline justify-center bottom-32 left-1/2 -translate-x-1/2 p-4 w-[90dvw] bg-card/15 md:bg-card rounded-md z-40 flex gap-2 shadow-lg border md:max-h-min md:items-center md:left-auto md:translate-x-0 md:max-w-20 md:flex-col md:right-4 md:top-1/2 md:-translate-y-1/2'>
+    <div className='
+    fixed items-baseline justify-center 
+    bottom-26 
+    left-1/2 -translate-x-1/2 
+    backdrop-blur-sm
+    p-2 w-[90dvw] 
+    bg-card/15
+    rounded-md 
+    z-40 
+    flex gap-2 
+    shadow-lg 
+    border 
+    
+    md:bg-card 
+    md:max-h-min 
+    md:items-center 
+    md:left-auto 
+    md:translate-x-0 
+    md:max-w-20 
+    md:flex-col 
+    md:right-4 
+    md:top-1/2 
+    md:-translate-y-1/2
+    '>
       <Timer
         variant='dock'
         timerProps={{

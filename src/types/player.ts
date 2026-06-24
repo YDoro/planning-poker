@@ -6,7 +6,6 @@ export interface Player {
   status: Status;
   value?: number;
   isNonVoter?: boolean;
-  emoji?: string;
 }
 
 export interface PlayerGame {

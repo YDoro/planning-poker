@@ -70,4 +70,37 @@ describe('CheckIsModerator', () => {
 
     expect(result).toBe(true);
   });
+
+  it('should return true if the currentPlayerId is included in moderatorIds', () => {
+    const result = checkIsModerator.execute({
+      moderatorId: 'moderator123',
+      currentPlayerId: 'promoted456',
+      isAllowMembersToManageSession: false,
+      moderatorIds: ['promoted456'],
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false if the currentPlayerId is not in moderatorIds nor the creator', () => {
+    const result = checkIsModerator.execute({
+      moderatorId: 'moderator123',
+      currentPlayerId: 'player789',
+      isAllowMembersToManageSession: false,
+      moderatorIds: ['promoted456'],
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false when moderatorIds is empty and player is not the creator', () => {
+    const result = checkIsModerator.execute({
+      moderatorId: 'moderator123',
+      currentPlayerId: 'player789',
+      isAllowMembersToManageSession: false,
+      moderatorIds: [],
+    });
+
+    expect(result).toBe(false);
+  });
 });

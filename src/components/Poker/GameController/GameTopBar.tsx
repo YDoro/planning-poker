@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Game } from '../../../core/domain/entities/Game'
-import { checkIsModerator } from '../../../core/use-cases/CheckIsModerator'
 import { Lightbulb, LightbulbOff, LogOut, Share2, StopCircle } from 'lucide-react'
 import { H1 } from '../../Typography'
 import { ControlDock } from './ControlDock'
@@ -25,6 +24,7 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
   const [showCopiedMessage, setShowCopiedMessage] = useState(false)
   const setDontVote = useGameStore((state) => state.setDontVote);
   const currentPlayer = useGameStore((state) => state.getCurrentPlayer(currentPlayerId))
+  const isModerator = useGameStore((state) => state.isModerator)
 
   const handleCopyInviteLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}/join/${game.id}`)
@@ -34,11 +34,7 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
 
   const handleLeaveGame = () => navigate(`/`)
 
-  const isMod = checkIsModerator.execute({
-    moderatorId: game.createdById,
-    currentPlayerId,
-    isAllowMembersToManageSession: game.isAllowMembersToManageSession,
-  })
+  const isMod = isModerator(currentPlayerId)
 
   const handleDontVote = () => {
     setDontVote(game.id, currentPlayerId)

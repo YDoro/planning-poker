@@ -11,6 +11,8 @@ describe('PlayerCard component', () => {
     const mockStore = (globalThis as any).mockStoreState;
     if (mockStore) {
       mockStore.removePlayer.mockClear();
+      mockStore.promotePlayerToModerator.mockClear();
+      mockStore.game = createMockGame();
     }
   });
 
@@ -38,7 +40,7 @@ describe('PlayerCard component', () => {
   it('should display Player name', () => {
     const player = createMockPlayer();
     render(
-      <PlayerCard game={createMockGame()} player={player} currentPlayerId="a1" />,
+      <PlayerCard player={player} currentPlayerId="a1" />,
     );
 
     expect(screen.getAllByText(player.name)[0]).toBeInTheDocument();
@@ -46,20 +48,20 @@ describe('PlayerCard component', () => {
 
   it('should display thinking emoji when Player has not voted', () => {
     render(
-      <PlayerCard game={createMockGame()} player={createMockPlayer()} currentPlayerId="a1" />,
+      <PlayerCard player={createMockPlayer()} currentPlayerId="a1" />,
     );
 
-    expect(screen.getByText('🤔')).toBeInTheDocument();
+    expect(screen.getByTestId('brain-emoji')).toBeInTheDocument();
   });
 
   it('should display thumbs up emoji when Player has voted', () => {
     const player = createMockPlayer();
     player.status = PlayerStatus.Finished;
     render(
-      <PlayerCard game={createMockGame()} player={player} currentPlayerId="a1" />,
+      <PlayerCard player={player} currentPlayerId="a1" />,
     );
 
-    expect(screen.getByText('👍')).toBeInTheDocument();
+    expect(screen.getByTestId('check-emoji')).toBeInTheDocument();
   });
 
   it('should display coffee up emoji when Player has voted but value is -1 and Game is finished', () => {
@@ -68,10 +70,11 @@ describe('PlayerCard component', () => {
     player.value = -1;
     const game = createMockGame();
     game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a1"
       />,
@@ -86,10 +89,11 @@ describe('PlayerCard component', () => {
     player.value = 3; // displayValue is '3'
     const game = createMockGame();
     game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a1"
       />,
@@ -98,31 +102,53 @@ describe('PlayerCard component', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
-  it('should display thinking emoji when Player has not voted and Game is finished', () => {
+  it('should display correct color when Player card is revealed', () => {
     const player = createMockPlayer();
-    player.status = PlayerStatus.InProgress;
+    player.status = PlayerStatus.Finished;
+    player.value = 1; 
     const game = createMockGame();
     game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a1"
       />,
     );
 
-    expect(screen.getByText('🤔')).toBeInTheDocument();
+    const cardElement = screen.getByTestId('player-card-ui');
+    expect(cardElement).toHaveStyle({ backgroundColor: '#9EC8FE' });
+  });
+
+  it('should display thinking emoji when Player has not voted and Game is finished', () => {
+    const player = createMockPlayer();
+    player.status = PlayerStatus.InProgress;
+    const game = createMockGame();
+    game.isFinished = true;
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="a1"
+      />,
+    );
+
+    expect(screen.getByTestId('minus-emoji')).toBeInTheDocument();
   });
 
   it('should display remove icon for moderator', () => {
     const player = createMockPlayer();
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="moderator-1"
       />,
@@ -135,10 +161,11 @@ describe('PlayerCard component', () => {
     const player = createMockPlayer();
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="a2" // not moderator, not own card
       />,
@@ -151,10 +178,11 @@ describe('PlayerCard component', () => {
     const player = new Player('moderator-1', 'SpiderMan');
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="moderator-1"
       />,
@@ -167,17 +195,123 @@ describe('PlayerCard component', () => {
     const player = createMockPlayer();
     const game = createMockGame();
     game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
 
     render(
       <PlayerCard
-        game={game}
         player={player}
         currentPlayerId="moderator-1"
       />,
     );
 
     await userEvent.click(screen.getByTestId('remove-button'));
-    const mockStore = (globalThis as any).mockStoreState;
     expect(mockStore.removePlayer).toHaveBeenCalledWith('xyz', 'a1');
+  });
+
+  it('should display make-moderator icon for moderator on another player card', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="moderator-1"
+      />,
+    );
+
+    expect(screen.getByTestId('make-moderator-button')).toBeInTheDocument();
+  });
+
+  it('should not display make-moderator icon for non moderator', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="a2" // not moderator
+      />,
+    );
+
+    expect(screen.queryByTestId('make-moderator-button')).not.toBeInTheDocument();
+  });
+
+  it('should not display make-moderator icon on own card', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'a1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="a1"
+      />,
+    );
+
+    expect(screen.queryByTestId('make-moderator-button')).not.toBeInTheDocument();
+  });
+
+  it('should not display make-moderator icon when target player is already a moderator', () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    game.moderatorIds = ['a1'];
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="moderator-1"
+      />,
+    );
+
+    expect(screen.queryByTestId('make-moderator-button')).not.toBeInTheDocument();
+  });
+
+  it('should call promote function on Make moderator action', async () => {
+    const player = createMockPlayer();
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="moderator-1"
+      />,
+    );
+
+    await userEvent.click(screen.getByTestId('make-moderator-button'));
+    expect(mockStore.promotePlayerToModerator).toHaveBeenCalledWith('xyz', 'a1');
+  });
+
+  it('should let a promoted moderator manage other players', () => {
+    const player = createMockPlayer(); // a1
+    const game = createMockGame();
+    game.createdById = 'moderator-1';
+    game.moderatorIds = ['promoted-1'];
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) mockStore.game = game;
+
+    render(
+      <PlayerCard
+        player={player}
+        currentPlayerId="promoted-1" // moderator via moderatorIds
+      />,
+    );
+
+    expect(screen.getByTestId('remove-button')).toBeInTheDocument();
+    expect(screen.getByTestId('make-moderator-button')).toBeInTheDocument();
   });
 });

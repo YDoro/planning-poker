@@ -71,7 +71,8 @@ function mapFirestoreGameToDomain(id: string, g: any, players: DomainPlayer[]): 
     g.storyName,
     updatedAt,
     g.timerProps,
-    g.autoReveal
+    g.autoReveal,
+    g.moderatorIds || []
   );
 }
 
@@ -94,6 +95,7 @@ function mapDomainGameToFirestore(g: DomainGame): any {
     updatedAt: new Date(),
     timerProps: g.timerProps || null,
     autoReveal: g.autoReveal || false,
+    moderatorIds: g.moderatorIds || [],
   };
 }
 
@@ -104,7 +106,6 @@ function mapFirestorePlayerToDomain(p: any): DomainPlayer {
     p.status as PlayerStatus,
     p.value,
     p.isNonVoter,
-    p.emoji
   );
 }
 
@@ -115,7 +116,6 @@ function mapDomainPlayerToFirestore(p: DomainPlayer): any {
     status: p.status,
     value: p.value !== undefined ? p.value : null,
     isNonVoter: p.isNonVoter || false,
-    emoji: p.emoji || null,
   };
 }
 

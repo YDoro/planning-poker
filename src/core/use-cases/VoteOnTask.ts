@@ -1,13 +1,13 @@
 import { IGameRepository } from '../domain/repositories/IGameRepository';
 
 export class VoteOnTask {
-  constructor(private gameRepository: IGameRepository) {}
+  constructor(private gameRepository: IGameRepository) { }
 
-  async execute(gameId: string, playerId: string, cardValue: number, emoji: string): Promise<void> {
+  async execute(gameId: string, playerId: string, cardValue: number): Promise<void> {
     const game = await this.gameRepository.getById(gameId);
     if (!game) throw new Error('Game not found');
 
-    game.submitVote(playerId, cardValue, emoji);
+    game.submitVote(playerId, cardValue);
 
     // Save the updated player state
     const player = game.players.find((p) => p.id === playerId);

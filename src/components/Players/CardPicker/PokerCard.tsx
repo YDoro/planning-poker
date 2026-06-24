@@ -2,13 +2,13 @@ import React from 'react';
 import { CardConfig } from './CardConfigs';
 import { Button } from '../../ui/button';
 import { H3, H4 } from '../../Typography';
+import { Coffee, MessageCircleQuestionMark } from 'lucide-react';
 
 interface PokerCardProps {
   card: CardConfig;
   isSelected: boolean;
   isFinished: boolean;
   onClick: () => void;
-  randomEmoji: string;
 }
 
 export const PokerCard: React.FC<PokerCardProps> = ({
@@ -16,7 +16,6 @@ export const PokerCard: React.FC<PokerCardProps> = ({
   isSelected,
   isFinished,
   onClick,
-  randomEmoji,
 }) => {
   return (
     <Button
@@ -35,8 +34,8 @@ export const PokerCard: React.FC<PokerCardProps> = ({
         hover:scale-115
         shrink-0
         w-15 h-23
-        md:w-20 md:h-30
-        sm:w-15 sm:h-23
+        2xl:w-20 2xl:h-30
+
         ${isSelected
             ? 'border-dashed border-2 border-border z-10 shadow-lg scale-110'
             : 'shadow-md scale-100'
@@ -65,12 +64,14 @@ export const PokerCard: React.FC<PokerCardProps> = ({
             </>
           )}
           {card.value === -1 && (
-            <span className='flex flex-col justify-center h-full text-4xl'>
-              {randomEmoji}
+            <span className='flex flex-col justify-center h-full w-full text-amber-950'>
+              <Coffee className='self-center size-10' />
             </span>
           )}
           {card.value === -2 && (
-            <span className='flex flex-col justify-center h-full text-4xl'>❓</span>
+            <span className='flex flex-col justify-center h-full w-full text-red-800'>
+              <MessageCircleQuestionMark className='self-center size-10' />
+            </span>
           )}
         </div>
       </div>

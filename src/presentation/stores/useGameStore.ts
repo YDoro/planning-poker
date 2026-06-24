@@ -8,6 +8,7 @@ import { FirebaseGameRepository } from '../../infrastructure/firebase/FirebaseGa
 import { CreateGame } from '../../core/use-cases/CreateGame';
 import { AddPlayer } from '../../core/use-cases/AddPlayer';
 import { RemovePlayer } from '../../core/use-cases/RemovePlayer';
+import { PromotePlayerToModerator } from '../../core/use-cases/PromotePlayerToModerator';
 import { VoteOnTask } from '../../core/use-cases/VoteOnTask';
 import { RevealCards } from '../../core/use-cases/RevealCards';
 import { NextTask } from '../../core/use-cases/NextTask';
@@ -25,6 +26,7 @@ const gameRepository = new FirebaseGameRepository();
 const createGameUC = new CreateGame(gameRepository);
 const addPlayerUC = new AddPlayer(gameRepository);
 const removePlayerUC = new RemovePlayer(gameRepository);
+const promotePlayerToModeratorUC = new PromotePlayerToModerator(gameRepository);
 const voteOnTaskUC = new VoteOnTask(gameRepository);
 const revealCardsUC = new RevealCards(gameRepository);
 const nextTaskUC = new NextTask(gameRepository);
@@ -45,6 +47,7 @@ interface GameState {
   // Getters
   getCurrentTask: () => Task | undefined;
   getCurrentPlayer: (playerId: string) => Player | undefined;
+  isModerator: (playerId?: string) => boolean;
 
   // Real-time connections
   connectToGame: (gameId: string) => () => void;
@@ -59,7 +62,8 @@ interface GameState {
   }) => Promise<{ gameId: string; creatorId: string }>;
   addPlayer: (gameId: string, playerName: string) => Promise<string>;
   removePlayer: (gameId: string, playerId: string) => Promise<void>;
-  voteOnTask: (gameId: string, playerId: string, value: number, emoji: string) => Promise<void>;
+  promotePlayerToModerator: (gameId: string, playerId: string) => Promise<void>;
+  voteOnTask: (gameId: string, playerId: string, value: number) => Promise<void>;
   revealCards: (gameId: string) => Promise<void>;
   nextTask: (gameId: string, score?: string, skipped?: boolean) => Promise<void>;
   finishGame: (gameId: string) => Promise<void>;
@@ -108,7 +112,8 @@ export const useGameStore = create<GameState>((set, get) => ({
           gameData.storyName,
           gameData.updatedAt,
           gameData.timerProps,
-          gameData.autoReveal
+          gameData.autoReveal,
+          gameData.moderatorIds
         ) : null,
         isLoading: false,
       }));
@@ -134,7 +139,8 @@ export const useGameStore = create<GameState>((set, get) => ({
           state.game.storyName,
           state.game.updatedAt,
           state.game.timerProps,
-          state.game.autoReveal
+          state.game.autoReveal,
+          state.game.moderatorIds
         ) : null;
 
         return {
@@ -183,8 +189,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     await removePlayerUC.execute(gameId, playerId);
   },
 
-  voteOnTask: async (gameId, playerId, value, emoji) => {
-    await voteOnTaskUC.execute(gameId, playerId, value, emoji);
+  promotePlayerToModerator: async (gameId, playerId) => {
+    await promotePlayerToModeratorUC.execute(gameId, playerId);
+  },
+
+  voteOnTask: async (gameId, playerId, value) => {
+    await voteOnTaskUC.execute(gameId, playerId, value);
   },
 
   revealCards: async (gameId) => {
@@ -243,5 +253,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   getCurrentPlayer: (playerId: string) => {
     const { players } = get();
     return players.find((p) => p.id === playerId);
+  },
+
+  isModerator: (playerId) => {
+    const { game } = get();
+    return game ? game.isModerator(playerId) : false;
   },
 }));

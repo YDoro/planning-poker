@@ -21,17 +21,6 @@ vi.mock('react-i18next', () => ({
 }))
 
 describe('GameTopBar component', () => {
-  beforeEach(() => {
-    mockNavigate.mockClear()
-    const mockStore = (globalThis as any).mockStoreState
-    if (mockStore) {
-      mockStore.revealCards.mockClear()
-      mockStore.nextTask.mockClear()
-      mockStore.updateGame.mockClear()
-      mockStore.deleteGame.mockClear()
-    }
-  })
-
   const createMockGame = () => {
     const game = new Game('xyz', 'testGame', false)
     game.createdById = 'abc'
@@ -46,6 +35,20 @@ describe('GameTopBar component', () => {
     game.isFinished = false
     return game
   }
+
+  beforeEach(() => {
+    mockNavigate.mockClear()
+    const mockStore = (globalThis as any).mockStoreState
+    if (mockStore) {
+      mockStore.revealCards.mockClear()
+      mockStore.nextTask.mockClear()
+      mockStore.updateGame.mockClear()
+      mockStore.deleteGame.mockClear()
+      // The store is the source of truth for the active game; the moderator
+      // check reads from it. Keep it in sync with the rendered game.
+      mockStore.game = createMockGame()
+    }
+  })
 
   const mockCurrentPlayerId = 'abc'
   const mockPlayers = [

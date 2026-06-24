@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useGameStore } from '../../../presentation/stores/useGameStore';
 
 interface TaskListProps {
-  game: Game;
+
   isModerator: boolean;
   fullWidth?: boolean;
 }
@@ -196,11 +196,14 @@ const DraggableTaskItem: React.FC<DraggableTaskItemProps> = ({
   );
 };
 
-export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth = false }) => {
+export const TaskList: React.FC<TaskListProps> = ({ isModerator, fullWidth = false }) => {
   const { t } = useTranslation();
+  const game = useGameStore((state) => state.game);
   const addTaskStore = useGameStore((state) => state.addTask);
   const editTaskStore = useGameStore((state) => state.editTask);
   const reorderTasksStore = useGameStore((state) => state.reorderTasks);
+
+  if (!game) return null;
 
   const tasks = game.tasks || [];
   const [isAdding, setIsAdding] = useState(false);
@@ -249,7 +252,7 @@ export const TaskList: React.FC<TaskListProps> = ({ game, isModerator, fullWidth
   };
 
   return (
-    <Card className={`flex flex-col h-full p-4 gap-4 bg-card overflow-hidden ${fullWidth ? 'w-full' : 'w-full md:w-80'}`}>
+    <Card className={`flex flex-col h-full p-4 gap-4 bg-card overflow-hidden flex-5 ${fullWidth ? 'w-full' : 'w-full md:w-80'}`}>
       <div className="flex justify-between items-center">
         <h3 className="font-semibold text-lg">{t('GameController.tasks.title', 'Tasks')}</h3>
         {isModerator && (

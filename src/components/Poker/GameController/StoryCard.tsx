@@ -4,7 +4,7 @@ import { Player } from '../../../core/domain/entities/Player'
 import { HTMLAttributes, useState, useEffect, useMemo } from 'react'
 import { Card } from '../../ui/card'
 import { H2 } from '../../Typography'
-import { Plus, Pencil, Check } from 'lucide-react'
+import { Pencil, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { computeStoryVoteStatistics } from '@/src/domain/game/storyVoteStatistics'
 import { useGameStore } from '../../../presentation/stores/useGameStore'
@@ -12,8 +12,7 @@ import { useGameStore } from '../../../presentation/stores/useGameStore'
 type StoryCardProps = HTMLAttributes<HTMLDivElement> & {
   story: Story
   isModerator?: boolean
-  game?: Game
-  players?: Player[]
+
   onStoryNameChange?: (name: string) => void
   onStoryNameConfirm?: (name: string) => void
 }
@@ -21,17 +20,18 @@ type StoryCardProps = HTMLAttributes<HTMLDivElement> & {
 export const StoryCard = ({
   story,
   isModerator,
-  game,
-  players,
   onStoryNameChange,
   onStoryNameConfirm,
   ...props
 }: StoryCardProps) => {
+  const game = useGameStore((state) => state.game)
+  const players = useGameStore((state) => state.players)
+  
+  if (!game) return null
+
   const { t } = useTranslation()
   const [isEditing, setIsEditing] = useState(false)
-  const storeGame = useGameStore((state) => state.game)
-  const activeGame = game || storeGame
-  const currentTask = activeGame?.tasks?.find((t) => t.id === activeGame?.currentTaskId)
+  const currentTask = game.tasks?.find((t) => t.id === game.currentTaskId)
   const editTaskAction = useGameStore((state) => state.editTask)
 
   const toggleEdit = () => setIsEditing(!isEditing)
@@ -45,16 +45,16 @@ export const StoryCard = ({
   const isFinished = currentTask?.status === 'voted' && currentTask.revealed
 
   const stats = useMemo(() => {
-    if (!isFinished || !game || !players) return null
+    if (!isFinished || !players) return null
     return computeStoryVoteStatistics(game, players)
   }, [isFinished, game, players])
 
   return (
     <Card
-      className={`flex flex-col aspect-4/3 w-lg shadow-md p-4 relative group ${isFinished ? 'justify-between' : 'justify-center'}`}
+      className={`flex flex-col w-full h-full shadow-md p-4 relative group ${isFinished ? 'justify-between' : 'justify-center'}`}
       {...props}
     >
-      <div className='flex flex-col items-center w-full'>
+      <div className='flex flex-col items-center justify-center w-full h-full max-w-full p-4'>
         {isModerator && !isEditing && (
           <button
             type='button'
@@ -138,7 +138,7 @@ export const StoryCard = ({
                 className='w-16 p-1 text-center text-sm border bg-background border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring'
                 defaultValue={story.points || stats.closestFormatted}
                 onBlur={(e) => {
-                  if (game && story.cod && story.cod !== 'active') {
+                  if (story.cod && story.cod !== 'active') {
                     editTaskAction(game.id, story.cod, { score: e.target.value });
                   }
                 }}
@@ -156,12 +156,3 @@ export const StoryCard = ({
   )
 }
 
-export const AddStoryCard = ({ ...props }: HTMLAttributes<HTMLButtonElement>) => {
-  return (
-    <button type='button' {...props} className='flex hover:scale-105 transition-all'>
-      <Card className='flex aspect-4/3 w-lg shadow-md justify-center items-center'>
-        <Plus size={100} />
-      </Card>
-    </button>
-  )
-}

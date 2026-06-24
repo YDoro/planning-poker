@@ -65,6 +65,7 @@ export const mockStoreState = {
   nextTask: vi.fn(),
   finishGame: vi.fn(),
   removePlayer: vi.fn(),
+  promotePlayerToModerator: vi.fn(),
   changeCurrentTask: vi.fn(),
   addTask: vi.fn(),
   editTask: vi.fn(),
@@ -74,6 +75,7 @@ export const mockStoreState = {
   updateGame: vi.fn(),
   deleteGame: vi.fn(),
   getCurrentPlayer: vi.fn((playerId) => mockStoreState.players.find(p => p.id === playerId)),
+  isModerator: vi.fn((playerId) => mockStoreState.game?.isModerator(playerId) ?? false),
   setDontVote: vi.fn(),
 };
 

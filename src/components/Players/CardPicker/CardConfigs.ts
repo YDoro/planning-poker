@@ -96,29 +96,6 @@ export const getCards = (gameType: GameType | undefined): CardConfig[] => {
   }
 };
 
-export const getRandomEmoji = () => {
-  const emojis = [
-    '☕',
-    '🥤',
-    '🍹',
-    '🍸',
-    '🍧',
-    '🍨',
-    '🍩',
-    '🍎',
-    '🧁',
-    '🍪',
-    '🍿',
-    '🌮',
-    '🍦',
-    '🍉',
-    '🍐',
-    '🍰',
-    '🍫',
-  ];
-  return emojis[Math.floor(Math.random() * emojis.length)];
-};
-
 export const getCustomCards = (values: string[]) => {
   const customCards: CardConfig[] = customCardsTemplate;
   values.forEach((value, index) => (customCards[index].displayValue = value));

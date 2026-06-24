@@ -14,8 +14,8 @@ export const MarqueeText = ({ children, className = "", title }: { children: Rea
     return (
         <div className={`overflow-hidden whitespace-nowrap marquee-hover w-full ${className}`} title={title}>
             <div className="inline-block marquee-content">
-                <span className="inline-block pr-10">{children}</span>
-                <span className="inline-block pr-10">{children}</span>
+                <span className="inline-block pr-10 w-full">{children}</span>
+                <span className="inline-block pr-10 w-full">{children}</span>
             </div>
         </div>
     )

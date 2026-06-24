@@ -23,7 +23,13 @@ describe('Players component', () => {
 
   it('should display all players', () => {
     const players = createMockPlayers();
-    render(<Players game={createMockGame()} players={players} currentPlayerId="a1" />);
+    const mockStore = (globalThis as any).mockStoreState;
+    if (mockStore) {
+      mockStore.game = createMockGame();
+      mockStore.players = players;
+    }
+
+    render(<Players currentPlayerId="a1" />);
 
     players.forEach((player: Player) => {
       expect(screen.getAllByText(player.name)[0]).toBeInTheDocument();

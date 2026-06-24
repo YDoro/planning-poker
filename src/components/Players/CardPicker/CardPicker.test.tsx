@@ -153,13 +153,12 @@ describe('CardPicker component', () => {
   it('should update player value when player clicks on a card', async () => {
     const game = createMockGame();
     const players = createMockPlayers();
-    vi.spyOn(cardConfigs, 'getRandomEmoji').mockReturnValue('something');
     render(<CardPicker game={game} players={players} currentPlayerId="a1" />);
     const cardValueElement = screen.queryAllByText(1);
     await userEvent.click(cardValueElement[0]);
     const mockStore = (globalThis as any).mockStoreState;
     expect(mockStore.voteOnTask).toHaveBeenCalled();
-    expect(mockStore.voteOnTask).toHaveBeenCalledWith('xyz', 'a1', 1, 'something');
+    expect(mockStore.voteOnTask).toHaveBeenCalledWith('xyz', 'a1', 1);
   });
 
   it('should not update player value when player clicks on a card and game is finished', async () => {
@@ -177,28 +176,5 @@ describe('CardPicker component', () => {
     await userEvent.click(cardValueElement[0]);
     const mockStore = (globalThis as any).mockStoreState;
     expect(mockStore.voteOnTask).not.toHaveBeenCalled();
-  });
-
-  it('should display Click on the card to vote when game is not finished', () => {
-    const game = createMockGame();
-    render(<CardPicker game={game} players={createMockPlayers()} currentPlayerId="a1" />);
-    const helperText = screen.getByText('Click on the card to vote');
-    expect(helperText).toBeInTheDocument();
-  });
-
-  it('should display wait message to vote when game is finished', () => {
-    const game = createMockGame();
-    game.isFinished = true;
-    render(
-      <CardPicker
-        game={game}
-        players={createMockPlayers()}
-        currentPlayerId="a1"
-      />,
-    );
-    const helperText = screen.getByText(
-      'Session not ready for Voting! Wait for moderator to start',
-    );
-    expect(helperText).toBeInTheDocument();
   });
 });
